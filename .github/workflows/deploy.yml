@@ -10,15 +10,15 @@ jobs:
     steps:
       - name: Update and Deploy
         run: |
-          # 1. Pull with the double-slash path from your screenshot
+          # 1. Pull with the CLEAN path
           echo "📥 PULLING LATEST CODE..."
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
-          "https://dondang.iixcp.rumahweb.net:2083/json-api/cpanel?cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=VersionControl&cpanel_jsonapi_func=update&repository_root=%2fhome%2facpp2118%2f%2fpublic_html%2frev.acpedia.id"
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?repository_root=%2fhome%2facpp2118%2fpublic_html%2frev.acpedia.id"
           
           echo "⏳ Waiting for sync..."
           sleep 5
           
-          # 2. Deploy using the API 2 syntax
+          # 2. Deploy with the CLEAN path
           echo "🚀 DEPLOYING TO LIVE SITE..."
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
-          "https://dondang.iixcp.rumahweb.net:2083/json-api/cpanel?cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=VersionControl&cpanel_jsonapi_func=deploy&repository_root=%2fhome%2facpp2118%2f%2fpublic_html%2frev.acpedia.id"
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?repository_root=%2fhome%2facpp2118%2fpublic_html%2frev.acpedia.id"
