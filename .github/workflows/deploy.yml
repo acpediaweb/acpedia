@@ -8,7 +8,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Pull to Live Folder
+      - name: Force Pull to Live Folder
         run: |
+          # We add the 'branch' and 'source' parameters to force a fresh pull
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
-          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?repository_root=%2fhome%2facpp2118%2f%2fpublic_html%2frev.acpedia.id"
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?repository_root=%2fhome%2facpp2118%2f%2fpublic_html%2frev.acpedia.id&branch=main"
