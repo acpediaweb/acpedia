@@ -1,14 +1,5 @@
 name: 🚀 Trigger cPanel Deploy
-on:
-  push:
-    branches:
-      - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-     name: 🚀 Trigger cPanel Deploy
 on:
   push:
     branches:
