@@ -1,20 +1,11 @@
-name: 🚀 Remote Git Deploy
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy via SSH
+- name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEYS }}
+          key: ${{ secrets.SSH_PRIVATE_KEYS }}  # <--- MUST match the name in GitHub Settings
           port: 22
+          script_stop: true # Stops the script if an error occurs
           script: |
             uapi VersionControl update name=acpedia branch=main
             uapi VersionControl deploy name=acpedia
