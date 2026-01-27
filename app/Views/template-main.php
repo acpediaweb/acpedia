@@ -90,7 +90,7 @@
             <div class="flex items-center justify-between h-14 md:h-16">
                 <a href="#top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
                     <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
-                        <img src="C:\Users\adhoy\Desktop\New folder (2)\ACpedia\src\assets\acpedialogo.png" 
+                        <img src="assets\acpedialogo.png" 
                              alt="ACpedia Logo" 
                              class="h-6 md:h-7 w-auto">
                     </div>
