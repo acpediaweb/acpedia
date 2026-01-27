@@ -22,3 +22,5 @@ jobs:
         protocol: ftp
         security: loose  # Change "ftps" to "loose"
         port: 21
+        timeout: 60000        # Gives the server more time to respond (60 seconds)
+        log-level: verbose
