@@ -10,12 +10,11 @@ jobs:
     steps:
       - name: Update and Deploy
         run: |
-          echo "📥 PULLING CODE..."
-          curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} -v \
-          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?name=acpedia" > pull_log.json
-          cat pull_log.json
+          # We use -u with the secret and -K to be more secure
+          curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?name=acpedia"
           
-          echo "🚀 DEPLOYING..."
-          curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} -v \
-          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?name=acpedia" > deploy_log.json
-          cat deploy_log.json
+          sleep 2
+          
+          curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?name=acpedia"
