@@ -1,4 +1,4 @@
-name: 🚀 Trigger cPanel Deploy
+name: 🚀 Sync Website
 on:
   push:
     branches:
@@ -8,9 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Update and Sync
+      - name: Pull to Live Folder
         run: |
-          # We only run the Update command because your server doesn't support 'deploy'
-          echo "📥 PULLING CODE & TRIGGERING SYNC..."
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
           "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?repository_root=%2fhome%2facpp2118%2f%2fpublic_html%2frev.acpedia.id"
