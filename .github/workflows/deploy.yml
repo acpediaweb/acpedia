@@ -14,8 +14,8 @@ jobs:
           host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }} # <--- Add this line
-          port: 21
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: 2222  # <--- Change this to your server's actual SSH port
           script: |
             uapi VersionControl update name=acpedia branch=main
             uapi VersionControl deploy name=acpedia
