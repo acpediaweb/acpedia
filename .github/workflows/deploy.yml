@@ -1,5 +1,4 @@
 name: 🚀 Trigger cPanel Deploy
-
 on:
   push:
     branches:
@@ -9,17 +8,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Update and Deploy
+      - name: Update and Sync
         run: |
-          # 1. Pull the latest code (using the double-slash path)
-          echo "📥 PULLING LATEST CODE..."
+          # We only run the Update command because your server doesn't support 'deploy'
+          echo "📥 PULLING CODE & TRIGGERING SYNC..."
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
           "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?repository_root=%2fhome%2facpp2118%2f%2fpublic_html%2frev.acpedia.id"
-          
-          echo "⏳ Waiting for sync..."
-          sleep 5
-          
-          # 2. Trigger the Deployment (using the double-slash path)
-          echo "🚀 DEPLOYING TO LIVE SITE..."
-          curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
-          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?repository_root=%2fhome%2facpp2118%2f%2fpublic_html%2frev.acpedia.id"
