@@ -1,26 +1,20 @@
-name: 🚀 Deploy to cPanel
+name: 🚀 Remote Git Deploy
 on:
   push:
     branches:
       - main
 
 jobs:
-  web-deploy:
-    name: 🎉 Deploy
+  deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v4
-
-    - name: 📂 Sync files via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ftp.acpedia.id
-        username: cegeb@rev.acpedia.id
-        password: sellyapp69
-        server-dir: ./rev.acpedia.id/
-        protocol: ftp
-        security: loose  # Change "ftps" to "loose"
-        port: 21
-        timeout: 60000        # Gives the server more time to respond (60 seconds)
-        log-level: verbose
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            uapi VersionControl update name=acpedia branch=main
+            uapi VersionControl deploy name=acpedia
