@@ -8,11 +8,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger cPanel Pull
+      - name: Update and Deploy
         run: |
+          echo "📥 Pulling latest code from GitHub..."
           curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} \
           "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?name=acpedia"
-      - name: Trigger cPanel Deploy
-        run: |
+          
+          echo "⏳ Waiting 5 seconds for cPanel to process files..."
+          sleep 5
+          
+          echo "🚀 Deploying to public_html..."
           curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} \
           "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?name=acpedia"
