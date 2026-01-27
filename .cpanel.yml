@@ -3,5 +3,3 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/acpp2118/public_html/rev.acpedia.id/
     - /bin/cp -R * $DEPLOYPATH
-
-    
