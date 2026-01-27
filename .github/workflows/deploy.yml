@@ -10,11 +10,16 @@ jobs:
     steps:
       - name: Update and Deploy
         run: |
-          # We use -u with the secret and -K to be more secure
+          # 1. Pull the latest code from GitHub to the cPanel repo folder
+          echo "📥 PULLING LATEST CODE..."
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
           "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?name=acpedia"
           
+          # Give cPanel a few seconds to process the file download
+          echo "⏳ Waiting for sync..."
           sleep 2
           
+          # 2. Deploy (Move) the files to the public_html folder
+          echo "🚀 DEPLOYING TO LIVE SITE..."
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
           "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?name=acpedia"
