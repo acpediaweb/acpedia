@@ -84,7 +84,7 @@
         </div>
     </div>
 
-    <!-- Header / Navbar -->
+    <!-- Header / Navbars -->
     <header id="header" class="bg-white border-b sticky top-0 z-50 shadow-sm transition-all duration-300">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-14 md:h-16">
