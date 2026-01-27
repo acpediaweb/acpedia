@@ -1,0 +1,356 @@
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+:root {
+    --primary: #41B8EA;
+    --secondary: #F99C1C;
+    --success: #3EB48A;
+    --destructive: #ED2024;
+    --foreground: #373E51;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #ffffff; /* Default from index.html */
+    color: var(--foreground);
+}
+
+/* Override body bg for toko-kami if needed, but usually shared styles implies consistency */
+/* In toko-kami.html body had background-color: #f9fafb; */
+
+/* Animation Classes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+@keyframes slideInfinite {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-scaleIn {
+    animation: scaleIn 0.5s ease-out forwards;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.logo-scroll {
+    animation: slideInfinite 40s linear infinite;
+}
+
+/* Intersection Observer Classes */
+.observe-me {
+    opacity: 0;
+}
+
+.observe-me.animated {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.observe-scale.animated {
+    animation: scaleIn 0.5s ease-out forwards;
+}
+
+/* Hover Effects */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* WhatsApp Float */
+.whatsapp-pulse {
+    position: relative;
+}
+
+.whatsapp-pulse::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background-color: #25D366;
+    animation: ping 2s ease-in-out infinite;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.mobile-menu.active {
+    max-height: 500px;
+}
+
+/* Counter Animation */
+.counter {
+    display: inline-block;
+}
+
+/* Gradient Text */
+.gradient-text {
+    background: linear-gradient(to right, #41B8EA, #3EB48A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Toko Kami Specific Styles */
+
+/* Scrollbar Hide */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Dropdown Animation */
+.dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.dropdown-content.open {
+    max-height: 2000px;
+    opacity: 1;
+}
+
+/* Product Card Hover */
+.product-card {
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Slider Styles */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    width: 100%;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    cursor: pointer;
+    border: none;
+}
+
+/* Service Button Hover */
+.service-btn {
+    transition: all 0.2s ease;
+}
+
+.service-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Brand Logo Hover */
+.brand-logo {
+    transition: all 0.2s ease;
+}
+
+.brand-logo:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+/* PK Button Active */
+.pk-btn.active {
+    background-color: #41B8EA;
+    color: white;
+    border-color: #41B8EA;
+    box-shadow: 0 4px 12px rgba(65, 184, 234, 0.3);
+}
+
+.type-btn.active.inverter {
+    background-color: #3EB48A;
+    color: white;
+    border-color: #3EB48A;
+    box-shadow: 0 4px 12px rgba(62, 180, 138, 0.3);
+}
+
+.type-btn.active.non-inverter {
+    background-color: #F99C1C;
+    color: white;
+    border-color: #F99C1C;
+    box-shadow: 0 4px 12px rgba(249, 156, 28, 0.3);
+}
+
+/* Category Button Active */
+.category-btn.active {
+    background-color: #41B8EA;
+    color: white;
+    border-color: #41B8EA;
+    box-shadow: 0 4px 12px rgba(65, 184, 234, 0.3);
+}
+
+/* Tab Styles */
+.tab-btn {
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background-color: #F99C1C;
+    color: white;
+}
+
+/* Pagination */
+.page-btn {
+    transition: all 0.2s ease;
+}
+
+.page-btn.active {
+    background-color: #41B8EA;
+    color: white;
+    border-color: #41B8EA;
+}
+
+.page-btn:hover:not(.active) {
+    background-color: #f3f4f6;
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Custom scrollbar hiding */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Calendar Styles */
+.calendar-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 50;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    width: 300px;
+}
+.calendar-popup.show {
+    display: block;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+    text-align: center;
+}
+.calendar-day {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+}
+.calendar-day:hover {
+    background-color: #f1f5f9;
+}
+.calendar-day.selected {
+    background-color: #41B8EA;
+    color: white;
+}
+.calendar-day.empty {
+    pointer-events: none;
+}
+
