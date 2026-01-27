@@ -3,7 +3,7 @@
         with:
           host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEYS }}  # <--- MUST match the name in GitHub Settings
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # <--- MUST match the name in GitHub Settings
           port: 22
           script_stop: true # Stops the script if an error occurs
           script: |
