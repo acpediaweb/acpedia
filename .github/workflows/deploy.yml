@@ -10,13 +10,12 @@ jobs:
     steps:
       - name: Update and Deploy
         run: |
-          echo "📥 Pulling latest code from GitHub..."
-          curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} \
-          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?name=acpedia"
+          echo "📥 PULLING CODE..."
+          curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} -v \
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?name=acpedia" > pull_log.json
+          cat pull_log.json
           
-          echo "⏳ Waiting 5 seconds for cPanel to process files..."
-          sleep 5
-          
-          echo "🚀 Deploying to public_html..."
-          curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} \
-          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?name=acpedia"
+          echo "🚀 DEPLOYING..."
+          curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} -v \
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?name=acpedia" > deploy_log.json
+          cat deploy_log.json
