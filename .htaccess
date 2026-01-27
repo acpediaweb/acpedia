@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # CONDITION: If the requested URI does NOT start with 'dev.acpedia.id/'
+    # The '!' negates the match, making the rule only apply if the condition is FALSE.
+    # [NC] means No Case (case-insensitive)
+
+    # RULE: Apply the redirect to 'public/' for all other requests
+    RewriteRule ^(.*)$ public/$1 [L]
+        
+</IfModule>
+
+#----------------------------------------------------------------cp:ppd
+# Section managed by cPanel: Password Protected Directories       -cp:ppd
+# - Do not edit this section of the htaccess file!               -cp:ppd
+#----------------------------------------------------------------cp:ppd
+#----------------------------------------------------------------cp:ppd
+# End section managed by cPanel: Password Protected Directories -cp:ppd
