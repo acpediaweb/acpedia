@@ -20,5 +20,5 @@ jobs:
         password: sellyapp69
         server-dir: ./rev.acpedia.id/
         protocol: ftp
-        security: ftps  # This enables TLS
+        security: loose  # Change "ftps" to "loose"
         port: 21
