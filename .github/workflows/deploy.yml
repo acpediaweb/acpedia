@@ -19,3 +19,4 @@ jobs:
         username: cegeb@rev.acpedia.id
         password: sellyapp69
         server-dir: ./rev.acpedia.id/
+        protocol: ftp
