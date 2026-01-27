@@ -1,4 +1,4 @@
-name: 🚀 Remote Git Deploy
+name: 🚀 Trigger cPanel Deploy
 on:
   push:
     branches:
@@ -8,14 +8,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          port: 2222  # <--- Change this to your server's actual SSH port
-          script: |
-            uapi VersionControl update name=acpedia branch=main
-            uapi VersionControl deploy name=acpedia
+      - name: Trigger cPanel Pull
+        run: |
+          curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} \
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?name=acpedia"
+      - name: Trigger cPanel Deploy
+        run: |
+          curl -u acpp2118:${{ secrets.CPANEL_PASSWORD }} \
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?name=acpedia"
