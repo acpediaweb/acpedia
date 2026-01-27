@@ -10,16 +10,15 @@ jobs:
     steps:
       - name: Update and Deploy
         run: |
-          # 1. Pull the latest code from GitHub to the cPanel repo folder
+          # 1. Pull the latest code using repository_root
           echo "📥 PULLING LATEST CODE..."
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
-          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?name=acpedia"
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/update?repository_root=%2fhome%2facpp2118%2fpublic_html%2frev.acpedia.id"
           
-          # Give cPanel a few seconds to process the file download
           echo "⏳ Waiting for sync..."
-          sleep 2
+          sleep 5
           
-          # 2. Deploy (Move) the files to the public_html folder
+          # 2. Trigger the Deployment
           echo "🚀 DEPLOYING TO LIVE SITE..."
           curl -L -u "acpp2118:${{ secrets.CPANEL_PASSWORD }}" \
-          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?name=acpedia"
+          "https://dondang.iixcp.rumahweb.net:2083/execute/VersionControl/deploy?repository_root=%2fhome%2facpp2118%2fpublic_html%2frev.acpedia.id"
