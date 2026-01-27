@@ -21,7 +21,7 @@
 </head>
 <body>
 
-    <!-- Top Bar (Desktop Only) -->
+    <!-- Top Bar -->
     <div id="topBar" class="bg-white border-b border-gray-200 py-2.5 hidden xl:block relative z-40">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between gap-4">
