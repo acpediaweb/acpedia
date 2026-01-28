@@ -89,7 +89,7 @@
             <div class="flex items-center justify-between h-14 md:h-16">
                 <a href="/" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
                     <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
-                        <img src="assets\acpedialogo.png" 
+                        <img src="/assets\acpedialogo.png" 
                              alt="ACpedia Logo" 
                              class="h-6 md:h-7 w-auto">
                     </div>
@@ -172,7 +172,7 @@
                 <!-- Column 1 - Logo & Address -->
                 <div class="lg:col-span-4 lg:col-start-2 observe-me">
                     <div class="mb-3">
-                        <img src="assets/acpediawhite.png" 
+                        <img src="/assets/acpediawhite.png" 
                              alt="ACpedia Logo" 
                              class="h-12 w-auto">
                     </div>
