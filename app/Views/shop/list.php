@@ -666,38 +666,92 @@
     </div>
 
 
-   <script>
-    // 1. Inject the PHP data into a JS constant
-    const rawProducts = <?php echo json_encode($products); ?>;
+  <script>
+    /**
+     * 1. DATA INITIALIZATION
+     * We convert the PHP array directly into a JS object.
+     */
+    const rawData = <?php echo json_encode($products); ?>;
+    
+    // Fix ReferenceErrors: Define these globally before they are used
+    let currentPage = 1;
+    let filteredProducts = [];
 
-    // 2. Map the database results to your existing JS structure
-    const products = rawProducts.map((item) => {
-        // Calculate discount if sale_price exists and is lower than base_price
-        const original = parseFloat(item.base_price);
-        const sale = parseFloat(item.sale_price);
-        const discountPercent = (sale > 0 && sale < original) 
-            ? Math.round(((original - sale) / original) * 100) 
+    /**
+     * 2. DATA MAPPING
+     * Transforming Database columns to Frontend keys
+     */
+    const products = rawData.map(item => {
+        // Handle Pricing & Discount
+        const basePrice = parseFloat(item.base_price) || 0;
+        const salePrice = parseFloat(item.sale_price) || 0;
+        const discount = (salePrice > 0 && salePrice < basePrice) 
+            ? Math.round(((basePrice - salePrice) / basePrice) * 100) 
             : 0;
+
+        // FIX: "Object Object" JSON.parse error
+        // If CI4 already returns an object, don't parse it.
+        let featuresArr = ['Standard Unit'];
+        if (item.extra_attributes) {
+            if (typeof item.extra_attributes === 'object') {
+                featuresArr = item.extra_attributes;
+            } else {
+                try {
+                    featuresArr = JSON.parse(item.extra_attributes);
+                } catch (e) {
+                    console.warn("Invalid JSON in extra_attributes for ID: " + item.id);
+                }
+            }
+        }
 
         return {
             id: parseInt(item.id),
-            brand: item.brand_name || 'Unknown Brand',
+            brand: item.brand_name || 'Generic',
             model: item.product_name,
-            pk: item.pk_category_name || 'N/A',
+            pk: item.pk_category_name || 'Unknown PK',
             type: item.type_name || 'Standard',
-            rating: 4.5, // Default or join product_ratings table
-            reviews: 137,
-            originalPrice: original,
-            price: (sale > 0) ? sale : original,
-            discount: discountPercent,
-            // Prefix with your upload path
-            image: '<?= base_url("uploads/products/") ?>/' + item.main_image,
-            // Parse JSON from the extra_attributes column
-            features: item.extra_attributes ? JSON.parse(item.extra_attributes) : ['Standard Unit']
+            rating: 4.5, // Placeholder for now
+            reviews: 120, // Placeholder for now
+            originalPrice: basePrice,
+            price: salePrice > 0 ? salePrice : basePrice,
+            discount: discount,
+            // FIX: Image 404 - Ensure this folder exists in /public/uploads/products/
+            image: '<?= base_url("uploads/products") ?>/' + (item.main_image || 'default-ac.png'),
+            features: Array.isArray(featuresArr) ? featuresArr : [featuresArr]
         };
     });
 
-    console.log("Hydrated Products:", products);
+    // Sync filtered products with the newly loaded data
+    filteredProducts = [...products];
+
+    /**
+     * 3. RENDER LOGIC
+     * This function should exist in your script to display the items
+     */
+    function renderProducts() {
+        const productGrid = document.getElementById('product-grid');
+        if (!productGrid) return;
+
+        productGrid.innerHTML = ''; // Clear grid
+
+        // Example: Only showing current page logic here
+        filteredProducts.forEach(product => {
+            productGrid.innerHTML += `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.model}">
+                    <h4>${product.brand}</h4>
+                    <p>${product.model} - ${product.pk}</p>
+                    <div class="price">Rp ${product.price.toLocaleString('id-ID')}</div>
+                </div>
+            `;
+        });
+    }
+
+    // Run on load
+    document.addEventListener('DOMContentLoaded', () => {
+        renderProducts();
+    });
+
 </script>
 
 <?= $this->endSection() ?>
