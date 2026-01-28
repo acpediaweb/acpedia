@@ -27,39 +27,44 @@ class Inventory extends BaseController
     /**
      * List all inventory items with filters
      */
-    public function index()
-    {
-        $page = $this->request->getVar('page') ?? 1;
-        $product = $this->request->getVar('product') ?? '';
-        $itemType = $this->request->getVar('item_type') ?? '';
-        $itemsPerPage = $this->request->getVar('items_per_page') ?? 20;
+   public function index()
+{
+    $page = $this->request->getVar('page') ?? 1;
+    $product = $this->request->getVar('product') ?? '';
+    $brand = $this->request->getVar('brand') ?? ''; // Added brand filter variable
+    $type = $this->request->getVar('type') ?? '';   // Added type filter variable
+    $itemsPerPage = $this->request->getVar('items_per_page') ?? 20;
 
-        $query = $this->inventoryModel
-            ->select('inventory.*, products.product_name, brands.brand_name')
-            ->join('products', 'products.id = inventory.product_id', 'left')
-            ->join('brands', 'brands.id = products.brand_id', 'left');
+    $query = $this->inventoryModel
+        ->select('inventory.*, products.product_name, brands.brand_name')
+        ->join('products', 'products.id = inventory.product_id', 'left')
+        ->join('brands', 'brands.id = products.brand_id', 'left');
 
-        // Apply filters
-        if (!empty($product)) {
-            $query = $query->where('inventory.product_id', $product);
-        }
-
-        if (!empty($itemType)) {
-            $query = $query->where('inventory.item_type', $itemType);
-        }
-
-        $items = $query->orderBy('inventory.id', 'DESC')
-            ->paginate((int)$itemsPerPage, 'inventory');
-
-        return view('admin/inventory/index', [
-            'items' => $items,
-            'pager' => $this->inventoryModel->pager,
-            'selectedProduct' => $product,
-            'selectedItemType' => $itemType,
-            'itemsPerPage' => $itemsPerPage,
-            'products' => $this->productModel->findAll(),
-        ]);
+    // Apply filters
+    if (!empty($product)) {
+        $query = $query->where('inventory.product_id', $product);
     }
+    
+    // Ensure the filter logic matches the variables used in the view
+    if (!empty($brand)) {
+        $query = $query->where('products.brand_id', $brand);
+    }
+
+    $items = $query->orderBy('inventory.id', 'DESC')
+        ->paginate((int)$itemsPerPage, 'inventory');
+
+    return view('admin/inventory/index', [
+        'items' => $items,
+        'pager' => $this->inventoryModel->pager,
+        'selectedProduct' => $product,
+        'selectedBrand' => $brand, // Pass selectedBrand to view
+        'selectedType' => $type,   // Pass selectedType to view
+        'itemsPerPage' => $itemsPerPage,
+        'products' => $this->productModel->findAll(),
+        'brands'   => $this->brandModel->findAll(), // FETCH AND PASS BRANDS
+        'types'    => $this->typeModel->findAll(),  // FETCH AND PASS TYPES
+    ]);
+}
 
     /**
      * Show inventory item details
