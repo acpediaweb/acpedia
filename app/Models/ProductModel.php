@@ -27,13 +27,13 @@ class ProductModel extends Model
     /**
      * Fetch products with their related Master Data
      */
-    public function getWithRelations(array $where = [])
+    public function getWithRelations()
     {
-        return $this->select('products.*, categories.category_name, brands.brand_name, pk_categories.pk_category_name')
-            ->join('categories', 'categories.id = products.category_id', 'left')
+        return $this->select('products.*, brands.brand_name, types.type_name, pk_categories.pk_category_name')
             ->join('brands', 'brands.id = products.brand_id', 'left')
+            ->join('types', 'types.id = products.type_id', 'left')
             ->join('pk_categories', 'pk_categories.id = products.pk_category_id', 'left')
-            ->where($where)
+            ->where('products.deleted_at', null)
             ->findAll();
     }
 }

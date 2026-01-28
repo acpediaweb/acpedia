@@ -13,7 +13,6 @@ class ShopController extends BaseController
         
         $data = [
             'title'    => 'Shop AC Units - HVACPRO',
-            // Fetching all products with brand and category names
             'products' => $model->getWithRelations() 
         ];
 
