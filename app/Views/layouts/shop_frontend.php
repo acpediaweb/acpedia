@@ -92,16 +92,16 @@
             </a>
 
             <nav class="hidden lg:flex items-center gap-8">
-                <a href="#home" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
+                <a href="/" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
                     <i data-lucide="home" class="h-4 w-4"></i> Beranda
                 </a>
-                <a href="#about" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
+                <a href="/about" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
                     <i data-lucide="wrench" class="h-4 w-4"></i> Layanan Kami
                 </a>
-                <a href="#toko" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
+                <a href="/shop" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
                     <i data-lucide="store" class="h-4 w-4"></i> Toko Kami
                 </a>
-                <a href="#contact" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
+                <a href="/contact" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
                     <i data-lucide="mail" class="h-4 w-4"></i> Kontak
                 </a>
             </nav>
@@ -142,10 +142,10 @@
              @click.away="mobileMenuOpen = false" 
              class="lg:hidden border-t border-gray-100 pb-4">
             <nav class="flex flex-col py-2">
-                <a href="#home" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Beranda</a>
-                <a href="#about" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Layanan Kami</a>
-                <a href="#toko" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Toko Kami</a>
-                <a href="#contact" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Kontak</a>
+                <a href="/" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Beranda</a>
+                <a href="/about" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Layanan Kami</a>
+                <a href="/toko" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Toko Kami</a>
+                <a href="/contact" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Kontak</a>
                 <div class="px-4 pt-3 border-t">
                     <?php if (session()->get('isLoggedIn')): ?>
                         <a href="/users/profile" class="text-sm">Profile Saya</a>
