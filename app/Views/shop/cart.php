@@ -5,33 +5,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<script>
-    window.SHOP_DATA = {
-        pipePrices: {
-            <?php foreach ($pipes as $p): ?>
-            '<?= $p->id ?>': <?= (float)$p->price_per_meter ?>,
-            <?php endforeach; ?>
-        },
-        addonPrices: {
-            <?php foreach ($addons as $a): ?>
-            '<?= $a->id ?>': <?= (float)$a->addon_price ?>,
-            <?php endforeach; ?>
-        }
-    };
-</script>
-
-<div class="py-10" x-data="{ 
-    saveGlobalConfig() {
-        let formData = new FormData($refs.globalConfigForm);
-        fetch('<?= base_url('shop/cart/updateConfig') ?>', {
-            method: 'POST',
-            body: formData,
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        }).then(res => res.json()).then(data => {
-            console.log('Config saved');
-        });
-    }
-}">
+<div class="py-10">
     <div class="flex items-center justify-between mb-8">
         <h1 class="text-3xl font-black text-gray-900 tracking-tight">Your Cart</h1>
         <a href="<?= base_url('shop') ?>" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors">&larr; Continue Shopping</a>
@@ -52,35 +26,27 @@
                     $isService = !empty($item->service_id);
                     $basePrice = $isService ? $item->s_price : ($item->sale_price ?? $item->p_price);
                     
-                    // PHP-Side Subtotal (Uses prepared data from Controller)
+                    // PHP Calculation for Initial Load
                     $addonTotal = 0;
-                    
-                    // Add Pipe Cost
                     if (!empty($item->saved_pipe_id)) {
                         foreach ($pipes as $p) {
                             if ($p->id == $item->saved_pipe_id) $addonTotal += $p->price_per_meter;
                         }
                     }
-                    // Add Addon Costs
                     if (!empty($item->saved_addon_ids)) {
                         foreach ($addons as $a) {
                             if (in_array((string)$a->id, $item->saved_addon_ids)) $addonTotal += $a->addon_price;
                         }
                     }
-
                     $subtotal = ($basePrice + $addonTotal) * $item->quantity;
                     $grandTotal += $subtotal;
                 ?>
                 
-                <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
-                     x-data="cartItem({
-                        qty: <?= (int)$item->quantity ?>,
-                        basePrice: <?= (float)$basePrice ?>,
-                        selectedPipe: '<?= $item->saved_pipe_id ?>', 
-                        selectedAddons: <?= !empty($item->saved_addon_ids) ? json_encode($item->saved_addon_ids) : '[]' ?>
-                     })">
-                     
-                    <form action="<?= base_url('shop/cart/update') ?>" method="POST">
+                <div class="cart-item-card bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    
+                    <div class="hidden base-price-data" data-price="<?= $basePrice ?>"></div>
+
+                    <form action="<?= base_url('shop/cart/update') ?>" method="POST" class="cart-item-form">
                         <?= csrf_field() ?>
                         <input type="hidden" name="item_id" value="<?= $item->id ?>">
                         
@@ -127,11 +93,13 @@
                                     <?php else: ?>
                                         <div class="space-y-4">
                                             <div>
-                                                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pipe Kit</label>
-                                                <select name="pipe_id" x-model="selectedPipe" class="w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-emerald-500">
-                                                    <option value="">No Pipe Needed</option>
+                                                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pipe Kit (Applied to all units)</label>
+                                                <select name="pipe_id" class="pipe-select w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-emerald-500">
+                                                    <option value="" data-price="0">No Pipe Needed</option>
                                                     <?php foreach ($pipes as $p): ?>
-                                                        <option value="<?= (string)$p->id ?>">
+                                                        <option value="<?= $p->id ?>" 
+                                                                data-price="<?= $p->price_per_meter ?>"
+                                                                <?= (string)$p->id === (string)$item->saved_pipe_id ? 'selected' : '' ?>>
                                                             <?= esc($p->pipe_type) ?> (+Rp <?= number_format($p->price_per_meter, 0) ?>)
                                                         </option>
                                                     <?php endforeach; ?>
@@ -144,9 +112,10 @@
                                                         <?php foreach ($addons as $addon): ?>
                                                             <label class="flex items-center space-x-2 p-2 bg-white rounded-lg border border-gray-100 cursor-pointer hover:border-emerald-300">
                                                                 <input type="checkbox" name="addons[]" 
-                                                                       value="<?= (string)$addon->id ?>" 
-                                                                       x-model="selectedAddons" 
-                                                                       class="rounded text-emerald-600 border-gray-300">
+                                                                       value="<?= $addon->id ?>" 
+                                                                       data-price="<?= $addon->addon_price ?>"
+                                                                       class="addon-checkbox rounded text-emerald-600 border-gray-300"
+                                                                       <?= in_array((string)$addon->id, $item->saved_addon_ids) ? 'checked' : '' ?>>
                                                                 <div class="text-xs">
                                                                     <span class="font-bold text-gray-700 block"><?= esc($addon->addon_name) ?></span>
                                                                     <span class="text-gray-400 text-[10px]">+Rp <?= number_format($addon->addon_price, 0) ?></span>
@@ -165,14 +134,14 @@
                                 <div class="text-right">
                                     <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Total Price</p>
                                     <p class="text-xl font-black text-gray-900 tracking-tight">
-                                        Rp <span x-text="formatPrice(subtotal)"></span>
+                                        Rp <span class="price-display"><?= number_format($subtotal, 0, ',', '.') ?></span>
                                     </p>
                                 </div>
 
                                 <div class="flex flex-col items-end gap-3 w-full">
                                     <div class="flex items-center gap-2">
                                         <label class="text-[10px] font-bold text-gray-400 uppercase">Qty:</label>
-                                        <input type="number" name="qty" x-model="qty" min="1" class="w-16 text-center text-sm font-bold bg-white border-gray-200 rounded-lg">
+                                        <input type="number" name="qty" value="<?= $item->quantity ?>" min="1" class="qty-input w-16 text-center text-sm font-bold bg-white border-gray-200 rounded-lg">
                                     </div>
 
                                     <button type="submit" class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2">
@@ -189,7 +158,7 @@
             </div>
 
             <div class="lg:col-span-1">
-                <form action="<?= base_url('shop/checkout') ?>" method="GET" x-ref="globalConfigForm" class="bg-gray-900 text-white rounded-[2.5rem] p-8 sticky top-28 shadow-xl space-y-6">
+                <form id="sidebarForm" action="<?= base_url('shop/checkout') ?>" method="GET" class="bg-gray-900 text-white rounded-[2.5rem] p-8 sticky top-28 shadow-xl space-y-6">
                     <h2 class="text-xl font-bold mb-4">Checkout Details</h2>
                     
                     <div>
@@ -203,9 +172,6 @@
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <div class="absolute right-4 top-3.5 pointer-events-none text-gray-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                </div>
                             </div>
                         <?php else: ?>
                             <div class="p-3 bg-red-900/50 rounded-xl border border-red-800">
@@ -220,23 +186,17 @@
                         </div>
                     </div>
 
-                    <div x-data x-init="flatpickr($refs.picker, {
-                        enableTime: true,
-                        dateFormat: 'Y-m-d H:i',
-                        minDate: 'today',
-                        time_24hr: true,
-                        defaultDate: '<?= $cart->scheduled_datetime ?? '' ?>',
-                        onChange: function() { saveGlobalConfig(); }
-                    })">
+                    <div class="flatpickr-container">
                         <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2">Technician Arrival</label>
-                        <input x-ref="picker" type="text" name="scheduled_datetime" 
+                        <input id="schedule-input" type="text" name="scheduled_datetime" 
+                               value="<?= $cart->scheduled_datetime ?? '' ?>"
                                class="w-full bg-gray-800 border-none rounded-2xl py-3 px-4 text-sm text-white focus:ring-2 focus:ring-blue-500 placeholder-gray-500 cursor-pointer"
                                placeholder="Select Date & Time...">
                     </div>
 
                     <div class="pt-4 border-t border-gray-800">
                         <label class="flex items-center space-x-4 cursor-pointer group">
-                            <input type="checkbox" name="faktur" @change="saveGlobalConfig()" <?= ($cart->faktur_requested ?? false) ? 'checked' : '' ?> class="rounded bg-gray-800 border-gray-600 text-blue-600 focus:ring-blue-500">
+                            <input type="checkbox" name="faktur" onchange="autoSaveConfig()" <?= ($cart->faktur_requested ?? false) ? 'checked' : '' ?> class="rounded bg-gray-800 border-gray-600 text-blue-600 focus:ring-blue-500">
                             <span class="text-xs font-bold text-gray-300 group-hover:text-white">Request Tax Invoice (Faktur)</span>
                         </label>
                     </div>
@@ -259,39 +219,80 @@
 </div>
 
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('cartItem', (config) => ({
-            qty: Number(config.qty),
-            basePrice: Number(config.basePrice),
-            selectedPipe: config.selectedPipe, 
-            selectedAddons: config.selectedAddons || [],
-
-            get subtotal() {
-                let total = this.basePrice;
-                
-                if (!window.SHOP_DATA) return total;
-
-                // Pipe Price
-                if (this.selectedPipe) {
-                    let pipePrice = window.SHOP_DATA.pipePrices[this.selectedPipe] || 0;
-                    total += pipePrice;
-                }
-
-                // Addon Prices
-                this.selectedAddons.forEach(id => {
-                    let addonPrice = window.SHOP_DATA.addonPrices[String(id)] || 0;
-                    total += addonPrice;
-                });
-
-                return total * this.qty;
-            },
-            
-            formatPrice(val) {
-                if (isNaN(val)) return '0';
-                return new Intl.NumberFormat('id-ID').format(val);
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // 1. Initialize Flatpickr manually
+        flatpickr("#schedule-input", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            minDate: "today",
+            time_24hr: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                autoSaveConfig();
             }
-        }))
-    })
+        });
+
+        // 2. Attach Event Listeners to all cart items
+        const cartCards = document.querySelectorAll('.cart-item-card');
+
+        cartCards.forEach(card => {
+            // Listen for changes on inputs inside this card
+            const inputs = card.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('change', () => calculateItemTotal(card));
+                input.addEventListener('keyup', () => calculateItemTotal(card)); // For typing in qty
+            });
+        });
+
+        // Function to calculate total for a single item card
+        function calculateItemTotal(card) {
+            // Get Base Price
+            const basePrice = parseFloat(card.querySelector('.base-price-data').dataset.price) || 0;
+            
+            // Get Qty
+            const qtyInput = card.querySelector('.qty-input');
+            let qty = parseInt(qtyInput.value) || 1;
+            if(qty < 1) qty = 1;
+
+            let additionalCost = 0;
+
+            // Get Pipe Price
+            const pipeSelect = card.querySelector('.pipe-select');
+            if (pipeSelect) {
+                const selectedOption = pipeSelect.options[pipeSelect.selectedIndex];
+                const pipePrice = parseFloat(selectedOption.dataset.price) || 0;
+                additionalCost += pipePrice;
+            }
+
+            // Get Addons Price
+            const checkboxes = card.querySelectorAll('.addon-checkbox:checked');
+            checkboxes.forEach(box => {
+                additionalCost += parseFloat(box.dataset.price) || 0;
+            });
+
+            // Calculate Total
+            const total = (basePrice + additionalCost) * qty;
+
+            // Update Display
+            const display = card.querySelector('.price-display');
+            display.textContent = new Intl.NumberFormat('id-ID').format(total);
+        }
+    });
+
+    // Auto Save Sidebar Config
+    function autoSaveConfig() {
+        const form = document.getElementById('sidebarForm');
+        const formData = new FormData(form);
+
+        fetch('<?= base_url('shop/cart/updateConfig') ?>', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => console.log('Config autosaved'))
+        .catch(err => console.error('Autosave failed', err));
+    }
 </script>
 
 <?= $this->endSection() ?>
