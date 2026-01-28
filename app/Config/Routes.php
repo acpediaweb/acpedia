@@ -13,6 +13,14 @@ $routes->group('/', ['namespace' => 'App\Controllers\Home'], static function ($r
     $routes->get('contact', 'HomeController::contact');
 });
 
+$routes->group('', ['namespace' => 'App\Controllers\Auth'], static function ($routes) {
+    $routes->get('login', 'AuthController::login');
+    $routes->post('login/attempt', 'AuthController::attemptLogin');
+    $routes->get('register', 'AuthController::register');
+    $routes->post('register/attempt', 'AuthController::attemptRegister');
+    $routes->get('logout', 'AuthController::logout');
+});
+
 // --- 2. SHOP FRONTEND (Shop Folder) ---
 $routes->group('shop', ['namespace' => 'App\Controllers\Shop'], static function ($routes) {
     

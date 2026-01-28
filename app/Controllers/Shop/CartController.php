@@ -12,13 +12,14 @@ class CartController extends BaseController
      */
     public function add()
     {
-        // 1. Authentication Check
-        // Redirect to login if the user is not authenticated.
-        if (!auth()->loggedIn()) { 
+        $session = session();
+
+        // 1. Authentication Check using Session
+        if (!$session->get('isLoggedIn')) { 
             return redirect()->to('login')->with('error', 'Please login to add items to your cart.');
         }
 
-        $userId    = auth()->id();
+        $userId    = $session->get('user_id');
         $productId = $this->request->getPost('product_id');
         $serviceId = $this->request->getPost('service_id');
         $quantity  = $this->request->getPost('quantity') ?? 1;
@@ -26,8 +27,7 @@ class CartController extends BaseController
         $cartModel = new CartModel();
         $db = \Config\Database::connect();
 
-        // 2. Ensure a Cart Header exists for this User (user_cart table)
-        // This acts as the parent container for all mixed items.
+        // 2. Ensure a Cart Header exists for this User
         $cart = $cartModel->where('user_id', $userId)->first();
         
         if (!$cart) {
@@ -40,7 +40,6 @@ class CartController extends BaseController
         }
 
         // 3. Handle Mixed Combinations in user_cart_items
-        // We check if the exact item (Product or Service) already exists to increment quantity
         $builder = $db->table('user_cart_items');
         
         $existingItem = $builder->where([
@@ -50,11 +49,9 @@ class CartController extends BaseController
         ])->get()->getRow();
 
         if ($existingItem) {
-            // Update quantity if item is already in cart
             $builder->where('id', $existingItem->id)
                     ->update(['quantity' => $existingItem->quantity + $quantity]);
         } else {
-            // Insert new mixed item
             $builder->insert([
                 'cart_id'    => $cartId,
                 'product_id' => $productId ?: null,
@@ -66,19 +63,17 @@ class CartController extends BaseController
         return redirect()->back()->with('success', 'Cart updated successfully!');
     }
 
-    /**
-     * View the full cart with totals for both hardware and labor.
-     */
     public function index()
     {
-        if (!auth()->loggedIn()) {
+        $session = session();
+
+        if (!$session->get('isLoggedIn')) {
             return redirect()->to('login');
         }
 
-        $userId = auth()->id();
+        $userId = $session->get('user_id');
         $db = \Config\Database::connect();
 
-        // Complex Join to get names and prices for both Products and Services
         $items = $db->table('user_cart_items as uci')
             ->select('uci.*, p.product_name, p.base_price as p_price, p.sale_price, s.service_title, s.base_price as s_price')
             ->join('user_cart as uc', 'uc.id = uci.cart_id')
