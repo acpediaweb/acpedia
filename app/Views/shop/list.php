@@ -665,4 +665,33 @@
         </div>
     </div>
 
+
+    <script>
+        // Mock Products Data
+        const products = Array.from({ length: 16 }, (_, i) => ({
+            id: i + 1,
+            brand: ['Daikin', 'Panasonic', 'Midea', 'Sharp'][i % 4],
+            model: 'AC MULTI S 1/2 PK x 1/2 PK 2 Indoor',
+            pk: ['1/2 PK', '3/4 PK', '1 PK', '1.5 PK'][i % 4],
+            type: i % 3 === 0 ? 'Inverter' : 'Non Inverter',
+            rating: 4.5 + (i % 3) * 0.2,
+            reviews: 137,
+            originalPrice: 11649000,
+            price: 10019000,
+            discount: 14 + (i % 3) * 2,
+            image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=300&h=300&fit=crop',
+            features: ['midea Pionner 10', 'WALA 09/10']
+        }));
+
+        let filteredProducts = [...products];
+        let currentPage = 1;
+        const productsPerPage = 12;
+        let selectedPK = null;
+        let selectedType = null;
+        let selectedCategory = null;
+        let selectedBrands = [];
+        let selectedOtherProducts = [];
+        let currentTab = 'terbaru';
+        </script>
+
 <?= $this->endSection() ?>
