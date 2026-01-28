@@ -71,88 +71,278 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- 3. Product Listing Logic ---
-    const grid = document.getElementById('productsGrid');
+    // --- 3. Product Listing & Filtering ---
+
+   const grid = document.getElementById('productsGrid');
+    
     if (grid) {
-        const state = { products: [], filters: { brands:[], pk:null, type:null, search:'', sort:'terbaru' } };
+        // State Management
+        const state = { 
+            products: [], 
+            filters: { brands:[], pk:null, type:null, search:'', sort:'terbaru' },
+            loading: false
+        };
+
+        // Helpers
+        const rupiah = (num) => new Intl.NumberFormat('id-ID').format(num);
+        const calculateDiscount = (base, sale) => Math.round(((base - sale) / base) * 100);
 
         // Fetch Data
         const loadProducts = async () => {
+            state.loading = true;
+            render(); // Show loading spinner
+            
             try {
-                // Build Query String from state.filters
+                // Build Query Params
                 const params = new URLSearchParams();
-                if (state.filters.brands.length) state.filters.brands.forEach(b => params.append('brands[]', b));
+                state.filters.brands.forEach(b => params.append('brands[]', b));
                 if (state.filters.pk) params.append('pk', state.filters.pk);
                 if (state.filters.type) params.append('type', state.filters.type);
                 if (state.filters.search) params.append('search', state.filters.search);
                 if (state.filters.sort) params.append('sort', state.filters.sort);
                 
-                // Call the API
                 const res = await fetch(`/api/products?${params.toString()}`);
-                state.products = await res.json();
+                if(!res.ok) throw new Error('API Error');
                 
-                render();
+                state.products = await res.json();
             } catch (e) { 
                 console.error(e);
-                grid.innerHTML = '<div class="col-span-full text-center">Error loading data</div>'; 
+                grid.innerHTML = '<div class="col-span-full text-center py-10 text-red-500">Gagal memuat data produk.</div>'; 
+            } finally {
+                state.loading = false;
+                render();
             }
         };
 
+        // Render Active Filter Badges
+        const renderActiveFilters = () => {
+            const container = document.getElementById('activeFiltersContainer');
+            const resetBtn = document.getElementById('resetFiltersBtn');
+            if(!container) return;
+
+            let html = '';
+            let hasFilters = false;
+
+            // Brands
+            state.filters.brands.forEach(b => {
+                hasFilters = true;
+                html += createBadge(b, 'brands', b);
+            });
+            // PK
+            if (state.filters.pk) {
+                hasFilters = true;
+                html += createBadge(`PK: ${state.filters.pk}`, 'pk');
+            }
+            // Type
+            if (state.filters.type) {
+                hasFilters = true;
+                html += createBadge(`Tipe: ${state.filters.type}`, 'type');
+            }
+
+            container.innerHTML = html;
+            
+            // Show/Hide Reset Button
+            if(resetBtn) resetBtn.classList.toggle('hidden', !hasFilters);
+            
+            // Bind Remove Events
+            container.querySelectorAll('.remove-filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const group = btn.dataset.group;
+                    const value = btn.dataset.value;
+                    toggleFilter(group, value, false); // false = remove/toggle
+                };
+            });
+        };
+
+        const createBadge = (label, group, value = '') => `
+            <div class="inline-flex items-center gap-1 bg-[#41B8EA]/10 text-[#41B8EA] text-xs font-semibold px-2.5 py-1 rounded-full border border-[#41B8EA]/20">
+                ${label}
+                <button class="remove-filter-btn hover:text-red-500 transition-colors ml-1" data-group="${group}" data-value="${value}">
+                    <i data-lucide="x" class="w-3 h-3"></i>
+                </button>
+            </div>`;
+
+        // Main Render Function
         const render = () => {
-            // NOTE: Filtering is now done on server-side (PHP), 
-            // so we just render whatever state.products contains.
-            const data = state.products;
+            // 1. Loading State
+            if (state.loading) {
+                grid.innerHTML = `
+                <div class="col-span-full flex flex-col justify-center items-center py-12 text-gray-400">
+                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#41B8EA] mb-2"></div>
+                     <p class="text-sm">Memuat produk...</p>
+                </div>`;
+                return;
+            }
 
-            if (!data.length) return grid.innerHTML = '<div class="col-span-full py-8 text-center">Tidak ada produk ditemukan.</div>';
+            // 2. Empty State
+            if (!state.products.length) {
+                grid.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-12 text-center text-gray-500">
+                    <i data-lucide="package-open" class="w-12 h-12 mb-3 opacity-50"></i>
+                    <p>Tidak ada produk ditemukan dengan filter ini.</p>
+                </div>`;
+                return;
+            }
 
-            grid.innerHTML = data.map(p => {
-                // Formatting price
-                const price = new Intl.NumberFormat('id-ID').format(p.final_price);
+            // 3. Render Cards
+            grid.innerHTML = state.products.map(p => {
+                const finalPrice = p.sale_price || p.base_price;
+                const hasDiscount = p.sale_price && p.sale_price < p.base_price;
+                const discount = hasDiscount ? calculateDiscount(p.base_price, p.sale_price) : 0;
+                
+                // Random Rating for Demo (Since DB might be empty on ratings)
+                const rating = (Math.random() * (5.0 - 4.0) + 4.0).toFixed(1); 
                 
                 return `
-                <div class="product-card bg-white rounded shadow p-3 hover:shadow-lg transition-shadow">
-                    <img src="${p.main_image}" alt="${p.product_name}" class="w-full h-48 object-contain mb-2">
-                    <div class="text-xs text-gray-500 mb-1">${p.brand_name} - ${p.pk_category_name || ''}</div>
-                    <h3 class="font-bold text-[#373E51] text-sm mb-2 h-10 overflow-hidden">${p.product_name}</h3>
-                    <div class="text-[#F99C1C] font-bold">Rp ${price}</div>
-                    ${p.sale_price ? `<div class="text-xs text-gray-400 line-through">Rp ${new Intl.NumberFormat('id-ID').format(p.base_price)}</div>` : ''}
+                <div class="product-card group bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+                    ${hasDiscount ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm z-10">-${discount}%</div>` : ''}
+                    
+                    <div class="relative w-full h-48 bg-gray-50 flex items-center justify-center p-6 overflow-hidden">
+                        <img src="${p.main_image}" alt="${p.product_name}" 
+                             class="max-h-full max-w-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500">
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="text-[11px] text-gray-500 mb-1 flex items-center gap-2 font-medium">
+                            <span class="bg-gray-100 px-1.5 py-0.5 rounded">${p.brand_name || 'Brand'}</span>
+                            <span class="bg-gray-100 px-1.5 py-0.5 rounded">${p.pk_category_name || 'PK'}</span>
+                        </div>
+
+                        <h3 class="font-bold text-[#373E51] text-sm mb-2 line-clamp-2 leading-tight min-h-[40px] group-hover:text-[#41B8EA] transition-colors">
+                            ${p.product_name}
+                        </h3>
+
+                        <div class="flex items-center gap-1 mb-3">
+                            <div class="flex text-yellow-400 text-xs">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star-half-stroke"></i>
+                            </div>
+                            <span class="text-xs text-gray-400">(${rating})</span>
+                        </div>
+
+                        <div class="mt-auto">
+                            ${hasDiscount ? `
+                                <div class="text-xs text-gray-400 line-through mb-0.5">Rp ${rupiah(p.base_price)}</div>
+                                <div class="text-lg font-bold text-[#F99C1C]">Rp ${rupiah(finalPrice)}</div>
+                            ` : `
+                                <div class="h-4"></div> <div class="text-lg font-bold text-[#F99C1C]">Rp ${rupiah(finalPrice)}</div>
+                            `}
+                        </div>
+                    </div>
+
+                    <div class="px-4 pb-4 pt-0 grid grid-cols-2 gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200 lg:translate-y-2 lg:group-hover:translate-y-0">
+                         <button class="w-full py-1.5 border border-[#41B8EA] text-[#41B8EA] rounded text-[11px] font-bold hover:bg-[#41B8EA] hover:text-white transition-all uppercase tracking-wide">
+                            Komparasi
+                         </button>
+                         <button class="w-full py-1.5 bg-[#41B8EA] text-white rounded text-[11px] font-bold hover:bg-[#359bc7] transition-all shadow-md hover:shadow-lg uppercase tracking-wide">
+                            Pesan
+                         </button>
+                    </div>
                 </div>`;
             }).join('');
-            
+
+            updateUI();
             refreshIcons();
         };
 
-        // Event Bindings
-        document.querySelectorAll('.tab-btn').forEach(b => b.onclick = e => {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            e.target.classList.add('active');
-            state.filters.sort = e.target.dataset.tab;
-            render();
+        // Update UI (Sidebar Active States)
+        const updateUI = () => {
+            renderActiveFilters();
+
+            // Reset all buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Set Active: Brands
+            state.filters.brands.forEach(brand => {
+                const btn = document.querySelector(`.filter-btn[data-group="brands"][data-value="${brand}"]`);
+                if(btn) btn.classList.add('active');
+            });
+
+            // Set Active: PK
+            if(state.filters.pk) {
+                const btn = document.querySelector(`.filter-btn[data-group="pk"][data-value="${state.filters.pk}"]`);
+                if(btn) btn.classList.add('active');
+            }
+
+            // Set Active: Type
+            if(state.filters.type) {
+                const btn = document.querySelector(`.filter-btn[data-group="type"][data-value="${state.filters.type}"]`);
+                if(btn) btn.classList.add('active');
+            }
+        };
+
+        // Unified Toggle Logic
+        const toggleFilter = (group, value, reload = true) => {
+            if (group === 'brands') {
+                const idx = state.filters.brands.indexOf(value);
+                if (idx > -1) state.filters.brands.splice(idx, 1);
+                else state.filters.brands.push(value);
+            } 
+            else {
+                // For Single Selects (PK, Type), toggle off if same clicked
+                state.filters[group] = state.filters[group] === value ? null : value;
+            }
+
+            if (reload) loadProducts();
+            else {
+                // If called from Remove Badge, just reload
+                loadProducts();
+            }
+        };
+
+        // Event Listeners
+        
+        // 1. Sidebar Filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                e.preventDefault();
+                toggleFilter(btn.dataset.group, btn.dataset.value);
+            };
         });
 
-        document.getElementById('searchQuery')?.addEventListener('input', e => { state.filters.search = e.target.value.toLowerCase(); render(); });
-        
-        // Generic Filter Button Handler
-        const bindFilter = (cls, key, multi=false) => document.querySelectorAll(cls).forEach(btn => {
-            btn.onclick = () => {
-                const val = btn.dataset[key];
-                if (multi) {
-                    const idx = state.filters[key+'s']?.indexOf(val);
-                    idx > -1 ? state.filters[key+'s'].splice(idx,1) : state.filters[key+'s'].push(val);
-                    btn.classList.toggle('active'); // Simplified styling toggle
-                } else {
-                    state.filters[key] = state.filters[key] === val ? null : val;
-                    document.querySelectorAll(cls).forEach(b => b.classList.remove('active'));
-                    if(state.filters[key]) btn.classList.add('active');
-                }
+        // 2. Search
+        const searchInput = document.getElementById('searchQuery');
+        let debounceTimer;
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    state.filters.search = e.target.value;
+                    loadProducts();
+                }, 500);
+            });
+        }
+
+        // 3. Sort
+        document.getElementById('priceSort')?.addEventListener('change', (e) => {
+            state.filters.sort = e.target.value || 'terbaru';
+            loadProducts();
+        });
+
+        // 4. Tabs (Terbaru/Diskon/Terlaris)
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.filters.sort = btn.dataset.tab;
                 loadProducts();
             };
         });
 
-        bindFilter('.brand-filter-btn', 'brand', true);
-        bindFilter('.pk-btn', 'pk');
-        bindFilter('.type-filter-btn', 'type');
-        
+        // 5. Reset Button
+        document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
+            state.filters.brands = [];
+            state.filters.pk = null;
+            state.filters.type = null;
+            state.filters.search = '';
+            document.getElementById('searchQuery').value = '';
+            loadProducts();
+        });
+
+        // Initial Load
         loadProducts();
     }
 
