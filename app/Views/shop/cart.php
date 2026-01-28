@@ -1,6 +1,10 @@
 <?= $this->extend('layouts/shop_frontend') ?>
 
 <?= $this->section('content') ?>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <div class="py-10" x-data="{ 
     saveGlobalConfig() {
         let formData = new FormData($refs.globalConfigForm);
@@ -9,7 +13,7 @@
             body: formData,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         }).then(res => res.json()).then(data => {
-            console.log('Schedule & Faktur auto-saved');
+            console.log('Schedule saved');
         });
     }
 }">
@@ -36,25 +40,85 @@
                 $grandTotal = 0;
                 foreach ($items as $item): 
                     $isService = !empty($item->service_id);
-                    $price = $isService ? $item->s_price : ($item->sale_price ?? $item->p_price);
+                    $basePrice = $isService ? $item->s_price : ($item->sale_price ?? $item->p_price);
                     
-                    // Identify saved addons/pipes for pre-selection
+                    // Identify saved addons/pipes for pre-selection AND PHP total calculation
                     $savedPipeId = null;
                     $savedAddonIds = [];
+                    $addonTotal = 0;
+                    
                     if (!empty($item->saved_addons)) {
                         foreach ($item->saved_addons as $sa) {
-                            if ($sa->pipe_id) $savedPipeId = $sa->pipe_id;
-                            if ($sa->addon_id) $savedAddonIds[] = $sa->addon_id;
+                            if ($sa->pipe_id) {
+                                $savedPipeId = $sa->pipe_id;
+                                // Find pipe price
+                                foreach ($pipes as $p) {
+                                    if ($p->id == $sa->pipe_id) {
+                                        $addonTotal += ($p->price_per_meter * $item->quantity); // Pipe length = item qty? Usually per unit.
+                                        break;
+                                    }
+                                }
+                            }
+                            if ($sa->addon_id) {
+                                $savedAddonIds[] = $sa->addon_id;
+                                // Find addon price
+                                foreach ($addons as $a) {
+                                    if ($a->id == $sa->addon_id) {
+                                        $addonTotal += $a->addon_price;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                     
-                    // Calculate Subtotal (Base + Pipe + Addons)
-                    // Note: In a real app, you'd calculate exact addon prices here too. 
-                    // For simplicity, we show base subtotal and let checkout handle final math.
-                    $subtotal = $price * $item->quantity; 
-                    $grandTotal += $subtotal;
+                    // Initial PHP Subtotal
+                    $initialSubtotal = ($basePrice * $item->quantity) + $addonTotal;
+                    $grandTotal += $initialSubtotal;
                 ?>
-                <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+                     x-data="{
+                        qty: <?= $item->quantity ?>,
+                        basePrice: <?= $basePrice ?>,
+                        selectedPipe: '<?= $savedPipeId ?? '' ?>',
+                        selectedAddons: <?= json_encode($savedAddonIds) ?>,
+                        
+                        // Pricing Reference Data
+                        pipePrices: {
+                            <?php foreach ($pipes as $p): ?>
+                            '<?= $p->id ?>': <?= $p->price_per_meter ?>,
+                            <?php endforeach; ?>
+                        },
+                        addonPrices: {
+                            <?php foreach ($addons as $a): ?>
+                            '<?= $a->id ?>': <?= $a->addon_price ?>,
+                            <?php endforeach; ?>
+                        },
+
+                        get subtotal() {
+                            let total = this.basePrice * this.qty;
+                            
+                            // Add Pipe Price (Assuming price per meter * qty units, or flat fee? Usually per unit install)
+                            // Let's assume the pipe selection implies 'Pipe Kit per Unit'
+                            if (this.selectedPipe && this.pipePrices[this.selectedPipe]) {
+                                total += (this.pipePrices[this.selectedPipe] * this.qty);
+                            }
+
+                            // Add Addon Prices (Flat fee per unit usually)
+                            this.selectedAddons.forEach(id => {
+                                if (this.addonPrices[id]) {
+                                    total += this.addonPrices[id];
+                                }
+                            });
+
+                            return total;
+                        },
+                        
+                        formatPrice(val) {
+                            return new Intl.NumberFormat('id-ID').format(val);
+                        }
+                     }">
+                     
                     <form action="<?= base_url('shop/cart/update') ?>" method="POST">
                         <?= csrf_field() ?>
                         <input type="hidden" name="item_id" value="<?= $item->id ?>">
@@ -109,11 +173,11 @@
                                         <div class="space-y-4">
                                             <div>
                                                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pipe Installation Kit</label>
-                                                <select name="pipe_id" class="w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-emerald-500 focus:border-emerald-500">
+                                                <select name="pipe_id" x-model="selectedPipe" class="w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-emerald-500 focus:border-emerald-500">
                                                     <option value="">No Pipe Needed</option>
                                                     <?php foreach ($pipes as $p): ?>
-                                                        <option value="<?= $p->id ?>" <?= $savedPipeId == $p->id ? 'selected' : '' ?>>
-                                                            <?= esc($p->pipe_type) ?> (+Rp <?= number_format($p->price_per_meter, 0) ?>/m)
+                                                        <option value="<?= $p->id ?>">
+                                                            <?= esc($p->pipe_type) ?> (+Rp <?= number_format($p->price_per_meter, 0) ?>)
                                                         </option>
                                                     <?php endforeach; ?>
                                                 </select>
@@ -125,8 +189,7 @@
                                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                         <?php foreach ($addons as $addon): ?>
                                                             <label class="flex items-center space-x-2 p-2 bg-white rounded-lg border border-gray-100 cursor-pointer hover:border-emerald-300 transition-colors">
-                                                                <input type="checkbox" name="addons[]" value="<?= $addon->id ?>" 
-                                                                    <?= in_array($addon->id, $savedAddonIds) ? 'checked' : '' ?>
+                                                                <input type="checkbox" name="addons[]" value="<?= $addon->id ?>" x-model="selectedAddons"
                                                                     class="rounded text-emerald-600 border-gray-300 focus:ring-emerald-500">
                                                                 <div class="text-xs">
                                                                     <span class="font-bold text-gray-700 block"><?= esc($addon->addon_name) ?></span>
@@ -144,12 +207,14 @@
 
                             <div class="flex flex-col justify-between items-end min-w-[120px]">
                                 <div class="text-right">
-                                    <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Base Price</p>
-                                    <p class="text-xl font-black text-gray-900 tracking-tight">Rp <?= number_format($subtotal, 0, ',', '.') ?></p>
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Total</p>
+                                    <p class="text-xl font-black text-gray-900 tracking-tight">
+                                        Rp <span x-text="formatPrice(subtotal)"></span>
+                                    </p>
                                 </div>
 
                                 <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-xl">
-                                    <input type="number" name="qty" value="<?= $item->quantity ?>" min="1" 
+                                    <input type="number" name="qty" x-model="qty" min="1" 
                                            class="w-12 text-center text-sm font-bold bg-white border-gray-200 rounded-lg focus:ring-0 focus:border-blue-500">
                                     
                                     <button type="submit" class="p-2 text-blue-600 hover:bg-white hover:shadow-sm rounded-lg transition-all" title="Update Cart">
@@ -180,12 +245,20 @@
                     <form x-ref="globalConfigForm" class="space-y-6">
                         <?= csrf_field() ?>
                         
-                        <div>
+                        <div x-data x-init="flatpickr($refs.picker, {
+                            enableTime: true,
+                            dateFormat: 'Y-m-d H:i',
+                            minDate: 'today',
+                            time_24hr: true,
+                            defaultDate: '<?= $cart->scheduled_datetime ?? '' ?>',
+                            onChange: function(selectedDates, dateStr, instance) {
+                                saveGlobalConfig();
+                            }
+                        })">
                             <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">Technician Arrival</label>
-                            <input type="datetime-local" name="scheduled_datetime" 
-                                   @change="saveGlobalConfig()"
-                                   value="<?= $cart->scheduled_datetime ?? '' ?>"
-                                   class="w-full bg-gray-800 border-none rounded-2xl py-4 px-5 text-sm text-white focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-500">
+                            <input x-ref="picker" type="text" name="scheduled_datetime" 
+                                   class="w-full bg-gray-800 border-none rounded-2xl py-4 px-5 text-sm text-white focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-500 cursor-pointer"
+                                   placeholder="Select Date & Time...">
                             <p class="text-[10px] text-gray-500 mt-2 px-2">Required for service dispatch.</p>
                         </div>
 
@@ -208,7 +281,7 @@
                             <span class="text-gray-400 text-xs font-bold uppercase tracking-widest">Est. Total</span>
                             <span class="text-3xl font-black text-white">Rp <?= number_format($grandTotal, 0, ',', '.') ?></span>
                         </div>
-                        <p class="text-[10px] text-gray-500 text-right mb-8">* Final invoice may include pipe adjustments.</p>
+                        <p class="text-[10px] text-gray-500 text-right mb-8">* Total updates after clicking 'Update Cart' on items.</p>
 
                         <a href="<?= base_url('shop/checkout') ?>" 
                            class="block w-full bg-blue-600 hover:bg-blue-500 text-white text-center py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all transform hover:scale-[1.02] shadow-xl shadow-blue-900/40">
