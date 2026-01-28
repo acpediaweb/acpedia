@@ -77,29 +77,52 @@
                 </div>
 
                 <div class="relative">
-                    <button @click="userOpen = !userOpen; cartOpen = false; notifOpen = false" class="flex items-center space-x-2 border-l pl-5 ml-2">
-                        <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 hover:bg-blue-600 hover:text-white transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                    </button>
-
-                    <div x-show="userOpen" x-cloak @click.away="userOpen = false" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100"
-                         class="absolute right-0 mt-3 w-52 bg-white border rounded-2xl shadow-xl z-50 overflow-hidden">
-                        <div class="p-4 border-b">
-                            <p class="text-xs font-bold">Guest User</p>
-                            <p class="text-[10px] text-gray-400">Join us for full tracking</p>
-                        </div>
-                        <div class="p-2">
-                            <a href="<?= base_url('login') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Login</a>
-                            <a href="<?= base_url('register') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Register</a>
-                        </div>
-                    </div>
+    <button @click="userOpen = !userOpen; cartOpen = false; notifOpen = false" class="flex items-center space-x-2 border-l pl-5 ml-2">
+        <?php if (session()->get('isLoggedIn')): ?>
+            <div class="flex items-center space-x-2">
+                <div class="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                    <?= strtoupper(substr(session()->get('fullname'), 0, 1)) ?>
                 </div>
+                <span class="hidden lg:block text-xs font-bold text-gray-700"><?= explode(' ', session()->get('fullname'))[0] ?></span>
+            </div>
+        <?php else: ?>
+            <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 hover:bg-blue-600 hover:text-white transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+            </div>
+        <?php endif; ?>
+    </button>
+
+    <div x-show="userOpen" x-cloak @click.away="userOpen = false" 
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         class="absolute right-0 mt-3 w-52 bg-white border rounded-2xl shadow-xl z-50 overflow-hidden">
+        
+        <?php if (session()->get('isLoggedIn')): ?>
+            <div class="p-4 border-b bg-gray-50/50">
+                <p class="text-xs font-bold text-gray-900"><?= session()->get('fullname') ?></p>
+                <p class="text-[10px] text-gray-400">Logged in as Customer</p>
+            </div>
+            <div class="p-2">
+                <a href="<?= base_url('customer/dashboard') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg">My Orders</a>
+                <a href="<?= base_url('customer/profile') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Settings</a>
+                <hr class="my-1 border-gray-100">
+                <a href="<?= base_url('logout') ?>" class="block px-4 py-2 text-xs text-red-600 hover:bg-red-50 rounded-lg font-bold">Logout</a>
+            </div>
+        <?php else: ?>
+            <div class="p-4 border-b">
+                <p class="text-xs font-bold">Welcome, Guest</p>
+                <p class="text-[10px] text-gray-400">Login to track AC history</p>
+            </div>
+            <div class="p-2">
+                <a href="<?= base_url('login') ?>" class="block px-4 py-2 text-xs text-blue-600 font-bold hover:bg-blue-50 rounded-lg">Sign In</a>
+                <a href="<?= base_url('register') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-gray-50 rounded-lg">Create Account</a>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
 
             </div>
         </div>
