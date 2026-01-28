@@ -95,7 +95,7 @@
                 <a href="/" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
                     <i data-lucide="home" class="h-4 w-4"></i> Beranda
                 </a>
-                <a href="/about" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
+                <a href="/shop/services" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
                     <i data-lucide="wrench" class="h-4 w-4"></i> Layanan Kami
                 </a>
                 <a href="/shop" class="flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA] transition-colors">
@@ -143,8 +143,8 @@
              class="lg:hidden border-t border-gray-100 pb-4">
             <nav class="flex flex-col py-2">
                 <a href="/" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Beranda</a>
-                <a href="/about" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Layanan Kami</a>
-                <a href="/toko" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Toko Kami</a>
+                <a href="/shop/services" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Layanan Kami</a>
+                <a href="/shop" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Toko Kami</a>
                 <a href="/contact" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Kontak</a>
                 <div class="px-4 pt-3 border-t">
                     <?php if (session()->get('isLoggedIn')): ?>
