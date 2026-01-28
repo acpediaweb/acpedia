@@ -18,7 +18,7 @@ class UserModel extends Model
     protected $updatedField = null;
     protected $deletedField = null;
 
-    protected array $validationRules = [
+    protected $validationRules = [
         'fullname' => 'required|min_length[1]|max_length[50]|is_unique[users.fullname]',
         'email' => 'required|valid_email|is_unique[users.email]',
         'profile_picture' => 'permit_empty|string|max_length[255]',
