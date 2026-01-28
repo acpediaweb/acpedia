@@ -6,7 +6,6 @@
     <title><?= $title ?? 'HVAC Marketplace' ?></title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -46,50 +45,7 @@
                     </div>
                 </div>
 
-                <div class="relative">
-                    <button @click="cartOpen = !cartOpen; notifOpen = false; userOpen = false" 
-                            class="flex items-center space-x-2 px-3 py-2 bg-blue-50 rounded-xl text-blue-700 font-bold hover:bg-blue-100 transition-all border border-blue-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span class="text-xs"><?= count($headerCartItems ?? []) ?></span>
-                    </button>
-
-                    <div x-show="cartOpen" x-cloak @click.away="cartOpen = false" 
-                         class="absolute right-0 mt-3 w-80 bg-white border rounded-2xl shadow-2xl z-50 overflow-hidden ring-1 ring-black ring-opacity-5">
-                        <div class="p-4 border-b font-bold text-sm">Review Selection</div>
-                        
-                        <div class="max-h-72 overflow-y-auto">
-                            <?php if (!empty($headerCartItems)): ?>
-                                <?php foreach ($headerCartItems as $item): 
-                                    $isService = !empty($item->service_id);
-                                    $name = $isService ? $item->service_title : $item->product_name;
-                                    $price = $isService ? $item->s_price : ($item->sale_price ?? $item->p_price);
-                                ?>
-                                    <div class="p-4 border-b last:border-0 hover:bg-gray-50 flex justify-between items-center transition-colors">
-                                        <div class="pr-2">
-                                            <p class="text-xs font-bold text-gray-900 truncate w-36"><?= esc($name) ?></p>
-                                            <p class="text-[10px] text-gray-400"><?= $item->quantity ?> units x Rp <?= number_format($price, 0, ',', '.') ?></p>
-                                        </div>
-                                        <span class="text-xs font-black text-blue-600 whitespace-nowrap">
-                                            Rp <?= number_format($price * $item->quantity, 0, ',', '.') ?>
-                                        </span>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="p-10 text-center">
-                                    <p class="text-xs text-gray-400 italic">Your cart is empty.</p>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <div class="p-4 bg-gray-50 border-t">
-                            <a href="<?= base_url('shop/cart') ?>" class="block w-full bg-blue-600 text-white text-center py-3 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-200">
-                                View Full Cart & Schedule
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <?= view_cell('App\Cells\CartCell::mini') ?>
 
                 <div class="relative">
                     <button @click="userOpen = !userOpen; cartOpen = false; notifOpen = false" 
