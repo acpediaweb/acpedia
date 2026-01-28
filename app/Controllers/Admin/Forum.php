@@ -27,17 +27,22 @@ class Forum extends BaseController
         $status = $this->request->getVar('status') ?? '';
         $search = $this->request->getVar('search') ?? '';
 
-        $query = $this->forumModel;
+        // Build query with joins for author name and post count
+        $query = $this->forumModel
+            ->select('forum.*, users.fullname as author_name, COUNT(forum_posts.id) as post_count')
+            ->join('users', 'users.id = forum.thread_poster_id', 'left')
+            ->join('forum_posts', 'forum_posts.thread_id = forum.id AND forum_posts.deleted_at IS NULL', 'left')
+            ->groupBy('forum.id');
 
         if (!empty($status) && in_array($status, ['Open', 'Closed'])) {
-            $query = $query->where('status', $status);
+            $query = $query->where('forum.status', $status);
         }
 
         if (!empty($search)) {
-            $query = $query->like('thread_title', $search);
+            $query = $query->like('forum.thread_title', $search);
         }
 
-        $threads = $query->orderBy('created_at', 'DESC')
+        $threads = $query->orderBy('forum.created_at', 'DESC')
             ->paginate($this->perPage, 'forum');
 
         return view('admin/forum/index', [
