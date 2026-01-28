@@ -40,6 +40,15 @@
             </a>
         </div>
     </div>
+    <form action="<?= base_url('shop/cart/add') ?>" method="POST">
+    <?= csrf_field() ?>
+    <input type="hidden" name="product_id" value="<?= $product->id ?>">
+    <input type="hidden" name="quantity" value="1">
+    
+    <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg">
+        Add to Cart
+    </button>
+</form>
 </div>
 <?php endforeach; ?>
 </div>

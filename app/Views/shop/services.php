@@ -27,10 +27,16 @@
             </label>
             <?php endforeach; ?>
         </div>
-
-        <button class="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-colors">
+<form action="<?= base_url('shop/cart/add') ?>" method="POST">
+    <?= csrf_field() ?>
+    <input type="hidden" name="product_id" value="<?= $product->id ?>">
+    <input type="hidden" name="quantity" value="1">
+    
+   <button class="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-colors">
             Add Service to Cart
         </button>
+</form>
+       
     </div>
     <?php endforeach; ?>
 </div>
