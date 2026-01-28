@@ -365,10 +365,8 @@
     <div class="container mx-auto px-4 py-8">
         <div class="flex flex-col lg:flex-row gap-6">
             
-            <!-- Sidebar -->
             <aside class="w-full lg:w-64 flex-shrink-0">
                 
-                <!-- PK Calculator -->
                 <div class="bg-white rounded-lg p-4 shadow mb-6">
                     <h3 class="font-bold mb-4 text-[#373E51]">PK Calculator</h3>
                     <div class="space-y-3">
@@ -382,225 +380,88 @@
                         <div class="bg-gray-100 rounded-lg p-3 text-center">
                             <div class="text-3xl font-bold text-[#41B8EA]"><span id="m2Display">0</span> m²</div>
                         </div>
-                        
-                        <!-- Custom Slider -->
                         <div class="relative w-full h-[50px] mt-0 mb-3">
-                            <!-- Background Track -->
                             <div class="absolute bg-[#f3f3f3] h-[11px] left-0 rounded-full top-[5px] w-full"></div>
-                            
-                            <!-- Slider Handle -->
                             <div id="sliderHandle" class="absolute w-[20px] h-[20px] top-0 transition-all duration-150" style="left: 0px;">
                                 <div class="absolute inset-[-35%]">
-                                    <svg class="block w-full h-full" fill="none" preserveAspectRatio="none" viewBox="0 0 34 34">
-                                        <g filter="url(#filter0_d_91_212)">
-                                            <circle cx="17" cy="17" fill="#41B8EA" r="10" />
-                                            <circle cx="17" cy="17" r="11.5" stroke="white" stroke-width="3" />
-                                        </g>
-                                        <defs>
-                                            <filter color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="34" id="filter0_d_91_212" width="34" x="0" y="0">
-                                                <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                                                <feColorMatrix in="SourceAlpha" result="hardAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
-                                                <feOffset />
-                                                <feGaussianBlur stdDeviation="2" />
-                                                <feComposite in2="hardAlpha" operator="out" />
-                                                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-                                                <feBlend in2="BackgroundImageFix" mode="normal" result="effect1_dropShadow_91_212" />
-                                                <feBlend in="SourceGraphic" in2="effect1_dropShadow_91_212" mode="normal" result="shape" />
-                                            </filter>
-                                        </defs>
-                                    </svg>
+                                    <svg class="block w-full h-full" fill="none" viewBox="0 0 34 34"><g filter="url(#filter0_d_91_212)"><circle cx="17" cy="17" fill="#41B8EA" r="10" /><circle cx="17" cy="17" r="11.5" stroke="white" stroke-width="3" /></g></svg>
                                 </div>
                             </div>
-                            
-                            <!-- Labels -->
-                            <p class="absolute font-normal left-0 text-[13px] text-black whitespace-nowrap top-[28px]">0 m²</p>
-                            <p class="absolute font-normal right-0 text-[13px] text-black whitespace-nowrap top-[28px]">250 m²</p>
-                            
-                            <!-- Invisible Range Input -->
-                            <input type="range" id="m2Slider" min="0" max="250" value="0" class="w-full h-[20px]">
+                            <input type="range" id="m2Slider" min="0" max="250" value="0" class="w-full h-[20px] opacity-0 cursor-pointer relative z-10">
                         </div>
-                        
-                        <div class="text-xs text-gray-600 leading-relaxed">Geser kiri atau kanan slider dibawah ini sesuai ukuran ruangan anda dan klik tombol "Mulai Hitung" dibawah ini</div>
-                        
-                        <button id="calculateBtn" class="w-full bg-[#F99C1C] hover:bg-[#F99C1C]/90 text-white py-2 rounded-lg font-semibold transition-colors">
-                            Mulai Hitung
-                        </button>
+                        <button id="calculateBtn" class="w-full bg-[#F99C1C] hover:bg-[#F99C1C]/90 text-white py-2 rounded-lg font-semibold transition-colors">Mulai Hitung</button>
                     </div>
                 </div>
-
-                <!-- Calculation Result -->
+                
                 <div id="calculationResult" class="hidden mb-6">
                     <div class="bg-[#f3f3f3] rounded-lg p-5 relative">
                         <div class="mb-4">
                             <p class="font-semibold text-sm mb-3">Hasil PK Calculator</p>
-                            
-                            <p class="text-base leading-relaxed mb-1">
-                                <span class="font-semibold text-[#222]">Daya:</span>
-                                <span class="font-semibold text-[#41B8EA]" id="btuResult">-</span>
-                                <span class="text-[#222]">Btu/h</span>
-                            </p>
-                            
-                            <p class="text-base leading-relaxed">
-                                <span class="font-semibold text-[#222]">Kebutuhan:</span>
-                                <span class="font-semibold text-[#41B8EA]" id="pkResult">-</span>
-                                <span class="text-[#222]">PK</span>
-                            </p>
+                            <p class="text-base leading-relaxed mb-1"><span class="font-semibold text-[#222]">Daya:</span> <span class="font-semibold text-[#41B8EA]" id="btuResult">-</span> <span class="text-[#222]">Btu/h</span></p>
+                            <p class="text-base leading-relaxed"><span class="font-semibold text-[#222]">Kebutuhan:</span> <span class="font-semibold text-[#41B8EA]" id="pkResult">-</span> <span class="text-[#222]">PK</span></p>
                         </div>
-
-                        <div class="text-xs text-[#626060] space-y-2">
-                            <p>
-                                <span class="font-semibold">Catatan Penting</span><br>
-                                Hitungan diatas dengan asumsi tinggi plafon 2.8m dan kondisi ruangan tertutup.
-                            </p>
-                            
-                            <p>
-                                <span class="font-semibold">Kapan Menggunakan Nilai Minimum ?</span><br>
-                                Untuk kebutuhan ruangan tertutup biasa pada umumnya cukup menggunakan nilai minimum namun perlu berhati-hati jika cuaca Jabodetabek mengalami cuaca ekstrem panas
-                            </p>
-                            
-                            <p>
-                                <span class="font-semibold">Kapan Menggunakan Nilai Maksimum ?</span><br>
-                                Merupakan nilai yang direkomendasikan terutama Apabila ruangan menghadap matahari, Terdapat kaca sehingga terkena panas sinar matahari atau ruangan tersebut padat orang
-                            </p>
-                            
-                            <p>
-                                <span class="font-semibold">Tips & Trick</span><br>
-                                Untuk kebutuhan ruangan High Plafon &gt; 2.8m silahkan nyalakan fitur advanced mode
-                            </p>
-                        </div>
-                        
-                        <button class="w-full bg-[#3EB48A] hover:bg-[#3EB48A]/90 text-white py-2 rounded-lg font-semibold transition-colors mt-3 text-sm">
-                            Lihat Rekomendasi
-                        </button>
                     </div>
                 </div>
 
-                <!-- Filter Section -->
                 <div class="bg-white rounded-lg p-4 shadow">
                     <h3 class="font-bold mb-4 text-[#373E51]">Filter</h3>
                     
-                    <!-- Brands Filter -->
                     <div class="mb-6">
                         <button id="brandsFilterToggle" class="w-full flex items-center justify-between mb-3 hover:text-[#41B8EA] transition-colors">
                             <h4 class="font-semibold text-[#373E51]">Brands</h4>
                             <i data-lucide="chevron-down" id="brandsFilterChevron" class="h-5 w-5 text-[#41B8EA] transition-transform duration-200"></i>
                         </button>
                         <div id="brandsFilterContent" class="dropdown-content open space-y-2">
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="Panasonic">
-                                <span class="text-sm">Panasonic</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="Daikin">
-                                <span class="text-sm">Daikin</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="LG">
-                                <span class="text-sm">LG</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="Samsung">
-                                <span class="text-sm">Samsung</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="Gree">
-                                <span class="text-sm">Gree</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="FLiFE">
-                                <span class="text-sm">FLiFE</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="Polytron">
-                                <span class="text-sm">Polytron</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="Changhong">
-                                <span class="text-sm">Changhong</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="Sharp">
-                                <span class="text-sm">Sharp</span>
-                            </button>
-                            <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-brand="Midea">
-                                <span class="text-sm">Midea</span>
-                            </button>
+                            <?php if(!empty($brands)): ?>
+                                <?php foreach($brands as $brand): ?>
+                                    <button class="brand-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" 
+                                            data-brand="<?= esc($brand['brand_name']) ?>">
+                                        <span class="text-sm"><?= esc($brand['brand_name']) ?></span>
+                                    </button>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="text-xs text-gray-500">No brands available</p>
+                            <?php endif; ?>
                         </div>
                     </div>
 
-                    <!-- PK Capacity Filter -->
                     <div class="mb-6">
                         <button id="pkFilterToggle" class="w-full flex items-center justify-between mb-3 hover:text-[#41B8EA] transition-colors">
                             <h4 class="font-semibold text-[#373E51]">Kapasitas PK</h4>
                             <i data-lucide="chevron-down" id="pkFilterChevron" class="h-5 w-5 text-[#41B8EA] transition-transform duration-200"></i>
                         </button>
                         <div id="pkFilterContent" class="dropdown-content open space-y-2">
-                            <button class="pk-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-pk="1/2 PK">
-                                <span class="text-sm">1/2 PK</span>
-                            </button>
-                            <button class="pk-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-pk="3/4 PK">
-                                <span class="text-sm">3/4 PK</span>
-                            </button>
-                            <button class="pk-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-pk="1 PK">
-                                <span class="text-sm">1 PK</span>
-                            </button>
-                            <button class="pk-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-pk="1.5 PK">
-                                <span class="text-sm">1.5 PK</span>
-                            </button>
-                            <button class="pk-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-pk="2 PK">
-                                <span class="text-sm">2 PK</span>
-                            </button>
-                            <button class="pk-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-pk="2.5 PK">
-                                <span class="text-sm">2.5 PK</span>
-                            </button>
+                            <?php if(!empty($pk_categories)): ?>
+                                <?php foreach($pk_categories as $pk): ?>
+                                    <button class="pk-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" 
+                                            data-pk="<?= esc($pk['pk_category_name']) ?>">
+                                        <span class="text-sm"><?= esc($pk['pk_category_name']) ?></span>
+                                    </button>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
 
-                    <!-- Type Filter -->
                     <div class="mb-6">
                         <button id="typeFilterToggle" class="w-full flex items-center justify-between mb-3 hover:text-[#41B8EA] transition-colors">
                             <h4 class="font-semibold text-[#373E51]">Tipe AC</h4>
                             <i data-lucide="chevron-down" id="typeFilterChevron" class="h-5 w-5 text-[#41B8EA] transition-transform duration-200"></i>
                         </button>
                         <div id="typeFilterContent" class="dropdown-content open space-y-2">
-                            <button id="inverterFilterBtn" class="type-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-type="Inverter">
-                                <span class="text-sm">Inverter</span>
-                            </button>
-                            <button id="nonInverterFilterBtn" class="type-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-type="Non Inverter">
-                                <span class="text-sm">Non Inverter</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Produk Lainnya Filter -->
-                    <div>
-                        <button id="otherProductsToggle" class="w-full flex items-center justify-between mb-3 hover:text-[#41B8EA] transition-colors">
-                            <h4 class="font-semibold text-[#373E51]">Produk Lainnya</h4>
-                            <i data-lucide="chevron-down" id="otherProductsChevron" class="h-5 w-5 text-[#41B8EA] transition-transform duration-200"></i>
-                        </button>
-                        <div id="otherProductsContent" class="dropdown-content open space-y-2">
-                            <button class="other-product-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-product="Air Purifier">
-                                <span class="text-sm">Air Purifier</span>
-                            </button>
-                            <button class="other-product-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-product="Kipas Angin">
-                                <span class="text-sm">Kipas Angin</span>
-                            </button>
-                            <button class="other-product-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-product="Kabel Power">
-                                <span class="text-sm">Kabel Power</span>
-                            </button>
-                            <button class="other-product-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-product="Pipa AC">
-                                <span class="text-sm">Pipa AC</span>
-                            </button>
-                            <button class="other-product-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-product="Panel">
-                                <span class="text-sm">Panel</span>
-                            </button>
-                            <button class="other-product-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-product="Ducting">
-                                <span class="text-sm">Ducting</span>
-                            </button>
-                            <button class="other-product-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" data-product="Freon">
-                                <span class="text-sm">Freon</span>
-                            </button>
+                            <?php if(!empty($types)): ?>
+                                <?php foreach($types as $type): ?>
+                                    <button class="type-filter-btn w-full text-left px-3 py-2 rounded border border-gray-300 bg-white hover:border-[#41B8EA] hover:bg-gray-50 transition-all" 
+                                            data-type="<?= esc($type['type_name']) ?>">
+                                        <span class="text-sm"><?= esc($type['type_name']) ?></span>
+                                    </button>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-
             </aside>
 
-            <!-- Main Products Area -->
             <main class="flex-1">
-                
-                <!-- Penjualan Section -->
                 <div class="bg-white rounded-lg p-4 shadow mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-xl md:text-2xl font-bold text-[#373E51]">Penjualan</h2>
@@ -609,29 +470,16 @@
                         <span class="font-semibold hidden md:inline text-[#373E51]">Filter</span>
                         <div class="flex flex-col md:flex-row gap-3 md:gap-2 md:items-center flex-1">
                             <div class="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-                                <button class="tab-btn active px-4 py-2 rounded whitespace-nowrap transition-colors" data-tab="terbaru">
-                                    Terbaru
-                                </button>
-                                <button class="tab-btn px-4 py-2 rounded whitespace-nowrap transition-colors hover:bg-gray-100" data-tab="diskon">
-                                    Diskon
-                                </button>
-                                <button class="tab-btn px-4 py-2 rounded whitespace-nowrap transition-colors hover:bg-gray-100" data-tab="terlaris">
-                                    Terlaris
-                                </button>
+                                <button class="tab-btn active px-4 py-2 rounded whitespace-nowrap transition-colors border border-transparent hover:bg-gray-100" data-tab="terbaru">Terbaru</button>
+                                <button class="tab-btn px-4 py-2 rounded whitespace-nowrap transition-colors border border-transparent hover:bg-gray-100" data-tab="diskon">Diskon</button>
+                                <button class="tab-btn px-4 py-2 rounded whitespace-nowrap transition-colors border border-transparent hover:bg-gray-100" data-tab="terlaris">Terlaris</button>
                             </div>
                             
-                            <!-- Search Box -->
                             <div class="relative flex-1 md:ml-4">
                                 <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"></i>
-                                <input
-                                    type="text"
-                                    id="searchQuery"
-                                    placeholder="Cari produk..."
-                                    class="w-full border border-gray-300 rounded-lg focus:outline-none focus:border-[#41B8EA] focus:ring-1 focus:ring-[#41B8EA] transition-colors pl-10 pr-4 py-2"
-                                />
+                                <input type="text" id="searchQuery" placeholder="Cari produk..." class="w-full border border-gray-300 rounded-lg focus:outline-none focus:border-[#41B8EA] focus:ring-1 focus:ring-[#41B8EA] transition-colors pl-10 pr-4 py-2">
                             </div>
 
-                            <!-- Harga Dropdown -->
                             <select id="priceSort" class="border border-gray-300 rounded-lg px-4 py-2 w-full md:w-auto md:ml-auto focus:outline-none focus:border-[#41B8EA] focus:ring-1 focus:ring-[#41B8EA] transition-colors">
                                 <option value="">Harga</option>
                                 <option value="low">Harga: Rendah ke Tinggi</option>
@@ -641,26 +489,18 @@
                     </div>
                 </div>
 
-                <!-- Products Grid -->
-                <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-                    <!-- Products will be dynamically inserted here -->
+                <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6 min-h-[400px]">
+                    <div class="col-span-full flex justify-center items-center py-12">
+                         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#41B8EA]"></div>
+                    </div>
                 </div>
 
-                <!-- Pagination -->
                 <div class="flex justify-center items-center gap-2 mt-8">
-                    <button class="page-btn px-3 py-2 border border-gray-300 rounded-lg transition-colors" data-page="prev">
-                        <i data-lucide="chevron-left" class="h-5 w-5"></i>
-                    </button>
+                    <button class="page-btn px-3 py-2 border border-gray-300 rounded-lg transition-colors" data-page="prev"><i data-lucide="chevron-left" class="h-5 w-5"></i></button>
                     <button class="page-btn active px-4 py-2 border border-gray-300 rounded-lg transition-colors" data-page="1">1</button>
-                    <button class="page-btn px-4 py-2 border border-gray-300 rounded-lg transition-colors" data-page="2">2</button>
-                    <button class="page-btn px-4 py-2 border border-gray-300 rounded-lg transition-colors" data-page="3">3</button>
-                    <button class="page-btn px-3 py-2 border border-gray-300 rounded-lg transition-colors" data-page="next">
-                        <i data-lucide="chevron-right" class="h-5 w-5"></i>
-                    </button>
+                    <button class="page-btn px-3 py-2 border border-gray-300 rounded-lg transition-colors" data-page="next"><i data-lucide="chevron-right" class="h-5 w-5"></i></button>
                 </div>
-
             </main>
-
         </div>
     </div>
 
