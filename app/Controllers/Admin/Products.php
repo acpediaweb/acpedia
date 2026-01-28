@@ -86,14 +86,14 @@ class Products extends BaseController
     public function save()
     {
         $id = $this->request->getPost('id');
-        $validation = $this->validate([
-            'product_name' => 'required|min_length[3]|max_length[100]',
-            'product_description' => 'required',
-            'base_price' => 'required|numeric',
-            'brand_id' => 'permit_empty|numeric',
-            'category_id' => 'permit_empty|numeric',
-            'type_id' => 'permit_empty|numeric',
-        ]);
+       $validation = $this->validate([
+        'product_name'        => 'required|min_length[3]|max_length[100]',
+        'product_description' => 'required',
+        'base_price'          => 'required|numeric',
+        'brand_id'            => 'required|numeric',    // Changed from permit_empty
+        'category_id'         => 'required|numeric', // Changed from permit_empty
+        'type_id'             => 'required|numeric',     // Changed from permit_empty
+    ]);
 
         if (!$validation) {
             return redirect()->back()
