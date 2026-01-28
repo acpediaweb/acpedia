@@ -7,23 +7,17 @@ use App\Models\CartModel;
 
 class CartController extends BaseController
 {
-    /**
-     * Display the full cart with all configuration options and address picker.
-     */
     public function index()
     {
-        if (!session()->get('isLoggedIn')) {
-            return redirect()->to('login');
-        }
+        if (!session()->get('isLoggedIn')) return redirect()->to('login');
 
         $userId = session()->get('user_id');
         $db = \Config\Database::connect();
 
-        // 1. Fetch Cart Header (Schedule & Faktur status)
+        // 1. Fetch Cart Header
         $cart = $db->table('user_cart')->where('user_id', $userId)->get()->getRow();
         
-        // 2. Fetch Cart Items with joined Product/Service details
-        //    (Price calculation happens in the view, we just need base data here)
+        // 2. Fetch Items
         $items = $db->table('user_cart_items as uci')
             ->select('uci.*, p.product_name, p.base_price as p_price, p.sale_price, s.service_title, s.base_price as s_price')
             ->join('user_cart as uc', 'uc.id = uci.cart_id')
@@ -33,14 +27,13 @@ class CartController extends BaseController
             ->get()
             ->getResult();
 
-        // 3. Attach Saved Configurations (Addons, Pipes, JSON Data) to items
+        // 3. Attach Saved Addons & Configs
         foreach ($items as $item) {
             $item->saved_addons = $db->table('user_cart_item_addons')
                 ->where('cart_item_id', $item->id)
                 ->get()
                 ->getResult();
                 
-            // Parse the JSON config for Services (Brand, PK, Type) if it exists
             $item->service_config = null;
             foreach ($item->saved_addons as $addon) {
                 if (!empty($addon->extra_data_json)) {
@@ -50,20 +43,19 @@ class CartController extends BaseController
             }
         }
 
-        // 4. Fetch User Addresses (For the Sidebar Picker)
-        //    Ordered by Primary first so it shows up as default
+        // 4. Fetch Addresses for Dropdown
         $addresses = $db->table('users_addresses')
             ->where('user_id', $userId)
             ->orderBy('is_primary', 'DESC') 
             ->get()
             ->getResult();
 
-        // 5. Fetch Dropdown Data from Schema Tables
+        // 5. Data for View
         $data = [
             'title'         => 'Your Shopping Cart',
             'cart'          => $cart,
             'items'         => $items,
-            'addresses'     => $addresses, // Passed to View for the dropdown
+            'addresses'     => $addresses,
             'brands'        => $db->table('brands')->orderBy('brand_name', 'ASC')->get()->getResult(),
             'pk_categories' => $db->table('pk_categories')->orderBy('id', 'ASC')->get()->getResult(),
             'types'         => $db->table('types')->orderBy('type_name', 'ASC')->get()->getResult(),
@@ -74,85 +66,86 @@ class CartController extends BaseController
         return view('shop/cart', $data);
     }
 
-    /**
-     * Add Item to Cart (Entry Point)
-     */
     public function add()
     {
         if (!session()->get('isLoggedIn')) return redirect()->to('login');
-
         $userId = session()->get('user_id');
         $db = \Config\Database::connect();
         
-        // Get or Create Cart Header
         $cartModel = new CartModel();
         $cart = $cartModel->where('user_id', $userId)->first();
         $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId]);
 
-        // Add Item
+        // Note: 'add' usually comes from product page which might send 'quantity'
+        // We normalize it here.
+        $qty = $this->request->getPost('quantity') ?? 1;
+
         $db->table('user_cart_items')->insert([
             'cart_id'    => $cartId,
             'product_id' => $this->request->getPost('product_id') ?: null,
             'service_id' => $this->request->getPost('service_id') ?: null,
-            'quantity'   => $this->request->getPost('quantity') ?? 1
+            'quantity'   => $qty
         ]);
 
         return redirect()->back()->with('success', 'Item added to cart.');
     }
 
     /**
-     * Update Quantity and Save Complex Configurations (Pipes, JSON, Addons)
+     * FIX APPLIED HERE:
+     * 1. Capture 'qty' (from cart view input).
+     * 2. Force that quantity onto all Addons and Pipes.
      */
     public function update()
     {
         $db = \Config\Database::connect();
         $itemId = $this->request->getPost('item_id');
         
-        // 1. Update Base Quantity
+        // 1. Capture and Validate Qty
+        $qty = (int)$this->request->getPost('qty');
+        if ($qty < 1) $qty = 1; // Prevent 0 or negative
+
+        // 2. Update Main Item Quantity
         $db->table('user_cart_items')->where('id', $itemId)->update([
-            'quantity' => $this->request->getPost('qty')
+            'quantity' => $qty
         ]);
 
-        // 2. Clear previous configs/addons for this item
-        //    (This is the cleanest way to ensure we don't have duplicate pipes/configs)
+        // 3. Reset Old Configurations
         $db->table('user_cart_item_addons')->where('cart_item_id', $itemId)->delete();
 
-        // 3. Save Service Configuration (Brand, Type, PK) -> Stored as JSON
+        // 4. Save Service Config (Brand/Type/PK) -> JSON
         $configData = $this->request->getPost('config');
         if (!empty($configData)) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id'    => $itemId,
                 'extra_data_json' => json_encode($configData),
-                'quantity'        => 1
+                'quantity'        => 1 // Config row itself is usually just 1 per item row logic, or $qty. 
+                                     // Technically metadata, so 1 is fine, but let's keep it clean.
             ]);
         }
 
-        // 4. Save Selected Pipe
+        // 5. Save Pipe (Matches Unit Quantity)
         $pipeId = $this->request->getPost('pipe_id');
         if (!empty($pipeId)) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
                 'pipe_id'      => $pipeId,
-                'quantity'     => 1 
+                'quantity'     => $qty // <--- FIX: Matches main item quantity
             ]);
         }
 
-        // 5. Save Selected Addons (Checkbox Array)
+        // 6. Save Addons (Matches Unit Quantity)
         $selectedAddons = $this->request->getPost('addons') ?? [];
         foreach ($selectedAddons as $addonId) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
                 'addon_id'     => $addonId,
-                'quantity'     => 1
+                'quantity'     => $qty // <--- FIX: Matches main item quantity (e.g. 3 ACs = 3 Installs)
             ]);
         }
 
         return redirect()->to('shop/cart')->with('success', 'Cart updated.');
     }
 
-    /**
-     * AJAX Endpoint: Auto-Save Schedule & Faktur
-     */
     public function updateConfig()
     {
         $db = \Config\Database::connect();
@@ -167,9 +160,6 @@ class CartController extends BaseController
         return $this->response->setJSON(['status' => 'success']);
     }
 
-    /**
-     * Remove Item
-     */
     public function remove($id)
     {
         $db = \Config\Database::connect();

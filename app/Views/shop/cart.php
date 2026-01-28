@@ -6,7 +6,6 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-    // We move this outside the x-data attribute to prevent syntax errors with quotes/arrays
     window.SHOP_DATA = {
         pipePrices: {
             <?php foreach ($pipes as $p): ?>
@@ -24,13 +23,12 @@
 <div class="py-10" x-data="{ 
     saveGlobalConfig() {
         let formData = new FormData($refs.globalConfigForm);
-        // We auto-save Schedule & Faktur. Address is passed on form submit.
         fetch('<?= base_url('shop/cart/updateConfig') ?>', {
             method: 'POST',
             body: formData,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         }).then(res => res.json()).then(data => {
-            console.log('Cart config auto-saved');
+            console.log('Config saved');
         });
     }
 }">
@@ -41,11 +39,6 @@
 
     <?php if (empty($items)): ?>
         <div class="flex flex-col items-center justify-center bg-white border-2 border-dashed border-gray-200 rounded-[2rem] p-20 text-center">
-            <div class="bg-gray-50 p-4 rounded-full mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-            </div>
             <p class="text-gray-500 font-medium">Your cart is currently empty.</p>
             <a href="<?= base_url('shop') ?>" class="mt-6 bg-blue-600 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">Browse Catalog</a>
         </div>
@@ -59,7 +52,7 @@
                     $isService = !empty($item->service_id);
                     $basePrice = $isService ? $item->s_price : ($item->sale_price ?? $item->p_price);
                     
-                    // PHP-side Subtotal Calculation (for initial page load)
+                    // PHP-Side Fallback Calculation
                     $savedPipeId = null;
                     $savedAddonIds = [];
                     $addonTotal = 0;
@@ -69,19 +62,13 @@
                             if ($sa->pipe_id) {
                                 $savedPipeId = $sa->pipe_id;
                                 foreach ($pipes as $p) {
-                                    if ($p->id == $sa->pipe_id) {
-                                        $addonTotal += $p->price_per_meter; 
-                                        break;
-                                    }
+                                    if ($p->id == $sa->pipe_id) $addonTotal += $p->price_per_meter;
                                 }
                             }
                             if ($sa->addon_id) {
                                 $savedAddonIds[] = $sa->addon_id;
                                 foreach ($addons as $a) {
-                                    if ($a->id == $sa->addon_id) {
-                                        $addonTotal += $a->addon_price;
-                                        break;
-                                    }
+                                    if ($a->id == $sa->addon_id) $addonTotal += $a->addon_price;
                                 }
                             }
                         }
@@ -90,12 +77,12 @@
                     $grandTotal += $subtotal;
                 ?>
                 
-                <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+                <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden"
                      x-data="cartItem({
-                        qty: <?= $item->quantity ?>,
-                        basePrice: <?= $basePrice ?>,
+                        qty: <?= (int)$item->quantity ?>,
+                        basePrice: <?= (float)$basePrice ?>,
                         selectedPipe: '<?= $savedPipeId ?? '' ?>',
-                        selectedAddons: <?= json_encode($savedAddonIds) ?>
+                        selectedAddons: <?= !empty($savedAddonIds) ? json_encode($savedAddonIds) : '[]' ?>
                      })">
                      
                     <form action="<?= base_url('shop/cart/update') ?>" method="POST">
@@ -116,7 +103,7 @@
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
                                                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Brand</label>
-                                                <select name="config[brand]" class="w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-blue-500">
+                                                <select name="config[brand]" class="w-full text-xs border-gray-200 rounded-lg bg-white">
                                                     <option value="">Select...</option>
                                                     <?php foreach ($brands as $b): ?>
                                                         <option value="<?= esc($b->brand_name) ?>" <?= ($item->service_config['brand'] ?? '') == $b->brand_name ? 'selected' : '' ?>><?= esc($b->brand_name) ?></option>
@@ -125,7 +112,7 @@
                                             </div>
                                             <div>
                                                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Type</label>
-                                                <select name="config[type]" class="w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-blue-500">
+                                                <select name="config[type]" class="w-full text-xs border-gray-200 rounded-lg bg-white">
                                                     <option value="">Select...</option>
                                                     <?php foreach ($types as $t): ?>
                                                         <option value="<?= esc($t->type_name) ?>" <?= ($item->service_config['type'] ?? '') == $t->type_name ? 'selected' : '' ?>><?= esc($t->type_name) ?></option>
@@ -134,7 +121,7 @@
                                             </div>
                                             <div>
                                                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Capacity</label>
-                                                <select name="config[pk]" class="w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-blue-500">
+                                                <select name="config[pk]" class="w-full text-xs border-gray-200 rounded-lg bg-white">
                                                     <option value="">Select...</option>
                                                     <?php foreach ($pk_categories as $pk): ?>
                                                         <option value="<?= esc($pk->pk_category_name) ?>" <?= ($item->service_config['pk'] ?? '') == $pk->pk_category_name ? 'selected' : '' ?>><?= esc($pk->pk_category_name) ?></option>
@@ -159,7 +146,7 @@
                                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                         <?php foreach ($addons as $addon): ?>
                                                             <label class="flex items-center space-x-2 p-2 bg-white rounded-lg border border-gray-100 cursor-pointer hover:border-emerald-300">
-                                                                <input type="checkbox" name="addons[]" value="<?= $addon->id ?>" x-model="selectedAddons" class="rounded text-emerald-600 border-gray-300 focus:ring-emerald-500">
+                                                                <input type="checkbox" name="addons[]" value="<?= $addon->id ?>" x-model="selectedAddons" class="rounded text-emerald-600 border-gray-300">
                                                                 <div class="text-xs">
                                                                     <span class="font-bold text-gray-700 block"><?= esc($addon->addon_name) ?></span>
                                                                     <span class="text-gray-400 text-[10px]">+Rp <?= number_format($addon->addon_price, 0) ?></span>
@@ -183,8 +170,7 @@
                                 </div>
 
                                 <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-xl">
-                                    <input type="number" name="qty" x-model="qty" min="1" class="w-12 text-center text-sm font-bold bg-white border-gray-200 rounded-lg focus:ring-0 focus:border-blue-500">
-                                    
+                                    <input type="number" name="qty" x-model="qty" min="1" class="w-12 text-center text-sm font-bold bg-white border-gray-200 rounded-lg">
                                     <button type="submit" class="p-2 text-blue-600 hover:bg-white hover:shadow-sm rounded-lg transition-all" title="Update Cart">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                     </button>
@@ -201,7 +187,7 @@
 
             <div class="lg:col-span-1">
                 <form action="<?= base_url('shop/checkout') ?>" method="GET" x-ref="globalConfigForm" class="bg-gray-900 text-white rounded-[2.5rem] p-8 sticky top-28 shadow-xl space-y-6">
-                    <h2 class="text-xl font-bold mb-4">Order Details</h2>
+                    <h2 class="text-xl font-bold mb-4">Checkout Details</h2>
                     
                     <div>
                         <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2">Installation Location</label>
@@ -275,27 +261,34 @@
             qty: Number(config.qty),
             basePrice: Number(config.basePrice),
             selectedPipe: config.selectedPipe,
-            selectedAddons: config.selectedAddons, // Array of strings/ints
+            selectedAddons: config.selectedAddons || [], // FORCE EMPTY ARRAY IF NULL
 
             get subtotal() {
                 let total = this.basePrice;
                 
-                // Calculate Pipe Price
-                if (this.selectedPipe && window.SHOP_DATA.pipePrices[this.selectedPipe]) {
-                    total += window.SHOP_DATA.pipePrices[this.selectedPipe];
+                // Safety check: Ensure global data is loaded
+                if (!window.SHOP_DATA) return total;
+
+                // Add Pipe Price (Safe Lookup)
+                if (this.selectedPipe) {
+                     // The || 0 prevents NaN if the ID is missing
+                    let pipePrice = window.SHOP_DATA.pipePrices[this.selectedPipe] || 0;
+                    total += pipePrice;
                 }
 
-                // Calculate Addon Prices
+                // Add Addon Prices (Safe Lookup)
                 this.selectedAddons.forEach(id => {
-                    if (window.SHOP_DATA.addonPrices[id]) {
-                        total += window.SHOP_DATA.addonPrices[id];
-                    }
+                    // Force String Key Lookup & Default to 0
+                    let addonPrice = window.SHOP_DATA.addonPrices[String(id)] || 0;
+                    total += addonPrice;
                 });
 
                 return total * this.qty;
             },
             
             formatPrice(val) {
+                // Return 0 if NaN appears
+                if (isNaN(val)) return '0';
                 return new Intl.NumberFormat('id-ID').format(val);
             }
         }))
