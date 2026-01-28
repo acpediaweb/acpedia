@@ -18,8 +18,10 @@ class CartCell extends Cell
         $userId = $session->get('user_id');
 
         // 1. Fetch Items
+        // FIXED: Changed p.image to p.main_image
+        // FIXED: Removed s.image (column does not exist in schema)
         $items = $db->table('user_cart_items as uci')
-            ->select('uci.*, p.product_name, p.image as p_image, p.base_price as p_price, p.sale_price, s.service_title, s.image as s_image, s.base_price as s_price')
+            ->select('uci.*, p.product_name, p.main_image as p_image, p.base_price as p_price, p.sale_price, s.service_title, s.base_price as s_price')
             ->join('user_cart as uc', 'uc.id = uci.cart_id')
             ->join('products as p', 'p.id = uci.product_id', 'left')
             ->join('services as s', 's.id = uci.service_id', 'left')
@@ -34,7 +36,7 @@ class CartCell extends Cell
         foreach ($items as $item) {
             $itemCount += $item->quantity;
             
-            // Base Price
+            // Base Price Logic
             $isService = !empty($item->service_id);
             $basePrice = $isService ? $item->s_price : ($item->sale_price ?? $item->p_price);
             
@@ -45,7 +47,7 @@ class CartCell extends Cell
                 ->getResult();
 
             $addonTotal = 0;
-            $details = []; // Array to hold string summary of configs
+            $details = []; 
 
             foreach ($savedAddons as $sa) {
                 // A. Pipe
@@ -74,7 +76,7 @@ class CartCell extends Cell
             }
 
             $item->final_price = ($basePrice + $addonTotal) * $item->quantity;
-            $item->config_summary = implode(', ', $details); // e.g. "Pipe: Tateyama, + Install, Daikin, 1PK"
+            $item->config_summary = implode(', ', $details); 
             
             $grandTotal += $item->final_price;
         }
