@@ -7,6 +7,9 @@ use App\Models\CartModel;
 
 class CartController extends BaseController
 {
+    /**
+     * Display the full cart page with configuration options.
+     */
     public function index()
     {
         if (!session()->get('isLoggedIn')) {
@@ -16,10 +19,10 @@ class CartController extends BaseController
         $userId = session()->get('user_id');
         $db = \Config\Database::connect();
 
-        // 1. Fetch Cart Header
+        // 1. Fetch Cart Header (Schedule & Faktur)
         $cart = $db->table('user_cart')->where('user_id', $userId)->get()->getRow();
         
-        // 2. Fetch Items with joined data
+        // 2. Fetch Items with joined Product/Service data
         $items = $db->table('user_cart_items as uci')
             ->select('uci.*, p.product_name, p.base_price as p_price, p.sale_price, s.service_title, s.base_price as s_price')
             ->join('user_cart as uc', 'uc.id = uci.cart_id')
@@ -29,23 +32,33 @@ class CartController extends BaseController
             ->get()
             ->getResult();
 
-        // 3. Fetch ONLY existing tables: brands and categories
+        // 3. Fetch data for Mandatory Configurations and Addons
         $brands     = $db->table('brands')->get()->getResult();
         $categories = $db->table('categories')->get()->getResult();
+        
+        // Fetch low-cost services typically used as addons (Pipe, Installation, etc.)
+        $addons = $db->table('services')
+            ->where('base_price <', 1000000) 
+            ->get()
+            ->getResult();
 
         return view('shop/cart', [
-            'title'      => 'Your Shopping Cart',
+            'title'      => 'Manage Your Cart',
             'cart'       => $cart,
             'items'      => $items,
             'brands'     => $brands,
-            'categories' => $categories // Replacing 'types' with your actual 'categories' table
+            'categories' => $categories,
+            'addons'     => $addons
         ]);
     }
 
+    /**
+     * Add a product or service to the cart.
+     */
     public function add()
     {
         if (!session()->get('isLoggedIn')) { 
-            return redirect()->to('login')->with('error', 'Please login to add items to your cart.');
+            return redirect()->to('login')->with('error', 'Please login to add items.');
         }
 
         $userId    = session()->get('user_id');
@@ -56,6 +69,7 @@ class CartController extends BaseController
         $cartModel = new CartModel();
         $db = \Config\Database::connect();
 
+        // Get or Create Cart Header
         $cart = $cartModel->where('user_id', $userId)->first();
         $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId, 'faktur_requested' => false]);
 
@@ -74,18 +88,22 @@ class CartController extends BaseController
                 'product_id' => $productId ?: null,
                 'service_id' => $serviceId ?: null,
                 'quantity'   => $quantity,
-                'config'     => json_encode([]) 
+                'config'     => json_encode([]) // Start with empty JSON config
             ]);
         }
 
-        return redirect()->back()->with('success', 'Cart updated successfully!');
+        return redirect()->back()->with('success', 'Added to cart!');
     }
 
+    /**
+     * Update individual item configuration (PK, Brand, Addons) and Qty.
+     */
     public function update()
     {
         $db = \Config\Database::connect();
         $itemId = $this->request->getPost('item_id');
         
+        // This takes the 'config' array from the form and stores it as JSON
         $data = [
             'quantity' => $this->request->getPost('qty'),
             'config'   => json_encode($this->request->getPost('config')) 
@@ -93,9 +111,12 @@ class CartController extends BaseController
 
         $db->table('user_cart_items')->where('id', $itemId)->update($data);
         
-        return redirect()->to('shop/cart')->with('success', 'Configuration updated.');
+        return redirect()->to('shop/cart')->with('success', 'Cart updated.');
     }
 
+    /**
+     * Auto-save Cart Header settings (Schedule & Faktur) via AJAX.
+     */
     public function updateConfig()
     {
         $db = \Config\Database::connect();
@@ -111,6 +132,9 @@ class CartController extends BaseController
         return $this->response->setJSON(['status' => 'success']);
     }
 
+    /**
+     * Remove item from cart.
+     */
     public function remove($id)
     {
         $db = \Config\Database::connect();
