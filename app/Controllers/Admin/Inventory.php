@@ -31,12 +31,11 @@ class Inventory extends BaseController
     {
         $page = $this->request->getVar('page') ?? 1;
         $product = $this->request->getVar('product') ?? '';
-        $brand = $this->request->getVar('brand') ?? '';
-        $type = $this->request->getVar('type') ?? '';
+        $itemType = $this->request->getVar('item_type') ?? '';
         $itemsPerPage = $this->request->getVar('items_per_page') ?? 20;
 
         $query = $this->inventoryModel
-            ->select('inventory.*, products.name as product_name, brands.name as brand_name')
+            ->select('inventory.*, products.product_name, brands.brand_name')
             ->join('products', 'products.id = inventory.product_id', 'left')
             ->join('brands', 'brands.id = products.brand_id', 'left');
 
@@ -45,23 +44,20 @@ class Inventory extends BaseController
             $query = $query->where('inventory.product_id', $product);
         }
 
-        if (!empty($brand)) {
-            $query = $query->where('brands.id', $brand);
+        if (!empty($itemType)) {
+            $query = $query->where('inventory.item_type', $itemType);
         }
 
-        $items = $query->orderBy('inventory.created_at', 'DESC')
+        $items = $query->orderBy('inventory.id', 'DESC')
             ->paginate((int)$itemsPerPage, 'inventory');
 
         return view('admin/inventory/index', [
             'items' => $items,
             'pager' => $this->inventoryModel->pager,
             'selectedProduct' => $product,
-            'selectedBrand' => $brand,
-            'selectedType' => $type,
+            'selectedItemType' => $itemType,
             'itemsPerPage' => $itemsPerPage,
             'products' => $this->productModel->findAll(),
-            'brands' => $this->brandModel->findAll(),
-            'types' => $this->typeModel->findAll(),
         ]);
     }
 
@@ -71,7 +67,7 @@ class Inventory extends BaseController
     public function show($id)
     {
         $item = $this->inventoryModel
-            ->select('inventory.*, products.name as product_name, products.price, products.unit, brands.name as brand_name')
+            ->select('inventory.*, products.product_name, brands.brand_name')
             ->join('products', 'products.id = inventory.product_id', 'left')
             ->join('brands', 'brands.id = products.brand_id', 'left')
             ->where('inventory.id', $id)
@@ -100,16 +96,15 @@ class Inventory extends BaseController
         }
 
         $userId = $this->request->getPost('user_id');
-        $addressId = $this->request->getPost('address_id');
+        $addressId = $this->request->getPost('user_address_id');
 
         $this->inventoryModel->update($id, [
-            'assigned_to_user_id' => $userId,
-            'assigned_to_address_id' => $addressId,
-            'assigned_at' => date('Y-m-d H:i:s'),
+            'bound_to_user_id' => $userId,
+            'bound_to_user_address_id' => $addressId,
         ]);
 
         return redirect()->to('admin/inventory/' . $id)
-            ->with('success', 'Item assigned successfully');
+            ->with('success', 'Item bound successfully');
     }
 
     /**
@@ -127,11 +122,10 @@ class Inventory extends BaseController
 
         $this->inventoryModel->update($id, [
             'assigned_to_user_id' => null,
-            'assigned_to_address_id' => null,
-            'unassigned_at' => date('Y-m-d H:i:s'),
+            'bound_to_user_id' => null,
+            'bound_to_user_address_id' => null,
         ]);
 
         return redirect()->to('admin/inventory/' . $id)
-            ->with('success', 'Item unassigned successfully');
-    }
+            ->with('success', 'Item unboun
 }

@@ -11,8 +11,8 @@ class BrandModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['name', 'description'];
-    protected $useTimestamps = true;
+    protected $allowedFields = ['brand_name', 'description'];
+    protected $useTimestamps = false;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 }

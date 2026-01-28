@@ -11,7 +11,7 @@ class RoleModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['name', 'description'];
+    protected $allowedFields = ['role_name', 'description'];
     protected $useTimestamps = false;
     protected $createdField = '';
     protected $updatedField = '';

@@ -25,7 +25,6 @@ class Timeline extends BaseController
     {
         $page = $this->request->getVar('page') ?? 1;
         $inventory = $this->request->getVar('inventory') ?? '';
-        $action = $this->request->getVar('action') ?? '';
 
         $query = $this->logModel;
 
@@ -33,18 +32,13 @@ class Timeline extends BaseController
             $query = $query->where('inventory_id', $inventory);
         }
 
-        if (!empty($action)) {
-            $query = $query->where('action', $action);
-        }
-
-        $logs = $query->orderBy('created_at', 'DESC')
+        $logs = $query->orderBy('action_timestamp', 'DESC')
             ->paginate($this->perPage, 'timeline');
 
         return view('admin/timeline/index', [
             'logs' => $logs,
             'pager' => $this->logModel->pager,
             'selectedInventory' => $inventory,
-            'selectedAction' => $action,
         ]);
     }
 
@@ -54,7 +48,7 @@ class Timeline extends BaseController
     public function show($id)
     {
         $item = $this->inventoryModel
-            ->select('inventory.*, products.name as product_name')
+            ->select('inventory.*, products.product_name')
             ->join('products', 'products.id = inventory.product_id', 'left')
             ->where('inventory.id', $id)
             ->first();
@@ -65,7 +59,7 @@ class Timeline extends BaseController
 
         $logs = $this->logModel
             ->where('inventory_id', $id)
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('action_timestamp', 'DESC')
             ->findAll();
 
         return view('admin/timeline/detail', [

@@ -37,7 +37,6 @@ class Users extends BaseController
             $query = $query->groupStart()
                 ->like('fullname', $search)
                 ->orLike('email', $search)
-                ->orLike('phone', $search)
                 ->groupEnd();
         }
 
@@ -80,8 +79,8 @@ class Users extends BaseController
         $id = $this->request->getPost('id');
         
         $rules = [
-            'fullname' => 'required|min_length[3]|max_length[255]',
-            'email' => 'required|valid_email',
+            'fullname' => 'required|min_length[3]|max_length[50]',
+            'email' => 'required|valid_email|max_length[100]',
             'role_id' => 'required|numeric',
         ];
 
@@ -102,6 +101,18 @@ class Users extends BaseController
                 ->with('error', 'Email already in use');
         }
 
+        // Check fullname uniqueness
+        $fullname = $this->request->getPost('fullname');
+        $existingName = $this->userModel->where('fullname', $fullname);
+        if ($id) {
+            $existingName = $existingName->where('id !=', $id);
+        }
+        if ($existingName->first()) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Fullname already in use');
+        }
+
         if (!$this->validate($rules)) {
             return redirect()->back()
                 ->withInput()
@@ -109,14 +120,14 @@ class Users extends BaseController
         }
 
         $data = [
-            'fullname' => $this->request->getPost('fullname'),
-            'email' => $this->request->getPost('email'),
-            'phone' => $this->request->getPost('phone') ?? null,
+            'fullname' => $fullname,
+            'email' => $email,
             'role_id' => $this->request->getPost('role_id'),
+            'is_active' => $this->request->getPost('is_active') ? 1 : 0,
         ];
 
         if ($this->request->getPost('password')) {
-            $data['password'] = password_hash(
+            $data['password_hash'] = password_hash(
                 $this->request->getPost('password'),
                 PASSWORD_DEFAULT
             );

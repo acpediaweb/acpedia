@@ -4,18 +4,15 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
-use App\Models\StaffClockLogModel;
 
 class Employee extends BaseController
 {
     protected $userModel;
-    protected $clockLogModel;
     protected $perPage = 15;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
-        $this->clockLogModel = new StaffClockLogModel();
     }
 
     /**
@@ -53,7 +50,7 @@ class Employee extends BaseController
     }
 
     /**
-     * Show employee details with clock logs
+     * Show employee details
      */
     public function show($id)
     {
@@ -63,34 +60,8 @@ class Employee extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        // Get recent clock logs
-        $clockLogs = $this->clockLogModel
-            ->where('user_id', $id)
-            ->orderBy('clock_in_time', 'DESC')
-            ->limit(50)
-            ->findAll();
-
-        // Calculate today's stats
-        $today = date('Y-m-d');
-        $todayLogs = $this->clockLogModel
-            ->where('user_id', $id)
-            ->where('DATE(clock_in_time)', $today)
-            ->findAll();
-
-        $hoursWorked = 0;
-        foreach ($todayLogs as $log) {
-            if (!empty($log->clock_out_time)) {
-                $inTime = strtotime($log->clock_in_time);
-                $outTime = strtotime($log->clock_out_time);
-                $hoursWorked += ($outTime - $inTime) / 3600;
-            }
-        }
-
         return view('admin/employee/detail', [
             'employee' => $employee,
-            'clockLogs' => $clockLogs,
-            'todayLogs' => $todayLogs,
-            'hoursWorked' => $hoursWorked,
             'roleMap' => [
                 3 => 'Technician',
                 4 => 'Staff',

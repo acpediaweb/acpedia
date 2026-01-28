@@ -11,8 +11,9 @@ class OrderItemModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['order_id', 'product_id', 'quantity', 'price_at_purchase', 'order_items_addons'];
-    protected $useTimestamps = true;
-    protected $createdField = 'created_at';
-    protected $updatedField = 'updated_at';
+    protected $allowedFields = [
+        'order_id', 'product_id', 'quantity', 
+        'base_price_snapshot', 'sale_price_snapshot'
+    ];
+    protected $useTimestamps = false;
 }

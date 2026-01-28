@@ -29,16 +29,12 @@ class Forum extends BaseController
 
         $query = $this->forumModel;
 
-        if (!empty($status)) {
-            if ($status === 'open') {
-                $query = $query->where('is_closed', 0);
-            } elseif ($status === 'closed') {
-                $query = $query->where('is_closed', 1);
-            }
+        if (!empty($status) && in_array($status, ['Open', 'Closed'])) {
+            $query = $query->where('status', $status);
         }
 
         if (!empty($search)) {
-            $query = $query->like('title', $search);
+            $query = $query->like('thread_title', $search);
         }
 
         $threads = $query->orderBy('created_at', 'DESC')
@@ -65,10 +61,10 @@ class Forum extends BaseController
 
         // Get all posts in thread
         $posts = $this->postModel
-            ->select('forum_posts.*, users.fullname, users.picture_url, forum_flairs.name as flair_name, forum_flairs.color as flair_color')
-            ->join('users', 'users.id = forum_posts.user_id', 'left')
-            ->join('forum_flairs', 'forum_flairs.id = forum_posts.forum_flair_id', 'left')
-            ->where('forum_posts.forum_id', $id)
+            ->select('forum_posts.*, users.fullname, users.profile_picture')
+            ->join('users', 'users.id = forum_posts.post_author_id', 'left')
+            ->where('forum_posts.thread_id', $id)
+            ->where('forum_posts.deleted_at', null)
             ->orderBy('forum_posts.created_at', 'ASC')
             ->findAll();
 
@@ -92,7 +88,7 @@ class Forum extends BaseController
             ])->setStatusCode(404);
         }
 
-        $this->forumModel->update($id, ['is_closed' => 1]);
+        $this->forumModel->update($id, ['status' => 'Closed']);
 
         return redirect()->to('admin/forum/' . $id)
             ->with('success', 'Thread closed successfully');
@@ -112,7 +108,7 @@ class Forum extends BaseController
             ])->setStatusCode(404);
         }
 
-        $this->forumModel->update($id, ['is_closed' => 0]);
+        $this->forumModel->update($id, ['status' => 'Open']);
 
         return redirect()->to('admin/forum/' . $id)
             ->with('success', 'Thread reopened successfully');

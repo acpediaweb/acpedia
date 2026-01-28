@@ -30,7 +30,7 @@
                     <option value="">All Brands</option>
                     <?php foreach ($brands as $brand): ?>
                         <option value="<?= $brand->id ?>" <?= ($selectedBrand === (string)$brand->id) ? 'selected' : '' ?>>
-                            <?= esc($brand->name) ?>
+                            <?= esc($brand->brand_name) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -48,9 +48,9 @@
                 <div class="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden hover:border-gray-600 transition-colors">
                     <!-- Product Image -->
                     <div class="relative bg-gray-900 h-40 overflow-hidden">
-                        <?php if (!empty($product->main_image_url)): ?>
-                            <img src="<?= base_url('file/uploads/' . $product->main_image_url) ?>" 
-                                alt="<?= esc($product->name) ?>"
+                        <?php if (!empty($product->main_image)): ?>
+                            <img src="<?= base_url('file/uploads/' . $product->main_image) ?>" 
+                                alt="<?= esc($product->product_name) ?>"
                                 class="w-full h-full object-cover hover:scale-105 transition-transform">
                         <?php else: ?>
                             <div class="w-full h-full flex items-center justify-center bg-gray-900">
@@ -64,28 +64,24 @@
                     <!-- Product Info -->
                     <div class="p-4 space-y-3">
                         <div>
-                            <h3 class="text-white font-bold truncate"><?= esc($product->name) ?></h3>
+                            <h3 class="text-white font-bold truncate"><?= esc($product->product_name) ?></h3>
                             <p class="text-gray-400 text-sm"><?= esc($product->brand_name) ?></p>
                         </div>
 
                         <div class="flex justify-between items-center pt-2 border-t border-gray-700">
                             <div>
-                                <p class="text-gray-400 text-xs">Price</p>
-                                <p class="text-white font-bold">Rp <?= number_format($product->price, 0, ',', '.') ?></p>
+                                <p class="text-gray-400 text-xs">Base Price</p>
+                                <p class="text-white font-bold">Rp <?= number_format($product->base_price, 0, ',', '.') ?></p>
                             </div>
                             <div class="text-right">
-                                <p class="text-gray-400 text-xs">Unit</p>
-                                <p class="text-white font-semibold"><?= esc($product->unit) ?></p>
+                                <p class="text-gray-400 text-xs">Category</p>
+                                <p class="text-white font-semibold text-sm"><?= esc($product->category_name ?? 'N/A') ?></p>
                             </div>
                         </div>
 
                         <!-- Status Badge -->
                         <div>
-                            <?php if ($product->is_active): ?>
-                                <span class="inline-block px-3 py-1 bg-green-900 text-green-200 text-xs font-semibold rounded">Active</span>
-                            <?php else: ?>
-                                <span class="inline-block px-3 py-1 bg-red-900 text-red-200 text-xs font-semibold rounded">Inactive</span>
-                            <?php endif; ?>
+                            <span class="inline-block px-3 py-1 bg-blue-900 text-blue-200 text-xs font-semibold rounded">Active</span>
                         </div>
 
                         <!-- Actions -->

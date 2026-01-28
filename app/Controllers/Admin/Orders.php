@@ -35,10 +35,7 @@ class Orders extends BaseController
         }
 
         if (!empty($search)) {
-            $query = $query->groupStart()
-                ->like('id', $search)
-                ->orLike('customer_notes', $search)
-                ->groupEnd();
+            $query = $query->where('id', $search);
         }
 
         $orders = $query->orderBy('created_at', 'DESC')
@@ -49,12 +46,12 @@ class Orders extends BaseController
             'pager' => $this->orderModel->pager,
             'currentStatus' => $status,
             'searchQuery' => $search,
-            'statuses' => ['Pending', 'In Progress', 'Completed', 'Cancelled'],
+            'statuses' => ['Pending', 'Confirmed', 'Technician Assigned', 'In Progress', 'Completed', 'Cancelled'],
         ]);
     }
 
     /**
-     * Display detailed order information with items and addons
+     * Display detailed order information with items
      */
     public function show($id)
     {
@@ -64,22 +61,17 @@ class Orders extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        // Get order items with addons
+        // Get order items
         $items = $this->orderItemModel
-            ->select('order_items.*, products.name as product_name, products.price, products.unit')
-            ->join('products', 'products.id = order_items.product_id')
+            ->select('order_items.*, products.product_name')
+            ->join('products', 'products.id = order_items.product_id', 'left')
             ->where('order_items.order_id', $id)
             ->findAll();
-
-        // Parse addons for each item
-        foreach ($items as $item) {
-            $item->addons = !empty($item->order_items_addons) ? json_decode($item->order_items_addons, true) : [];
-        }
 
         return view('admin/orders/detail', [
             'order' => $order,
             'items' => $items,
-            'statuses' => ['Pending', 'In Progress', 'Completed', 'Cancelled'],
+            'statuses' => ['Pending', 'Confirmed', 'Technician Assigned', 'In Progress', 'Completed', 'Cancelled'],
         ]);
     }
 
@@ -103,7 +95,7 @@ class Orders extends BaseController
         if (!in_array($status, $validStatuses)) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Invalid status'
+                'message' => 'Invalid Confirmed', 'Technician Assigned', 'status'
             ])->setStatusCode(400);
         }
 

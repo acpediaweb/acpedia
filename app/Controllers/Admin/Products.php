@@ -34,18 +34,20 @@ class Products extends BaseController
         $brand = $this->request->getVar('brand') ?? '';
 
         $query = $this->productModel
-            ->select('products.*, brands.name as brand_name')
-            ->join('brands', 'brands.id = products.brand_id', 'left');
+            ->select('products.*, brands.brand_name, categories.category_name, types.type_name')
+            ->join('brands', 'brands.id = products.brand_id', 'left')
+            ->join('categories', 'categories.id = products.category_id', 'left')
+            ->join('types', 'types.id = products.type_id', 'left');
 
         if (!empty($search)) {
-            $query = $query->like('products.name', $search);
+            $query = $query->like('products.product_name', $search);
         }
 
         if (!empty($brand)) {
             $query = $query->where('products.brand_id', $brand);
         }
 
-        $products = $query->orderBy('products.name', 'ASC')
+        $products = $query->orderBy('products.product_name', 'ASC')
             ->paginate($this->perPage, 'products');
 
         return view('admin/products/index', [
@@ -85,12 +87,12 @@ class Products extends BaseController
     {
         $id = $this->request->getPost('id');
         $validation = $this->validate([
-            'name' => 'required|min_length[3]|max_length[255]',
-            'description' => 'required',
-            'price' => 'required|numeric',
-            'brand_id' => 'required|numeric',
-            'product_type_id' => 'required|numeric',
-            'unit' => 'required|min_length[1]|max_length[50]',
+            'product_name' => 'required|min_length[3]|max_length[100]',
+            'product_description' => 'required',
+            'base_price' => 'required|numeric',
+            'brand_id' => 'permit_empty|numeric',
+            'category_id' => 'permit_empty|numeric',
+            'type_id' => 'permit_empty|numeric',
         ]);
 
         if (!$validation) {
@@ -99,14 +101,20 @@ class Products extends BaseController
                 ->with('errors', $this->validator->getErrors());
         }
 
+        // Generate slug from product name
+        $productName = $this->request->getPost('product_name');
+        $slug = url_title($productName, '-', true);
+
         $data = [
-            'name' => $this->request->getPost('name'),
-            'description' => $this->request->getPost('description'),
-            'price' => $this->request->getPost('price'),
-            'brand_id' => $this->request->getPost('brand_id'),
-            'product_type_id' => $this->request->getPost('product_type_id'),
-            'unit' => $this->request->getPost('unit'),
-            'is_active' => $this->request->getPost('is_active') ? 1 : 0,
+            'product_name' => $productName,
+            'product_description' => $this->request->getPost('product_description'),
+            'slug' => $slug,
+            'base_price' => $this->request->getPost('base_price'),
+            'sale_price' => $this->request->getPost('sale_price') ?? null,
+            'brand_id' => $this->request->getPost('brand_id') ?? null,
+            'category_id' => $this->request->getPost('category_id') ?? null,
+            'type_id' => $this->request->getPost('type_id') ?? null,
+            'pk_category_id' => $this->request->getPost('pk_category_id') ?? null,
         ];
 
         // Handle main image
@@ -114,10 +122,10 @@ class Products extends BaseController
         if ($mainImage && $mainImage->isValid()) {
             $name = time() . '_' . $mainImage->getRandomName();
             $mainImage->move(WRITEPATH . 'uploads', $name);
-            $data['main_image_url'] = $name;
+            $data['main_image'] = $name;
         }
 
-        // Handle additional images
+        // Handle additional images (stored as JSON)
         $additionalImages = $this->request->getFiles('additional_images');
         if (!empty($additionalImages)) {
             $images = [];
@@ -125,7 +133,7 @@ class Products extends BaseController
                 if ($file->isValid()) {
                     $name = time() . '_' . $file->getRandomName();
                     $file->move(WRITEPATH . 'uploads', $name);
-                    $images[] = ['url' => $name, 'order' => count($images)];
+                    $images[] = $name;
                 }
             }
             if (!empty($images)) {
@@ -133,7 +141,7 @@ class Products extends BaseController
             }
         }
 
-        // Handle extra attributes
+        // Handle extra attributes (stored as JSON)
         $attributeKeys = $this->request->getPost('attribute_key');
         $attributeValues = $this->request->getPost('attribute_value');
         if (!empty($attributeKeys)) {

@@ -31,88 +31,84 @@
                 <!-- Product Name -->
                 <div>
                     <label class="text-gray-400 text-sm font-semibold block mb-2">Product Name *</label>
-                    <input type="text" name="name" value="<?= $product ? esc($product->name) : esc(old('name')) ?>"
+                    <input type="text" name="product_name" value="<?= $product ? esc($product->product_name) : esc(old('product_name')) ?>"
                         class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                         placeholder="Enter product name" required>
-                    <?php if (isset($errors['name'])): ?>
-                        <p class="text-red-400 text-sm mt-1"><?= $errors['name'] ?></p>
+                    <?php if (isset($errors['product_name'])): ?>
+                        <p class="text-red-400 text-sm mt-1"><?= $errors['product_name'] ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Description -->
                 <div>
                     <label class="text-gray-400 text-sm font-semibold block mb-2">Description *</label>
-                    <textarea name="description" rows="4"
+                    <textarea name="product_description" rows="4"
                         class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                        placeholder="Enter product description" required><?= $product ? esc($product->description) : esc(old('description')) ?></textarea>
-                    <?php if (isset($errors['description'])): ?>
-                        <p class="text-red-400 text-sm mt-1"><?= $errors['description'] ?></p>
+                        placeholder="Enter product description" required><?= $product ? esc($product->product_description) : esc(old('product_description')) ?></textarea>
+                    <?php if (isset($errors['product_description'])): ?>
+                        <p class="text-red-400 text-sm mt-1"><?= $errors['product_description'] ?></p>
                     <?php endif; ?>
                 </div>
 
-                <!-- Grid: Price, Brand, Type -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <!-- Price -->
+                <!-- Grid: Prices, Brand, Type, Category -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <!-- Base Price -->
                     <div>
-                        <label class="text-gray-400 text-sm font-semibold block mb-2">Price (Rp) *</label>
-                        <input type="number" name="price" step="0.01" value="<?= $product ? esc($product->price) : esc(old('price')) ?>"
+                        <label class="text-gray-400 text-sm font-semibold block mb-2">Base Price (Rp) *</label>
+                        <input type="number" name="base_price" step="0.01" value="<?= $product ? esc($product->base_price) : esc(old('base_price')) ?>"
                             class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                             placeholder="0" required>
-                        <?php if (isset($errors['price'])): ?>
-                            <p class="text-red-400 text-sm mt-1"><?= $errors['price'] ?></p>
+                        <?php if (isset($errors['base_price'])): ?>
+                            <p class="text-red-400 text-sm mt-1"><?= $errors['base_price'] ?></p>
                         <?php endif; ?>
+                    </div>
+
+                    <!-- Sale Price -->
+                    <div>
+                        <label class="text-gray-400 text-sm font-semibold block mb-2">Sale Price (Rp)</label>
+                        <input type="number" name="sale_price" step="0.01" value="<?= $product ? esc($product->sale_price) : esc(old('sale_price')) ?>"
+                            class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                            placeholder="0">
                     </div>
 
                     <!-- Brand -->
                     <div>
-                        <label class="text-gray-400 text-sm font-semibold block mb-2">Brand *</label>
-                        <select name="brand_id" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500" required>
+                        <label class="text-gray-400 text-sm font-semibold block mb-2">Brand</label>
+                        <select name="brand_id" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500">
                             <option value="">Select Brand</option>
                             <?php foreach ($brands as $brand): ?>
                                 <option value="<?= $brand->id ?>" <?= ($product && $product->brand_id === (int)$brand->id) ? 'selected' : '' ?>>
-                                    <?= esc($brand->name) ?>
+                                    <?= esc($brand->brand_name) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if (isset($errors['brand_id'])): ?>
-                            <p class="text-red-400 text-sm mt-1"><?= $errors['brand_id'] ?></p>
-                        <?php endif; ?>
                     </div>
 
                     <!-- Product Type -->
                     <div>
-                        <label class="text-gray-400 text-sm font-semibold block mb-2">Product Type *</label>
-                        <select name="product_type_id" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500" required>
+                        <label class="text-gray-400 text-sm font-semibold block mb-2">Product Type</label>
+                        <select name="type_id" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500">
                             <option value="">Select Type</option>
                             <?php foreach ($types as $type): ?>
-                                <option value="<?= $type->id ?>" <?= ($product && $product->product_type_id === (int)$type->id) ? 'selected' : '' ?>>
-                                    <?= esc($type->name) ?>
+                                <option value="<?= $type->id ?>" <?= ($product && $product->type_id === (int)$type->id) ? 'selected' : '' ?>>
+                                    <?= esc($type->type_name) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if (isset($errors['product_type_id'])): ?>
-                            <p class="text-red-400 text-sm mt-1"><?= $errors['product_type_id'] ?></p>
-                        <?php endif; ?>
                     </div>
                 </div>
 
-                <!-- Unit -->
+                <!-- Category -->
                 <div>
-                    <label class="text-gray-400 text-sm font-semibold block mb-2">Unit (pcs, box, dll) *</label>
-                    <input type="text" name="unit" value="<?= $product ? esc($product->unit) : esc(old('unit')) ?>"
-                        class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                        placeholder="e.g. pcs, box, meter" required>
-                    <?php if (isset($errors['unit'])): ?>
-                        <p class="text-red-400 text-sm mt-1"><?= $errors['unit'] ?></p>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Is Active -->
-                <div class="flex items-center">
-                    <input type="checkbox" name="is_active" value="1" id="is_active"
-                        <?= ($product && $product->is_active) ? 'checked' : '' ?>
-                        class="w-5 h-5 bg-gray-700 border border-gray-600 rounded focus:outline-none">
-                    <label for="is_active" class="text-gray-400 text-sm ml-3">Product is Active</label>
+                    <label class="text-gray-400 text-sm font-semibold block mb-2">Category</label>
+                    <select name="category_id" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500">
+                        <option value="">Select Category</option>
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?= $category->id ?>" <?= ($product && $product->category_id === (int)$category->id) ? 'selected' : '' ?>>
+                                <?= esc($category->category_name) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
         </div>
@@ -125,13 +121,13 @@
                 <!-- Main Image -->
                 <div>
                     <label class="text-gray-400 text-sm font-semibold block mb-2">Main Image</label>
-                    <?php if ($product && !empty($product->main_image_url)): ?>
+                    <?php if ($product && !empty($product->main_image)): ?>
                         <div class="mb-4 flex items-center gap-4">
-                            <img src="<?= base_url('file/uploads/' . $product->main_image_url) ?>" 
+                            <img src="<?= base_url('file/uploads/' . $product->main_image) ?>" 
                                 alt="Main" class="w-24 h-24 object-cover rounded border border-gray-600">
                             <div>
                                 <p class="text-gray-300 text-sm">Current main image</p>
-                                <p class="text-gray-500 text-xs"><?= esc($product->main_image_url) ?></p>
+                                <p class="text-gray-500 text-xs"><?= esc($product->main_image) ?></p>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -146,7 +142,7 @@
                     <label class="text-gray-400 text-sm font-semibold block mb-2">Additional Images</label>
                     <input type="file" name="additional_images[]" accept="image/*" multiple
                         class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500">
-                    <p class="text-gray-500 text-xs mt-1">Upload multiple images. They can be reordered after creation.</p>
+                    <p class="text-gray-500 text-xs mt-1">Upload multiple images as JSON array</p>
                     
                     <?php if ($product && !empty($product->additional_images)): ?>
                         <div class="mt-4">
@@ -155,14 +151,13 @@
                                 <?php 
                                     $images = json_decode($product->additional_images, true);
                                     if (is_array($images)): 
-                                        usort($images, fn($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
-                                        foreach ($images as $img): 
+                                        foreach ($images as $idx => $img): 
                                 ?>
                                     <div class="relative">
-                                        <img src="<?= base_url('file/uploads/' . $img['url']) ?>" 
+                                        <img src="<?= base_url('file/uploads/' . $img) ?>" 
                                             alt="Additional" class="w-full h-20 object-cover rounded border border-gray-600">
                                         <span class="absolute top-1 right-1 bg-gray-900 text-white text-xs px-2 py-1 rounded">
-                                            #<?= ($img['order'] + 1) ?>
+                                            #<?= ($idx + 1) ?>
                                         </span>
                                     </div>
                                 <?php endif; endforeach; endif; ?>

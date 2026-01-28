@@ -6,12 +6,12 @@ use CodeIgniter\Model;
 
 class ProductTypeModel extends Model
 {
-    protected $table = 'product_types';
+    protected $table = 'types';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['name', 'description'];
+    protected $allowedFields = ['type_name', 'description'];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
