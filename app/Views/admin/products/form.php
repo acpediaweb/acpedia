@@ -116,7 +116,12 @@
                     <input type="file" name="additional_images[]" accept="image/*" multiple class="w-full text-gray-400 text-sm">
                     <?php if ($product && !empty($product->additional_images)): ?>
                         <div class="flex gap-2 mt-2">
-                            <span class="text-xs text-gray-500"><?= count(json_decode($product->additional_images)) ?> images uploaded</span>
+                            <?php 
+                                $images = is_string($product->additional_images) 
+                                          ? json_decode($product->additional_images, true) 
+                                          : (array)$product->additional_images;
+                            ?>
+                            <span class="text-xs text-gray-500"><?= count($images) ?> images already in gallery</span>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -130,19 +135,24 @@
             </div>
             <div id="attributesContainer" class="space-y-3">
                 <?php if ($product && !empty($product->extra_attributes)): 
-                    $attrs = json_decode($product->extra_attributes, true);
-                    foreach ($attrs as $key => $val): ?>
-                    <div class="flex gap-2">
-                        <input type="text" name="attribute_key[]" value="<?= esc($key) ?>" placeholder="Key" class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white">
-                        <input type="text" name="attribute_value[]" value="<?= esc($val) ?>" placeholder="Value" class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white">
-                        <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-600 text-white rounded">×</button>
-                    </div>
-                <?php endforeach; endif; ?>
+                    $attrs = is_string($product->extra_attributes) 
+                             ? json_decode($product->extra_attributes, true) 
+                             : (array)$product->extra_attributes;
+                    
+                    if (is_array($attrs)):
+                        foreach ($attrs as $key => $val): ?>
+                        <div class="flex gap-2">
+                            <input type="text" name="attribute_key[]" value="<?= esc($key) ?>" placeholder="Key" class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white">
+                            <input type="text" name="attribute_value[]" value="<?= esc($val) ?>" placeholder="Value" class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white">
+                            <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-600 text-white rounded">×</button>
+                        </div>
+                <?php endforeach; endif; endif; ?>
             </div>
+            <p class="text-gray-500 text-xs mt-3 italic">Example: Key "Color", Value "Space Gray"</p>
         </div>
 
         <div class="flex gap-3 pt-4">
-            <button type="submit" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold transition-all transform hover:scale-105">
+            <button type="submit" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold transition-all transform hover:scale-105 shadow-lg">
                 <?= $product ? 'Save Changes' : 'Publish Product' ?>
             </button>
             <a href="<?= base_url('admin/products') ?>" class="px-8 py-3 bg-gray-700 text-white rounded font-bold">Cancel</a>
@@ -156,8 +166,8 @@ document.getElementById('addAttribute').addEventListener('click', function() {
     const row = document.createElement('div');
     row.className = 'flex gap-2';
     row.innerHTML = `
-        <input type="text" name="attribute_key[]" placeholder="e.g. Color" class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white">
-        <input type="text" name="attribute_value[]" placeholder="e.g. Midnight Blue" class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white">
+        <input type="text" name="attribute_key[]" placeholder="Key" class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white">
+        <input type="text" name="attribute_value[]" placeholder="Value" class="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white">
         <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-600 text-white rounded">×</button>
     `;
     container.appendChild(row);
