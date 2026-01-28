@@ -115,7 +115,7 @@
     <!-- Pagination -->
     <?php if ($pager): ?>
         <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
-            <?= $pager->links('products', 'bootstrap_pagination') ?>
+            <?= $pager->links('products', 'default') ?>
         </div>
     <?php endif; ?>
 </div>

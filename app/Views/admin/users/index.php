@@ -28,11 +28,13 @@
             <div class="flex gap-2">
                 <select name="role" class="px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500">
                     <option value="">All Roles</option>
-                    <?php foreach ($roles as $role): ?>
-                        <option value="<?= $role->id ?>" <?= ($selectedRole === (string)$role->id) ? 'selected' : '' ?>>
-                            <?= esc($role->name) ?>
-                        </option>
-                    <?php endforeach; ?>
+                    <?php if (!empty($roles)): ?>
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?= $role->id ?>" <?= ($selectedRole === (string)$role->id) ? 'selected' : '' ?>>
+                                <?= esc($role->name ?? 'Unknown') ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </select>
                 <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition-colors">
                     Filter
@@ -111,7 +113,7 @@
         <!-- Pagination -->
         <?php if ($pager): ?>
             <div class="bg-gray-900 border-t border-gray-700 px-6 py-4">
-                <?= $pager->links('users', 'bootstrap_pagination') ?>
+                <?= $pager->links('users', 'default') ?>
             </div>
         <?php endif; ?>
     </div>

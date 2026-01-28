@@ -124,7 +124,7 @@
         <!-- Pagination -->
         <?php if ($pager): ?>
             <div class="bg-gray-900 border-t border-gray-700 px-6 py-4">
-                <?= $pager->links('inventory', 'bootstrap_pagination') ?>
+                <?= $pager->links('inventory', 'default') ?>
             </div>
         <?php endif; ?>
     </div>

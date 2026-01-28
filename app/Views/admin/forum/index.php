@@ -90,7 +90,7 @@
         <!-- Pagination -->
         <?php if ($pager): ?>
             <div class="bg-gray-900 border-t border-gray-700 px-6 py-4">
-                <?= $pager->links('forum', 'bootstrap_pagination') ?>
+                <?= $pager->links('forum', 'default') ?>
             </div>
         <?php endif; ?>
     </div>
