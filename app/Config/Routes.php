@@ -84,3 +84,54 @@ $routes->group('users', ['namespace' => 'App\Controllers\Users'], static functio
     $routes->get('units', 'UserUnits::list');
     $routes->get('units/(:num)', 'UserUnits::detail/$1');
 });
+
+// --- 5. ADMIN PANEL (Admin Folder) ---
+$routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'adminfilter'], static function ($routes) {
+    
+    // A. Dashboard
+    $routes->get('', 'Dashboard::index');
+    $routes->get('dashboard', 'Dashboard::index');
+
+    // B. Orders Management
+    $routes->get('orders', 'Orders::index');
+    $routes->get('orders/(:num)', 'Orders::show/$1');
+    $routes->post('orders/(:num)/update-status', 'Orders::updateStatus/$1');
+
+    // C. Products Management
+    $routes->get('products', 'Products::index');
+    $routes->get('products/create', 'Products::edit');
+    $routes->get('products/(:num)/edit', 'Products::edit/$1');
+    $routes->post('products/save', 'Products::save');
+    $routes->post('products/(:num)/delete', 'Products::delete/$1');
+
+    // D. Inventory Management
+    $routes->get('inventory', 'Inventory::index');
+    $routes->get('inventory/(:num)', 'Inventory::show/$1');
+    $routes->post('inventory/(:num)/bind', 'Inventory::bind/$1');
+    $routes->post('inventory/(:num)/unbind', 'Inventory::unbind/$1');
+
+    // E. Timeline/Logs
+    $routes->get('timeline', 'Timeline::index');
+    $routes->get('timeline/(:num)', 'Timeline::show/$1');
+
+    // F. Employee Management
+    $routes->get('employee', 'Employee::index');
+    $routes->get('employee/(:num)', 'Employee::show/$1');
+
+    // G. Forum Management
+    $routes->get('forum', 'Forum::index');
+    $routes->get('forum/(:num)', 'Forum::show/$1');
+    $routes->post('forum/(:num)/close', 'Forum::closeThread/$1');
+    $routes->post('forum/(:num)/reopen', 'Forum::reopenThread/$1');
+
+    // H. Users Management
+    $routes->get('users', 'Users::index');
+    $routes->get('users/create', 'Users::edit');
+    $routes->get('users/(:num)/edit', 'Users::edit/$1');
+    $routes->post('users/save', 'Users::save');
+    $routes->post('users/(:num)/delete', 'Users::delete/$1');
+
+    // I. Site Configuration
+    $routes->get('config', 'SiteConfig::index');
+    $routes->post('config/save', 'SiteConfig::save');
+});
