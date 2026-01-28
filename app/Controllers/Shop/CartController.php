@@ -35,14 +35,12 @@ class CartController extends BaseController
                 ->getResult();
                 
             $item->service_config = null;
-            $item->saved_addon_ids = []; // Helper array for View
+            $item->saved_addon_ids = []; 
             
             foreach ($item->saved_addons as $addon) {
-                // Parse Service JSON
                 if (!empty($addon->extra_data_json)) {
                     $item->service_config = json_decode($addon->extra_data_json, true);
                 }
-                // Collect Addon IDs as STRINGS to match JS checkbox values
                 if ($addon->addon_id) {
                     $item->saved_addon_ids[] = (string)$addon->addon_id;
                 }
@@ -82,7 +80,6 @@ class CartController extends BaseController
         $cart = $cartModel->where('user_id', $userId)->first();
         $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId]);
 
-        // Default qty to 1 if missing
         $qty = $this->request->getPost('quantity') ? (int)$this->request->getPost('quantity') : 1;
         if($qty < 1) $qty = 1;
 
@@ -97,56 +94,59 @@ class CartController extends BaseController
     }
 
     /**
-     * Update Quantity and Save Configurations
+     * MASTER SAVE: Updates Qty, Pipe, Addons, and Config all at once.
      */
     public function update()
     {
         $db = \Config\Database::connect();
         $itemId = $this->request->getPost('item_id');
         
-        // 1. VALIDATE QTY: Force at least 1 (Fixes "Sets qty to zero")
+        // 1. VALIDATE QTY
         $rawQty = (int)$this->request->getPost('qty');
-        $qty = max(1, $rawQty);
+        $qty = max(1, $rawQty); // Minimum 1
 
-        // 2. Update Main Item
+        // 2. Update Main Item Quantity
         $db->table('user_cart_items')->where('id', $itemId)->update([
             'quantity' => $qty
         ]);
 
-        // 3. Clear Old Configs (Pipes/Addons/JSON)
+        // 3. WIPE OLD CONFIGS
+        // We delete everything related to this item to avoid duplicates or stale data
         $db->table('user_cart_item_addons')->where('cart_item_id', $itemId)->delete();
 
-        // 4. Save Service Config (JSON)
+        // 4. INSERT NEW CONFIGS
+        
+        // A. Service Config (Brand, Type, PK)
         $configData = $this->request->getPost('config');
         if (!empty($configData)) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id'    => $itemId,
                 'extra_data_json' => json_encode($configData),
-                'quantity'        => 1 // Config metadata is singular
+                'quantity'        => 1
             ]);
         }
 
-        // 5. Save Pipe (Matches Unit Qty)
+        // B. Pipe Selection
         $pipeId = $this->request->getPost('pipe_id');
         if (!empty($pipeId)) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
                 'pipe_id'      => $pipeId,
-                'quantity'     => $qty // Syncs with AC Unit Qty
+                'quantity'     => $qty // Sync with unit qty
             ]);
         }
 
-        // 6. Save Addons (Matches Unit Qty)
+        // C. Addons Selection
         $selectedAddons = $this->request->getPost('addons') ?? [];
         foreach ($selectedAddons as $addonId) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
                 'addon_id'     => $addonId,
-                'quantity'     => $qty // Syncs with AC Unit Qty (e.g., 3 Install Services for 3 ACs)
+                'quantity'     => $qty // Sync with unit qty
             ]);
         }
 
-        return redirect()->to('shop/cart')->with('success', 'Cart updated.');
+        return redirect()->to('shop/cart')->with('success', 'Item configuration saved.');
     }
 
     public function updateConfig()

@@ -28,7 +28,7 @@
             body: formData,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         }).then(res => res.json()).then(data => {
-            console.log('Config saved');
+            console.log('Schedule saved');
         });
     }
 }">
@@ -45,7 +45,7 @@
     <?php else: ?>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-8">
                 <?php 
                 $grandTotal = 0;
                 foreach ($items as $item): 
@@ -78,7 +78,7 @@
                     $jsAddons = !empty($item->saved_addon_ids) ? json_encode($item->saved_addon_ids) : '[]';
                 ?>
                 
-                <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden"
+                <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
                      x-data="cartItem({
                         qty: <?= (int)$item->quantity ?>,
                         basePrice: <?= (float)$basePrice ?>,
@@ -133,7 +133,7 @@
                                     <?php else: ?>
                                         <div class="space-y-4">
                                             <div>
-                                                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pipe Kit</label>
+                                                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pipe Kit (Applied to all units)</label>
                                                 <select name="pipe_id" x-model="selectedPipe" class="w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-emerald-500">
                                                     <option value="">No Pipe Needed</option>
                                                     <?php foreach ($pipes as $p): ?>
@@ -170,14 +170,20 @@
                                     </p>
                                 </div>
 
-                                <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-xl">
-                                    <input type="number" name="qty" x-model="qty" min="1" class="w-12 text-center text-sm font-bold bg-white border-gray-200 rounded-lg">
-                                    <button type="submit" class="p-2 text-blue-600 hover:bg-white hover:shadow-sm rounded-lg transition-all" title="Update Cart">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                <div class="flex flex-col items-end gap-3 w-full">
+                                    <div class="flex items-center gap-2">
+                                        <label class="text-[10px] font-bold text-gray-400 uppercase">Qty:</label>
+                                        <input type="number" name="qty" x-model="qty" min="1" class="w-16 text-center text-sm font-bold bg-white border-gray-200 rounded-lg">
+                                    </div>
+
+                                    <button type="submit" class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Save Changes
                                     </button>
-                                    <a href="<?= base_url('shop/cart/remove/'.$item->id) ?>" class="p-2 text-red-500 hover:bg-white hover:shadow-sm rounded-lg transition-all" title="Remove Item">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </a>
+                                    
+                                    <a href="<?= base_url('shop/cart/remove/'.$item->id) ?>" class="text-[10px] font-bold text-red-400 hover:text-red-600 underline">Remove Item</a>
                                 </div>
                             </div>
                         </div>
@@ -262,26 +268,26 @@
             qty: Number(config.qty),
             basePrice: Number(config.basePrice),
             selectedPipe: config.selectedPipe,
-            selectedAddons: config.selectedAddons || [], // Valid Array or Empty
+            selectedAddons: config.selectedAddons || [],
 
             get subtotal() {
                 let total = this.basePrice;
                 
-                // Safety check
                 if (!window.SHOP_DATA) return total;
 
-                // Pipe Price (Safe Lookup)
+                // Pipe Price (matches unit qty implicitly in total price logic)
                 if (this.selectedPipe) {
                     let pipePrice = window.SHOP_DATA.pipePrices[this.selectedPipe] || 0;
                     total += pipePrice;
                 }
 
-                // Addon Prices (Safe Lookup)
+                // Addon Prices (matches unit qty)
                 this.selectedAddons.forEach(id => {
                     let addonPrice = window.SHOP_DATA.addonPrices[String(id)] || 0;
                     total += addonPrice;
                 });
 
+                // Final Total = (Base + Pipe + Addons) * Qty
                 return total * this.qty;
             },
             
