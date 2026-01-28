@@ -126,20 +126,25 @@ class Products extends BaseController
         }
 
         // Handle additional images (stored as JSON)
-        $additionalImages = $this->request->getFiles('additional_images');
-        if (!empty($additionalImages)) {
-            $images = [];
-            foreach ($additionalImages as $file) {
-                if ($file->isValid()) {
-                    $name = time() . '_' . $file->getRandomName();
-                    $file->move(WRITEPATH . 'uploads', $name);
-                    $images[] = $name;
-                }
-            }
-            if (!empty($images)) {
-                $data['additional_images'] = json_encode($images);
-            }
+        $additionalImages = $this->request->getFileMultiple('additional_images');
+
+if ($additionalImages) {
+    $images = [];
+    foreach ($additionalImages as $file) {
+        // Check if file was actually uploaded and is valid
+        if ($file->isValid() && !$file->hasMoved()) {
+            $name = $file->getRandomName(); // CI4 handles unique names better this way
+            $file->move(WRITEPATH . 'uploads', $name);
+            $images[] = $name;
         }
+    }
+    
+    if (!empty($images)) {
+        // If updating, you might want to merge with existing images 
+        // instead of overwriting, but for now, this matches your logic:
+        $data['additional_images'] = json_encode($images);
+    }
+}
 
         // Handle extra attributes (stored as JSON)
         $attributeKeys = $this->request->getPost('attribute_key');
