@@ -7,3 +7,4 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 $routes->get('/toko-kami', 'Toko::index');
+$routes->get('api/products', 'Toko::apiList');

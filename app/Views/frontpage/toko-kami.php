@@ -208,7 +208,7 @@
                 <div id="productCategoriesContent" class="dropdown-content mt-3 space-y-2 overflow-hidden">
                     <!-- Wall Mounted Split -->
                     <button class="category-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-[#ced4da] bg-[#f3f3f3] hover:border-[#41B8EA] hover:shadow-md transition-all duration-200" data-category="wall-mounted">
-                        <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\wall.png" alt="Wall Mounted Split AC Icon" class="w-10 h-auto flex-shrink-0 transition-all duration-200 category-icon">
+                        <img src="assets\wall.png" alt="Wall Mounted Split AC Icon" class="w-10 h-auto flex-shrink-0 transition-all duration-200 category-icon">
                         <div class="flex-1 text-left">
                             <div class="font-semibold text-sm">Wall Mounted Split</div>
                             <p class="text-xs opacity-75 mt-0.5">88 Items Available</p>
@@ -217,7 +217,7 @@
 
                     <!-- Cassette -->
                     <button class="category-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-[#ced4da] bg-[#f3f3f3] hover:border-[#41B8EA] hover:shadow-md transition-all duration-200" data-category="cassette">
-                        <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\Cassette.png" alt="Wall Mounted Split AC Icon" class="w-7 h-auto flex-shrink-0 transition-all duration-200 category-icon">
+                        <img src="assets\Cassette.png" alt="Wall Mounted Split AC Icon" class="w-7 h-auto flex-shrink-0 transition-all duration-200 category-icon">
                         <div class="flex-1 text-left">
                             <div class="font-semibold text-sm">Cassette</div>
                             <p class="text-xs opacity-75 mt-0.5">64 Items Available</p>
@@ -226,7 +226,7 @@
 
                     <!-- Floor Standing -->
                     <button class="category-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-[#ced4da] bg-[#f3f3f3] hover:border-[#41B8EA] hover:shadow-md transition-all duration-200" data-category="floor-standing">
-                        <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\Floor.png" alt="Wall Mounted Split AC Icon" class="w-5 h-auto flex-shrink-0 transition-all duration-200 category-icon">
+                        <img src="assets\Floor.png" alt="Wall Mounted Split AC Icon" class="w-5 h-auto flex-shrink-0 transition-all duration-200 category-icon">
                         <div class="flex-1 text-left">
                             <div class="font-semibold text-sm">Floor Standing</div>
                             <p class="text-xs opacity-75 mt-0.5">24 Items Available</p>
@@ -235,7 +235,7 @@
 
                     <!-- Ceiling Suspended -->
                     <button class="category-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-[#ced4da] bg-[#f3f3f3] hover:border-[#41B8EA] hover:shadow-md transition-all duration-200" data-category="ceiling-suspended">
-                        <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\Suspended.png" alt="Wall Mounted Split AC Icon" class="w-10 h-auto flex-shrink-0 transition-all duration-200 category-icon">
+                        <img src="assets\Suspended.png" alt="Wall Mounted Split AC Icon" class="w-10 h-auto flex-shrink-0 transition-all duration-200 category-icon">
                         <div class="flex-1 text-left">
                             <div class="font-semibold text-sm">Ceiling Suspended</div>
                             <p class="text-xs opacity-75 mt-0.5">24 Items Available</p>
@@ -244,7 +244,7 @@
 
                     <!-- Ceiling Duct -->
                     <button class="category-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-[#ced4da] bg-[#f3f3f3] hover:border-[#41B8EA] hover:shadow-md transition-all duration-200" data-category="ceiling-duct">
-                        <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\Duct.png" alt="Wall Mounted Split AC Icon" class="w-10 h-auto flex-shrink-0 transition-all duration-200 category-icon">
+                        <img src="assets\Duct.png" alt="Wall Mounted Split AC Icon" class="w-10 h-auto flex-shrink-0 transition-all duration-200 category-icon">
                         <div class="flex-1 text-left">
                             <div class="font-semibold text-sm">Ceiling Duct</div>
                             <p class="text-xs opacity-75 mt-0.5">64 Items Available</p>
@@ -253,7 +253,7 @@
 
                     <!-- VRV/VRF -->
                     <button class="category-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-[#ced4da] bg-[#f3f3f3] hover:border-[#41B8EA] hover:shadow-md transition-all duration-200" data-category="vrv-vrf">
-                        <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\VRV.png" alt="Wall Mounted Split AC Icon" class="w-6 h-auto flex-shrink-0 transition-all duration-200 category-icon">
+                        <img src="assets\VRV.png" alt="Wall Mounted Split AC Icon" class="w-6 h-auto flex-shrink-0 transition-all duration-200 category-icon">
                         <div class="flex-1 text-left">
                             <div class="font-semibold text-sm">VRV/VRF</div>
                             <p class="text-xs opacity-75 mt-0.5">Hubungi Kami</p>
@@ -262,7 +262,7 @@
 
                     <!-- Produk Lainnya -->
                     <button class="category-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-[#ced4da] bg-[#f3f3f3] hover:border-[#41B8EA] hover:shadow-md transition-all duration-200" data-category="produk-lainnya">
-                        <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\lainnya.png" alt="Wall Mounted Split AC Icon" class="w-4 h-auto flex-shrink-0 transition-all duration-200 category-icon">
+                        <img src="assets\lainnya.png" alt="Wall Mounted Split AC Icon" class="w-4 h-auto flex-shrink-0 transition-all duration-200 category-icon">
                         <div class="flex-1 text-left">
                             <div class="font-semibold text-sm">Produk Lainnya</div>
                             <p class="text-xs opacity-75 mt-0.5">Pipa, ducting, kabel, etc</p>
@@ -280,7 +280,7 @@
                             <!-- Wall Mounted Split -->
                             <button class="category-btn relative flex-1 flex flex-col items-center justify-center bg-[#f3f3f3] hover:bg-[#41B8EA] transition-all duration-200 group px-4" data-category="wall-mounted">
                                 <div class="flex items-center justify-center mb-4">
-                                    <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\wall.png" alt="Wall Mounted Split AC Icon" class="w-[58.79px] h-auto transition-all duration-200 category-icon-desktop">
+                                    <img src="assets\wall.png" alt="Wall Mounted Split AC Icon" class="w-[58.79px] h-auto transition-all duration-200 category-icon-desktop">
                                 </div>
                                 <div class="text-center mt-0">
                                     <div class="font-semibold text-sm text-[#222] group-hover:text-white transition-colors">Wall Mounted Split</div>
@@ -291,7 +291,7 @@
                             <!-- Cassette -->
                             <button class="category-btn relative flex-1 flex flex-col items-center justify-center bg-[#f3f3f3] hover:bg-[#41B8EA] transition-all duration-200 group px-4" data-category="cassette">
                                 <div class="flex items-center justify-center mb-2">
-                                    <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\Cassette.png" alt="Wall Mounted Split AC Icon" class="w-[45px] h-auto transition-all duration-200 category-icon-desktop">
+                                    <img src="assets\Cassette.png" alt="Wall Mounted Split AC Icon" class="w-[45px] h-auto transition-all duration-200 category-icon-desktop">
                                 </div>
                                 <div class="text-center mt-0">
                                     <div class="font-semibold text-sm text-[#222] group-hover:text-white transition-colors">Cassette</div>
@@ -302,7 +302,7 @@
                             <!-- Floor Standing -->
                             <button class="category-btn relative flex-1 flex flex-col items-center justify-center bg-[#f3f3f3] hover:bg-[#41B8EA] transition-all duration-200 group px-4" data-category="floor-standing">
                                 <div class="flex items-center justify-center mb-0">
-                                    <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\Floor.png" alt="Wall Mounted Split AC Icon" class="w-[30px] h-auto transition-all duration-200 category-icon-desktop">
+                                    <img src="assets\Floor.png" alt="Wall Mounted Split AC Icon" class="w-[30px] h-auto transition-all duration-200 category-icon-desktop">
                                 </div>
                                 <div class="text-center mt-0">
                                     <div class="font-semibold text-sm text-[#222] group-hover:text-white transition-colors">Floor Standing</div>
@@ -313,7 +313,7 @@
                             <!-- Ceiling Suspended -->
                             <button class="category-btn relative flex-1 flex flex-col items-center justify-center bg-[#f3f3f3] hover:bg-[#41B8EA] transition-all duration-200 group px-4" data-category="ceiling-suspended">
                                 <div class="flex items-center justify-center mb-2">
-                                    <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\Suspended.png" alt="Wall Mounted Split AC Icon" class="w-[58.79px] h-auto transition-all duration-200 category-icon-desktop">
+                                    <img src="assets\Suspended.png" alt="Wall Mounted Split AC Icon" class="w-[58.79px] h-auto transition-all duration-200 category-icon-desktop">
                                 </div>
                                 <div class="text-center mt-1">
                                     <div class="font-semibold text-sm text-[#222] group-hover:text-white transition-colors">Ceiling Suspended</div>
@@ -324,7 +324,7 @@
                             <!-- Ceiling Duct -->
                             <button class="category-btn relative flex-1 flex flex-col items-center justify-center bg-[#f3f3f3] hover:bg-[#41B8EA] transition-all duration-200 group px-4" data-category="ceiling-duct">
                                 <div class="flex items-center justify-center mb-0">
-                                    <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\Duct.png" alt="Wall Mounted Split AC Icon" class="w-[65px] h-auto transition-all duration-200 category-icon-desktop">
+                                    <img src="assets\Duct.png" alt="Wall Mounted Split AC Icon" class="w-[65px] h-auto transition-all duration-200 category-icon-desktop">
                                 </div>
                                 <div class="text-center mt-5">
                                     <div class="font-semibold text-sm text-[#222] group-hover:text-white transition-colors">Ceiling Duct</div>
@@ -335,7 +335,7 @@
                             <!-- VRV/VRF -->
                             <button class="category-btn relative flex-1 flex flex-col items-center justify-center bg-[#f3f3f3] hover:bg-[#41B8EA] transition-all duration-200 group px-4" data-category="vrv-vrf">
                                 <div class="flex items-center justify-center mb-1">
-                                    <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\VRV.png" alt="Wall Mounted Split AC Icon" class="w-[40px] h-auto transition-all duration-200 category-icon-desktop">
+                                    <img src="assets\VRV.png" alt="Wall Mounted Split AC Icon" class="w-[40px] h-auto transition-all duration-200 category-icon-desktop">
                                 </div>
                                 <div class="text-center mt-1">
                                     <div class="font-semibold text-sm text-[#222] group-hover:text-white transition-colors">VRV/VRF</div>
@@ -346,7 +346,7 @@
                             <!-- Produk Lainnya -->
                             <button class="category-btn relative flex-1 flex flex-col items-center justify-center bg-[#f3f3f3] hover:bg-[#41B8EA] transition-all duration-200 group px-4" data-category="produk-lainnya">
                                 <div class="flex items-center justify-center mb-1">
-                                    <img src="C:\Users\adhoy\Downloads\Website-20260112T131234Z-3-001\Website\New folder\lainnya.png" alt="Wall Mounted Split AC Icon" class="w-[30px] h-auto transition-all duration-200 category-icon-desktop">
+                                    <img src="assets\lainnya.png" alt="Wall Mounted Split AC Icon" class="w-[30px] h-auto transition-all duration-200 category-icon-desktop">
                                 </div>
                                 <div class="text-center mt-1">
                                     <div class="font-semibold text-sm text-[#222] group-hover:text-white transition-colors">Produk Lainnya</div>

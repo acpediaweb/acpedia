@@ -8,9 +8,7 @@ class ProductModel extends Model
 {
     protected $table            = 'products';
     protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = true;
     protected $allowedFields    = [
         'product_name', 'product_description', 'slug', 
         'base_price', 'sale_price', 
@@ -18,21 +16,48 @@ class ProductModel extends Model
         'main_image', 'additional_images', 'extra_attributes'
     ];
 
-    /**
-     * Reusable filter logic to avoid repeating code for Count and Data
-     */
     private function applyFilters($filters)
     {
-        $this->select('products.*, COALESCE(products.sale_price, products.base_price) as final_price');
+        // 1. Update Select to include names from joined tables
+        $this->select('products.*, 
+            COALESCE(products.sale_price, products.base_price) as final_price,
+            brands.brand_name, 
+            types.type_name, 
+            pk_categories.pk_category_name,
+            categories.category_name'
+        );
+
         $this->join('brands', 'brands.id = products.brand_id', 'left');
         $this->join('types', 'types.id = products.type_id', 'left');
         $this->join('pk_categories', 'pk_categories.id = products.pk_category_id', 'left');
+        $this->join('categories', 'categories.id = products.category_id', 'left');
         
-        if (!empty($filters['brand_id']))       $this->whereIn('products.brand_id', (array)$filters['brand_id']);
-        if (!empty($filters['type_id']))        $this->whereIn('products.type_id', (array)$filters['type_id']);
-        if (!empty($filters['category_id']))    $this->whereIn('products.category_id', (array)$filters['category_id']);
-        if (!empty($filters['pk_category_id'])) $this->whereIn('products.pk_category_id', (array)$filters['pk_category_id']);
+        // 2. Filter by Names (matching your HTML data-attributes)
+        if (!empty($filters['brands'])) {
+            $this->whereIn('brands.brand_name', (array)$filters['brands']);
+        }
+        if (!empty($filters['types'])) {
+            $this->whereIn('types.type_name', (array)$filters['types']);
+        }
+        // Note: JS sends 'pk', 'category' as single strings, but we can wrap in array
+        if (!empty($filters['pk'])) {
+            $this->where('pk_categories.pk_category_name', $filters['pk']);
+        }
+        if (!empty($filters['category'])) {
+             // Mapping "wall-mounted" (slug style) to Name if necessary, 
+             // or ensure your DB category_name matches the HTML data-category
+             // For now assuming partial match or exact match logic:
+             $this->like('categories.category_name', str_replace('-', ' ', $filters['category']));
+        }
 
+        if (!empty($filters['search'])) {
+            $this->groupStart()
+                ->like('products.product_name', $filters['search'])
+                ->orLike('brands.brand_name', $filters['search'])
+            ->groupEnd();
+        }
+        
+        // Price sorting logic remains...
         if (!empty($filters['min_price'])) {
             $this->where('COALESCE(products.sale_price, products.base_price) >=', $filters['min_price']);
         }
@@ -40,12 +65,32 @@ class ProductModel extends Model
             $this->where('COALESCE(products.sale_price, products.base_price) <=', $filters['max_price']);
         }
 
-        if (!empty($filters['keyword'])) {
+         if (!empty($filters['keyword'])) {
             $this->groupStart()
                 ->like('products.product_name', $filters['keyword'])
                 ->orLike('products.product_description', $filters['keyword'])
             ->groupEnd();
         }
+    }
+
+    public function getFilteredProducts(array $filters)
+    {
+        $this->applyFilters($filters);
+
+        $sort = $filters['sort'] ?? 'terbaru';
+        switch ($sort) {
+            case 'low':  $this->orderBy('final_price', 'ASC'); break;
+            case 'high': $this->orderBy('final_price', 'DESC'); break;
+            case 'terlaris': 
+                // Placeholder for sales logic, or fallback to default
+                $this->orderBy('products.created_at', 'DESC'); 
+                break;
+            default: // 'terbaru'
+                $this->orderBy('products.created_at', 'DESC'); 
+                break;
+        }
+
+        return $this->findAll();
     }
 
     public function getManualPagination(array $filters, int $limit, int $offset)
@@ -69,4 +114,6 @@ class ProductModel extends Model
         $this->applyFilters($filters);
         return $this->countAllResults();
     }
+
+
 }

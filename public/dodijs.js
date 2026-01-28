@@ -76,36 +76,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (grid) {
         const state = { products: [], filters: { brands:[], pk:null, type:null, search:'', sort:'terbaru' } };
 
-        // Fetch Data (Placeholder)
+        // Fetch Data
         const loadProducts = async () => {
             try {
-                // const res = await fetch('/api/products'); state.products = await res.json();
-                console.log('Fetching products...'); 
-                state.products = []; // Empty until API connected
+                // Build Query String from state.filters
+                const params = new URLSearchParams();
+                if (state.filters.brands.length) state.filters.brands.forEach(b => params.append('brands[]', b));
+                if (state.filters.pk) params.append('pk', state.filters.pk);
+                if (state.filters.type) params.append('type', state.filters.type);
+                if (state.filters.search) params.append('search', state.filters.search);
+                if (state.filters.sort) params.append('sort', state.filters.sort);
+                
+                // Call the API
+                const res = await fetch(`/api/products?${params.toString()}`);
+                state.products = await res.json();
+                
                 render();
-            } catch (e) { grid.innerHTML = '<div class="col-span-full text-center">Error loading data</div>'; }
+            } catch (e) { 
+                console.error(e);
+                grid.innerHTML = '<div class="col-span-full text-center">Error loading data</div>'; 
+            }
         };
 
         const render = () => {
-            let data = state.products.filter(p => 
-                (state.filters.brands.length === 0 || state.filters.brands.includes(p.brand)) &&
-                (!state.filters.pk || p.pk === state.filters.pk) &&
-                (!state.filters.type || p.type === state.filters.type) &&
-                (p.brand.toLowerCase().includes(state.filters.search) || p.model.toLowerCase().includes(state.filters.search))
-            );
+            // NOTE: Filtering is now done on server-side (PHP), 
+            // so we just render whatever state.products contains.
+            const data = state.products;
 
-            // Sort
-            if (state.filters.sort === 'low') data.sort((a,b) => a.price - b.price);
-            else if (state.filters.sort === 'high') data.sort((a,b) => b.price - a.price);
+            if (!data.length) return grid.innerHTML = '<div class="col-span-full py-8 text-center">Tidak ada produk ditemukan.</div>';
+
+            grid.innerHTML = data.map(p => {
+                // Formatting price
+                const price = new Intl.NumberFormat('id-ID').format(p.final_price);
+                
+                return `
+                <div class="product-card bg-white rounded shadow p-3 hover:shadow-lg transition-shadow">
+                    <img src="${p.main_image}" alt="${p.product_name}" class="w-full h-48 object-contain mb-2">
+                    <div class="text-xs text-gray-500 mb-1">${p.brand_name} - ${p.pk_category_name || ''}</div>
+                    <h3 class="font-bold text-[#373E51] text-sm mb-2 h-10 overflow-hidden">${p.product_name}</h3>
+                    <div class="text-[#F99C1C] font-bold">Rp ${price}</div>
+                    ${p.sale_price ? `<div class="text-xs text-gray-400 line-through">Rp ${new Intl.NumberFormat('id-ID').format(p.base_price)}</div>` : ''}
+                </div>`;
+            }).join('');
             
-            if (!data.length) return grid.innerHTML = '<div class="col-span-full py-8 text-center">Tidak ada produk.</div>';
-
-            grid.innerHTML = data.map(p => `
-                <div class="product-card bg-white rounded shadow p-3">
-                    <img src="${p.image}" class="w-full h-48 object-cover mb-2">
-                    <h3 class="font-bold">${p.brand} ${p.model}</h3>
-                    <div class="text-red-600 font-bold">Rp ${p.price.toLocaleString()}</div>
-                </div>`).join('');
             refreshIcons();
         };
 
@@ -132,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll(cls).forEach(b => b.classList.remove('active'));
                     if(state.filters[key]) btn.classList.add('active');
                 }
-                render();
+                loadProducts();
             };
         });
 
