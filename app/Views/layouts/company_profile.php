@@ -65,16 +65,16 @@
                 <div class="flex items-center gap-6 flex-shrink-0">
                     <div class="flex items-center gap-2">
                         <span class="text-sm text-gray-700 mr-1">Ikuti Kami</span>
-                        <a href="#" class="text-gray-600 hover:text-pink-600 transition-colors">
+                        <a href="" class="text-gray-600 hover:text-pink-600 transition-colors">
                             <i data-lucide="instagram" class="h-4 w-4"></i>
                         </a>
-                        <a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        <a href="" class="text-gray-600 hover:text-gray-900 transition-colors">
                             <i class="fab fa-tiktok text-sm"></i>
                         </a>
-                        <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        <a href="" class="text-gray-600 hover:text-blue-600 transition-colors">
                             <i data-lucide="facebook" class="h-4 w-4"></i>
                         </a>
-                        <a href="#" class="text-gray-600 hover:text-red-600 transition-colors">
+                        <a href="" class="text-gray-600 hover:text-red-600 transition-colors">
                             <i data-lucide="youtube" class="h-4 w-4"></i>
                         </a>
                     </div>
@@ -87,7 +87,7 @@
     <header id="header" class="bg-white border-b sticky top-0 z-50 shadow-sm transition-all duration-300">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-14 md:h-16">
-                <a href="#top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+                <a href="/" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
                     <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
                         <img src="assets\acpedialogo.png" 
                              alt="ACpedia Logo" 
@@ -96,22 +96,22 @@
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-8">
-                    <a href="#home" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
+                    <a href="home" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
                         <i data-lucide="home" class="h-4 w-4"></i>
                         Beranda
                         <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#41B8EA] transition-all group-hover:w-full"></span>
                     </a>
-                    <a href="#about" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
+                    <a href="about" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
                         <i data-lucide="wrench" class="h-4 w-4"></i>
                         Layanan Kami
                         <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#41B8EA] transition-all group-hover:w-full"></span>
                     </a>
-                    <a href="#toko-kami" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
+                    <a href="shop" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
                         <i data-lucide="store" class="h-4 w-4"></i>
                         Toko Kami
                         <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#41B8EA] transition-all group-hover:w-full"></span>
                     </a>
-                    <a href="#contact" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
+                    <a href="contact" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
                         <i data-lucide="mail" class="h-4 w-4"></i>
                         Kontak
                         <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#41B8EA] transition-all group-hover:w-full"></span>
@@ -133,19 +133,19 @@
             <!-- Mobile Menu -->
             <div id="mobileMenu" class="mobile-menu lg:hidden border-t border-gray-200">
                 <div class="py-3 space-y-2">
-                    <a href="#home" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
+                    <a href="home" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
                         <i data-lucide="home" class="h-4 w-4"></i>
                         Beranda
                     </a>
-                    <a href="#about" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
+                    <a href="about" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
                         <i data-lucide="wrench" class="h-4 w-4"></i>
                         Layanan Kami
                     </a>
-                    <a href="#toko-kami" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
+                    <a href="shop" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
                         <i data-lucide="store" class="h-4 w-4"></i>
                         Toko Kami
                     </a>
-                    <a href="#contact" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
+                    <a href="contact" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
                         <i data-lucide="mail" class="h-4 w-4"></i>
                         Kontak
                     </a>
@@ -197,16 +197,16 @@
                     <div>
                         <h6 class="text-sm uppercase mb-3">Ikuti Kami</h6>
                         <div class="flex gap-3">
-                            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#41B8EA] transition-colors">
+                            <a href="" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#41B8EA] transition-colors">
                                 <i data-lucide="facebook" class="h-5 w-5"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#41B8EA] transition-colors">
+                            <a href="" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#41B8EA] transition-colors">
                                 <i data-lucide="instagram" class="h-5 w-5"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#41B8EA] transition-colors">
+                            <a href="" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#41B8EA] transition-colors">
                                 <i data-lucide="twitter" class="h-5 w-5"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#41B8EA] transition-colors">
+                            <a href="" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#41B8EA] transition-colors">
                                 <i data-lucide="youtube" class="h-5 w-5"></i>
                             </a>
                         </div>
@@ -231,8 +231,8 @@
                     <ul class="space-y-2">
                         <li><a href="https://acpedia.id/pk-calculator" target="_blank" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Kalkulator PK</a></li>
                         <li><a href="https://acpedia.id/hvac-contact" target="_blank" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Projek HVAC</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Jasa Pasang AC</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Jasa Perawatan</a></li>
+                        <li><a href="" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Jasa Pasang AC</a></li>
+                        <li><a href="" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Jasa Perawatan</a></li>
                         <li><a href="https://acpedia.id/auth/login" target="_blank" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Lacak Pesanan</a></li>
                     </ul>
                 </div>
@@ -241,10 +241,10 @@
                 <div class="lg:col-span-2 observe-me" style="animation-delay: 0.3s;">
                     <h6 class="text-sm uppercase mb-4">Produk</h6>
                     <ul class="space-y-2 mb-6">
-                        <li><a href="#" class="text-slate-400 hover:text-[#41B8EA] transition-colors">AC Split Wall</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-[#41B8EA] transition-colors">AC Cassette</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-[#41B8EA] transition-colors">AC Floor Standing</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Produk Lainnya</a></li>
+                        <li><a href="" class="text-slate-400 hover:text-[#41B8EA] transition-colors">AC Split Wall</a></li>
+                        <li><a href="" class="text-slate-400 hover:text-[#41B8EA] transition-colors">AC Cassette</a></li>
+                        <li><a href="" class="text-slate-400 hover:text-[#41B8EA] transition-colors">AC Floor Standing</a></li>
+                        <li><a href="" class="text-slate-400 hover:text-[#41B8EA] transition-colors">Produk Lainnya</a></li>
                     </ul>
 
                     <!-- Payment Methods -->
