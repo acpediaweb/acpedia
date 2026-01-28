@@ -14,6 +14,6 @@ class HomeController extends BaseController
             'hero_subtitle' => 'The only HVAC provider that tracks your unit’s lifetime history from the moment it leaves our warehouse.'
         ];
 
-        return view('Home/index', $data);
+        return view('home/index', $data);
     }
 }
