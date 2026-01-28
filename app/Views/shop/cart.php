@@ -38,86 +38,48 @@
             <div class="lg:col-span-2 space-y-6">
                 <?php 
                 $grandTotal = 0;
+                
+                // Prepare Pricing Data for JS to avoid loop overhead in x-data
+                $jsPipePrices = [];
+                foreach ($pipes as $p) $jsPipePrices[$p->id] = (float)$p->price_per_meter;
+                
+                $jsAddonPrices = [];
+                foreach ($addons as $a) $jsAddonPrices[$a->id] = (float)$a->addon_price;
+
                 foreach ($items as $item): 
                     $isService = !empty($item->service_id);
                     $basePrice = $isService ? $item->s_price : ($item->sale_price ?? $item->p_price);
                     
-                    // Identify saved addons/pipes for pre-selection AND PHP total calculation
                     $savedPipeId = null;
                     $savedAddonIds = [];
-                    $addonTotal = 0;
+                    $addonTotal = 0; // PHP Side Calculation for initial load
                     
                     if (!empty($item->saved_addons)) {
                         foreach ($item->saved_addons as $sa) {
                             if ($sa->pipe_id) {
                                 $savedPipeId = $sa->pipe_id;
-                                // Find pipe price
-                                foreach ($pipes as $p) {
-                                    if ($p->id == $sa->pipe_id) {
-                                        $addonTotal += ($p->price_per_meter * $item->quantity); // Pipe length = item qty? Usually per unit.
-                                        break;
-                                    }
-                                }
+                                if(isset($jsPipePrices[$sa->pipe_id])) $addonTotal += $jsPipePrices[$sa->pipe_id]; // Assuming flat fee per unit for simplicity in display
                             }
                             if ($sa->addon_id) {
                                 $savedAddonIds[] = $sa->addon_id;
-                                // Find addon price
-                                foreach ($addons as $a) {
-                                    if ($a->id == $sa->addon_id) {
-                                        $addonTotal += $a->addon_price;
-                                        break;
-                                    }
-                                }
+                                if(isset($jsAddonPrices[$sa->addon_id])) $addonTotal += $jsAddonPrices[$sa->addon_id];
                             }
                         }
                     }
                     
-                    // Initial PHP Subtotal
-                    $initialSubtotal = ($basePrice * $item->quantity) + $addonTotal;
+                    $initialSubtotal = ($basePrice + $addonTotal) * $item->quantity;
                     $grandTotal += $initialSubtotal;
                 ?>
+                
                 <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
-                     x-data="{
+                     x-data="cartItem({
                         qty: <?= $item->quantity ?>,
                         basePrice: <?= $basePrice ?>,
                         selectedPipe: '<?= $savedPipeId ?? '' ?>',
                         selectedAddons: <?= json_encode($savedAddonIds) ?>,
-                        
-                        // Pricing Reference Data
-                        pipePrices: {
-                            <?php foreach ($pipes as $p): ?>
-                            '<?= $p->id ?>': <?= $p->price_per_meter ?>,
-                            <?php endforeach; ?>
-                        },
-                        addonPrices: {
-                            <?php foreach ($addons as $a): ?>
-                            '<?= $a->id ?>': <?= $a->addon_price ?>,
-                            <?php endforeach; ?>
-                        },
-
-                        get subtotal() {
-                            let total = this.basePrice * this.qty;
-                            
-                            // Add Pipe Price (Assuming price per meter * qty units, or flat fee? Usually per unit install)
-                            // Let's assume the pipe selection implies 'Pipe Kit per Unit'
-                            if (this.selectedPipe && this.pipePrices[this.selectedPipe]) {
-                                total += (this.pipePrices[this.selectedPipe] * this.qty);
-                            }
-
-                            // Add Addon Prices (Flat fee per unit usually)
-                            this.selectedAddons.forEach(id => {
-                                if (this.addonPrices[id]) {
-                                    total += this.addonPrices[id];
-                                }
-                            });
-
-                            return total;
-                        },
-                        
-                        formatPrice(val) {
-                            return new Intl.NumberFormat('id-ID').format(val);
-                        }
-                     }">
+                        pipePrices: <?= json_encode($jsPipePrices) ?>,
+                        addonPrices: <?= json_encode($jsAddonPrices) ?>
+                     })">
                      
                     <form action="<?= base_url('shop/cart/update') ?>" method="POST">
                         <?= csrf_field() ?>
@@ -205,9 +167,9 @@
                                 </div>
                             </div>
 
-                            <div class="flex flex-col justify-between items-end min-w-[120px]">
+                            <div class="flex flex-col justify-between items-end min-w-[140px]">
                                 <div class="text-right">
-                                    <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Total</p>
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Total Price</p>
                                     <p class="text-xl font-black text-gray-900 tracking-tight">
                                         Rp <span x-text="formatPrice(subtotal)"></span>
                                     </p>
@@ -281,7 +243,7 @@
                             <span class="text-gray-400 text-xs font-bold uppercase tracking-widest">Est. Total</span>
                             <span class="text-3xl font-black text-white">Rp <?= number_format($grandTotal, 0, ',', '.') ?></span>
                         </div>
-                        <p class="text-[10px] text-gray-500 text-right mb-8">* Total updates after clicking 'Update Cart' on items.</p>
+                        <p class="text-[10px] text-gray-500 text-right mb-8">* Total updates after clicking 'Update Cart'.</p>
 
                         <a href="<?= base_url('shop/checkout') ?>" 
                            class="block w-full bg-blue-600 hover:bg-blue-500 text-white text-center py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all transform hover:scale-[1.02] shadow-xl shadow-blue-900/40">
@@ -294,4 +256,40 @@
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('cartItem', (config) => ({
+            qty: config.qty,
+            basePrice: config.basePrice,
+            selectedPipe: config.selectedPipe,
+            selectedAddons: config.selectedAddons,
+            pipePrices: config.pipePrices,
+            addonPrices: config.addonPrices,
+
+            get subtotal() {
+                let total = this.basePrice;
+                
+                // Add Pipe Price (if selected)
+                if (this.selectedPipe && this.pipePrices[this.selectedPipe]) {
+                    total += this.pipePrices[this.selectedPipe];
+                }
+
+                // Add Addon Prices (if selected)
+                this.selectedAddons.forEach(id => {
+                    if (this.addonPrices[id]) {
+                        total += this.addonPrices[id];
+                    }
+                });
+
+                return total * this.qty;
+            },
+            
+            formatPrice(val) {
+                return new Intl.NumberFormat('id-ID').format(val);
+            }
+        }))
+    })
+</script>
+
 <?= $this->endSection() ?>
