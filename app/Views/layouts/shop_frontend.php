@@ -17,7 +17,7 @@
     <!-- React Icons CDN for TikTok -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="\style.css">
 </head>
 <body>
     <!-- Top Bar -->
@@ -83,7 +83,7 @@
             <div class="flex items-center justify-between h-14 md:h-16 transition-all duration-300">
                 <a href="#top">
                     <div class="flex items-center gap-3 cursor-pointer">
-                        <img src="C:\Users\Dody\Desktop\ACpedia\ACpedia\assets\acpedialogo.png" alt="ACpedia Logo" class="h-6 md:h-7 w-auto">
+                        <img src="\assets\acpedialogo.png" alt="ACpedia Logo" class="h-6 md:h-7 w-auto">
                     </div>
                 </a>
 
