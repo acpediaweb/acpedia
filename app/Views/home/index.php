@@ -1,148 +1,54 @@
-<?php echo $this->extend('layouts/main'); ?>
+<?= $this->extend('layouts/company_profile') ?>
 
-<?php echo $this->section('content'); ?>
+<?= $this->section('content') ?>
 
-<!-- Hero Section -->
-<section class="hero-section py-5 bg-light">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">ACPedia - Solusi HVAC Terpadu</h1>
-                <p class="lead mb-4">Penyedia layanan perawatan, perbaikan, dan penjualan sistem pendingin profesional dengan teknologi terkini.</p>
-                <div class="d-flex gap-3">
-                    <a href="/toko-kami" class="btn btn-primary btn-lg">Belanja Sekarang</a>
-                    <a href="/tentang-kami" class="btn btn-outline-primary btn-lg">Pelajari Lebih Lanjut</a>
-                </div>
+<section class="relative py-24 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="max-w-3xl">
+            <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-widest mb-6">
+                Leading HVAC Excellence
+            </span>
+            <h1 class="text-6xl font-extrabold text-gray-900 tracking-tight mb-8">
+                <?= $hero_title ?>
+            </h1>
+            <p class="text-xl text-gray-600 mb-10 leading-relaxed">
+                <?= $hero_subtitle ?>
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="<?= base_url('shop') ?>" class="bg-blue-600 text-white px-10 py-4 rounded-full font-bold text-center hover:shadow-xl hover:-translate-y-1 transition-all">
+                    Explore Inventory
+                </a>
+                <a href="<?= base_url('about') ?>" class="bg-white border-2 border-gray-200 px-10 py-4 rounded-full font-bold text-center hover:border-blue-600 transition-all">
+                    Our Mission
+                </a>
             </div>
-            <div class="col-lg-6 text-center">
-                <img src="/images/hero-hvac.jpg" alt="HVAC System" class="img-fluid rounded">
+        </div>
+    </div>
+    
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-blue-50 -z-0 hidden lg:block rounded-l-3xl"></div>
+</section>
+
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+                <div class="text-4xl font-black text-blue-600">15k+</div>
+                <div class="text-sm text-gray-500 uppercase font-bold mt-2">Units Tracked</div>
+            </div>
+            <div>
+                <div class="text-4xl font-black text-blue-600">98%</div>
+                <div class="text-sm text-gray-500 uppercase font-bold mt-2">Service Accuracy</div>
+            </div>
+            <div>
+                <div class="text-4xl font-black text-blue-600">24h</div>
+                <div class="text-sm text-gray-500 uppercase font-bold mt-2">Response Time</div>
+            </div>
+            <div>
+                <div class="text-4xl font-black text-blue-600">50+</div>
+                <div class="text-sm text-gray-500 uppercase font-bold mt-2">Expert Technicians</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Features Section -->
-<section class="features-section py-5">
-    <div class="container">
-        <h2 class="text-center mb-5">Mengapa Memilih ACPedia?</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 text-center p-4">
-                    <i class="bi bi-tools fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title">Layanan Profesional</h5>
-                    <p class="card-text">Tim teknisi berpengalaman siap melayani kebutuhan HVAC Anda 24/7.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 text-center p-4">
-                    <i class="bi bi-shield-check fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title">Garansi Terjamin</h5>
-                    <p class="card-text">Semua produk dan jasa dilengkapi garansi resmi dan dukungan purna jual.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 text-center p-4">
-                    <i class="bi bi-bag-check fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title">Produk Berkualitas</h5>
-                    <p class="card-text">Kami menjual produk-produk HVAC dari merek ternama dan terpercaya.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Featured Products Section -->
-<section class="featured-section py-5 bg-light">
-    <div class="container">
-        <h2 class="text-center mb-5">Produk Unggulan</h2>
-        <div class="row g-4" id="featured-products">
-            <!-- Products will be loaded dynamically -->
-            <p class="text-center text-muted">Loading produk...</p>
-        </div>
-        <div class="text-center mt-4">
-            <a href="/toko-kami" class="btn btn-primary">Lihat Semua Produk</a>
-        </div>
-    </div>
-</section>
-
-<!-- Services Section -->
-<section class="services-section py-5">
-    <div class="container">
-        <h2 class="text-center mb-5">Layanan Kami</h2>
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="text-center">
-                    <i class="bi bi-wrench fs-1 text-primary mb-3"></i>
-                    <h5>Instalasi</h5>
-                    <p>Instalasi profesional sistem HVAC dengan standar internasional.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="text-center">
-                    <i class="bi bi-speedometer fs-1 text-primary mb-3"></i>
-                    <h5>Pemeliharaan</h5>
-                    <p>Layanan perawatan berkala untuk performa optimal sistem Anda.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="text-center">
-                    <i class="bi bi-exclamation-circle fs-1 text-primary mb-3"></i>
-                    <h5>Perbaikan</h5>
-                    <p>Layanan perbaikan cepat dengan garansi kepuasan pelanggan.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="text-center">
-                    <i class="bi bi-clipboard-check fs-1 text-primary mb-3"></i>
-                    <h5>Konsultasi</h5>
-                    <p>Konsultasi gratis untuk menentukan solusi HVAC terbaik untuk Anda.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="cta-section py-5 bg-primary text-white">
-    <div class="container text-center">
-        <h2 class="mb-4">Butuh Layanan HVAC?</h2>
-        <p class="lead mb-4">Hubungi tim kami untuk konsultasi gratis dan penawaran terbaik.</p>
-        <div class="d-flex gap-3 justify-content-center">
-            <a href="/hubungi-kami" class="btn btn-light">Hubungi Kami</a>
-            <a href="/form-hvac" class="btn btn-outline-light">Formulir HVAC</a>
-        </div>
-    </div>
-</section>
-
-<script>
-// Load featured products
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('/api/products?limit=4')
-        .then(response => response.json())
-        .then(data => {
-            const container = document.getElementById('featured-products');
-            if (data.products && data.products.length > 0) {
-                container.innerHTML = data.products.map(product => `
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card h-100">
-                            <img src="${product.image_url || '/images/placeholder.jpg'}" class="card-img-top" alt="${product.product_name}">
-                            <div class="card-body">
-                                <h6 class="card-title">${product.product_name}</h6>
-                                <p class="card-text text-muted small">${product.description?.substring(0, 50) || ''}</p>
-                                <h5 class="text-primary">Rp ${product.product_price?.toLocaleString('id-ID') || 0}</h5>
-                            </div>
-                            <div class="card-footer bg-white border-top-0">
-                                <a href="/toko-kami/produk/${product.product_id}" class="btn btn-sm btn-outline-primary w-100">Lihat Detail</a>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                container.innerHTML = '<p class="text-center text-muted">Tidak ada produk tersedia</p>';
-            }
-        })
-        .catch(error => console.error('Error loading products:', error));
-});
-</script>
-
-<?php echo $this->endSection(); ?>
+<?= $this->endSection() ?>
