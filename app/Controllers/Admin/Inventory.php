@@ -128,3 +128,4 @@ class Inventory extends BaseController
         return redirect()->to('admin/inventory/' . $id)
             ->with('success', 'Item unbound successfully');
     }
+}
