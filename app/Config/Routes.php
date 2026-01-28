@@ -24,26 +24,26 @@ $routes->group('', ['namespace' => 'App\Controllers\Auth'], static function ($ro
 });
 
 // --- 3. SHOP & SERVICES (Shop Folder) ---
+// --- 3. SHOP & SERVICES (Shop Folder) ---
 $routes->group('shop', ['namespace' => 'App\Controllers\Shop'], static function ($routes) {
-    // Product Catalog
-    $routes->get('', 'ShopController::index');
-    $routes->get('(:segment)', 'ShopController::detail/$1'); // Detail view (lowercase file: detail.php)
     
-    // Services (Mixed with products in cart)
-    $routes->get('services', 'ServiceController::index'); // Lowercase file: services.php
+    // 1. Specific Routes FIRST (Hardcoded paths)
+    $routes->get('services', 'ServiceController::index');
     
-    // Unified Cart Operations
     $routes->group('cart', static function ($routes) {
-        $routes->get('/', 'CartController::index');        // Lowercase file: cart.php
+        $routes->get('/', 'CartController::index');
         $routes->post('add', 'CartController::add');
         $routes->get('remove/(:num)', 'CartController::remove/$1');
     });
 
-    // Checkout (Snapshot Logic)
     $routes->group('checkout', static function ($routes) {
         $routes->get('/', 'CheckoutController::index');
         $routes->post('process', 'CheckoutController::process');
     });
+
+    // 2. Generic Slug Route LAST
+    // If you put this at the top, it 'eats' the word 'cart' or 'services'
+    $routes->get('(:segment)', 'ShopController::detail/$1'); 
 });
 
 // --- 4. INTERNAL (Future Persistence/Forum Logic) ---
