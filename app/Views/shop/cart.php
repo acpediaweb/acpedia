@@ -52,46 +52,32 @@
                     $isService = !empty($item->service_id);
                     $basePrice = $isService ? $item->s_price : ($item->sale_price ?? $item->p_price);
                     
-                    // --- 1. EXTRACT SAVED STATE FROM DB ---
-                    $savedPipeId = ''; // Default to empty string
-                    $savedAddonIds = [];
-                    $addonTotal = 0; // PHP Fallback Calculation
+                    // PHP-Side Subtotal (Uses prepared data from Controller)
+                    $addonTotal = 0;
                     
-                    if (!empty($item->saved_addons)) {
-                        foreach ($item->saved_addons as $sa) {
-                            // Check for Pipe
-                            if (!empty($sa->pipe_id)) {
-                                $savedPipeId = $sa->pipe_id;
-                                // Calculate cost for PHP grand total
-                                foreach ($pipes as $p) {
-                                    if ($p->id == $sa->pipe_id) $addonTotal += $p->price_per_meter;
-                                }
-                            }
-                            // Check for Addons
-                            if (!empty($sa->addon_id)) {
-                                $savedAddonIds[] = (string)$sa->addon_id; // String for JS match
-                                // Calculate cost for PHP grand total
-                                foreach ($addons as $a) {
-                                    if ($a->id == $sa->addon_id) $addonTotal += $a->addon_price;
-                                }
-                            }
+                    // Add Pipe Cost
+                    if (!empty($item->saved_pipe_id)) {
+                        foreach ($pipes as $p) {
+                            if ($p->id == $item->saved_pipe_id) $addonTotal += $p->price_per_meter;
                         }
                     }
-                    
-                    // Calculate Subtotal
+                    // Add Addon Costs
+                    if (!empty($item->saved_addon_ids)) {
+                        foreach ($addons as $a) {
+                            if (in_array((string)$a->id, $item->saved_addon_ids)) $addonTotal += $a->addon_price;
+                        }
+                    }
+
                     $subtotal = ($basePrice + $addonTotal) * $item->quantity;
                     $grandTotal += $subtotal;
-                    
-                    // Prepare JSON for Alpine
-                    $jsAddons = !empty($savedAddonIds) ? json_encode($savedAddonIds) : '[]';
                 ?>
                 
                 <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
                      x-data="cartItem({
                         qty: <?= (int)$item->quantity ?>,
                         basePrice: <?= (float)$basePrice ?>,
-                        selectedPipe: '<?= $savedPipeId ?>', 
-                        selectedAddons: <?= $jsAddons ?>
+                        selectedPipe: '<?= $item->saved_pipe_id ?>', 
+                        selectedAddons: <?= !empty($item->saved_addon_ids) ? json_encode($item->saved_addon_ids) : '[]' ?>
                      })">
                      
                     <form action="<?= base_url('shop/cart/update') ?>" method="POST">
@@ -141,11 +127,11 @@
                                     <?php else: ?>
                                         <div class="space-y-4">
                                             <div>
-                                                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pipe Kit (Applied to all units)</label>
+                                                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pipe Kit</label>
                                                 <select name="pipe_id" x-model="selectedPipe" class="w-full text-xs border-gray-200 rounded-lg bg-white focus:ring-emerald-500">
                                                     <option value="">No Pipe Needed</option>
                                                     <?php foreach ($pipes as $p): ?>
-                                                        <option value="<?= $p->id ?>">
+                                                        <option value="<?= (string)$p->id ?>">
                                                             <?= esc($p->pipe_type) ?> (+Rp <?= number_format($p->price_per_meter, 0) ?>)
                                                         </option>
                                                     <?php endforeach; ?>
@@ -158,7 +144,7 @@
                                                         <?php foreach ($addons as $addon): ?>
                                                             <label class="flex items-center space-x-2 p-2 bg-white rounded-lg border border-gray-100 cursor-pointer hover:border-emerald-300">
                                                                 <input type="checkbox" name="addons[]" 
-                                                                       value="<?= $addon->id ?>" 
+                                                                       value="<?= (string)$addon->id ?>" 
                                                                        x-model="selectedAddons" 
                                                                        class="rounded text-emerald-600 border-gray-300">
                                                                 <div class="text-xs">
@@ -190,13 +176,10 @@
                                     </div>
 
                                     <button type="submit" class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                        </svg>
                                         Save Changes
                                     </button>
                                     
-                                    <a href="<?= base_url('shop/cart/remove/'.$item->id) ?>" class="text-[10px] font-bold text-red-400 hover:text-red-600 underline">Remove Item</a>
+                                    <a href="<?= base_url('shop/cart/remove/'.$item->id) ?>" class="text-[10px] font-bold text-red-400 hover:text-red-600 underline">Remove</a>
                                 </div>
                             </div>
                         </div>
@@ -280,8 +263,8 @@
         Alpine.data('cartItem', (config) => ({
             qty: Number(config.qty),
             basePrice: Number(config.basePrice),
-            selectedPipe: config.selectedPipe,
-            selectedAddons: config.selectedAddons || [], // Ensure array
+            selectedPipe: config.selectedPipe, 
+            selectedAddons: config.selectedAddons || [],
 
             get subtotal() {
                 let total = this.basePrice;

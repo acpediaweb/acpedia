@@ -27,21 +27,32 @@ class CartController extends BaseController
             ->get()
             ->getResult();
 
-        // 3. Attach Saved Configs
+        // 3. PREPARE DATA FOR VIEW (Crucial Step)
         foreach ($items as $item) {
-            $item->saved_addons = $db->table('user_cart_item_addons')
+            // Default Values
+            $item->service_config = [];
+            $item->saved_pipe_id = '';
+            $item->saved_addon_ids = [];
+
+            // Fetch relations
+            $savedAddons = $db->table('user_cart_item_addons')
                 ->where('cart_item_id', $item->id)
                 ->get()
                 ->getResult();
                 
-            $item->service_config = null;
-            $item->saved_addon_ids = []; 
-            
-            foreach ($item->saved_addons as $addon) {
+            foreach ($savedAddons as $addon) {
+                // A. Config JSON (Brand/Type/PK)
                 if (!empty($addon->extra_data_json)) {
                     $item->service_config = json_decode($addon->extra_data_json, true);
                 }
-                if ($addon->addon_id) {
+                
+                // B. Pipe Selection (Single ID)
+                if (!empty($addon->pipe_id)) {
+                    $item->saved_pipe_id = (string)$addon->pipe_id;
+                }
+
+                // C. Addons (Array of Strings)
+                if (!empty($addon->addon_id)) {
                     $item->saved_addon_ids[] = (string)$addon->addon_id;
                 }
             }
@@ -70,103 +81,89 @@ class CartController extends BaseController
         return view('shop/cart', $data);
     }
 
-    public function add()
-    {
-        if (!session()->get('isLoggedIn')) return redirect()->to('login');
-        $userId = session()->get('user_id');
-        $db = \Config\Database::connect();
-        
-        $cartModel = new CartModel();
-        $cart = $cartModel->where('user_id', $userId)->first();
-        $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId]);
-
-        $qty = $this->request->getPost('quantity') ? (int)$this->request->getPost('quantity') : 1;
-        if($qty < 1) $qty = 1;
-
-        $db->table('user_cart_items')->insert([
-            'cart_id'    => $cartId,
-            'product_id' => $this->request->getPost('product_id') ?: null,
-            'service_id' => $this->request->getPost('service_id') ?: null,
-            'quantity'   => $qty
-        ]);
-
-        return redirect()->back()->with('success', 'Item added to cart.');
-    }
-
-    /**
-     * MASTER SAVE: Updates Qty, Pipe, Addons, and Config all at once.
-     */
+    // ... (add, update, updateConfig, remove methods remain exactly as provided previously)
+    // I will include update() again just to be sure it matches the view's form logic
+    
     public function update()
     {
         $db = \Config\Database::connect();
         $itemId = $this->request->getPost('item_id');
-        
-        // 1. VALIDATE QTY
         $rawQty = (int)$this->request->getPost('qty');
-        $qty = max(1, $rawQty); // Minimum 1
+        $qty = max(1, $rawQty);
 
-        // 2. Update Main Item Quantity
-        $db->table('user_cart_items')->where('id', $itemId)->update([
-            'quantity' => $qty
-        ]);
+        // Update Qty
+        $db->table('user_cart_items')->where('id', $itemId)->update(['quantity' => $qty]);
 
-        // 3. WIPE OLD CONFIGS
-        // We delete everything related to this item to avoid duplicates or stale data
+        // Clear Old Configs
         $db->table('user_cart_item_addons')->where('cart_item_id', $itemId)->delete();
 
-        // 4. INSERT NEW CONFIGS
-        
-        // A. Service Config (Brand, Type, PK)
+        // Save Config
         $configData = $this->request->getPost('config');
         if (!empty($configData)) {
             $db->table('user_cart_item_addons')->insert([
-                'cart_item_id'    => $itemId,
+                'cart_item_id' => $itemId,
                 'extra_data_json' => json_encode($configData),
-                'quantity'        => 1
+                'quantity' => 1
             ]);
         }
 
-        // B. Pipe Selection
+        // Save Pipe
         $pipeId = $this->request->getPost('pipe_id');
         if (!empty($pipeId)) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
-                'pipe_id'      => $pipeId,
-                'quantity'     => $qty // Sync with unit qty
+                'pipe_id' => $pipeId,
+                'quantity' => $qty
             ]);
         }
 
-        // C. Addons Selection
+        // Save Addons
         $selectedAddons = $this->request->getPost('addons') ?? [];
         foreach ($selectedAddons as $addonId) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
-                'addon_id'     => $addonId,
-                'quantity'     => $qty // Sync with unit qty
+                'addon_id' => $addonId,
+                'quantity' => $qty
             ]);
         }
 
-        return redirect()->to('shop/cart')->with('success', 'Item configuration saved.');
+        return redirect()->to('shop/cart')->with('success', 'Changes saved.');
     }
 
-    public function updateConfig()
-    {
+    // Include other methods if needed (add, remove, updateConfig) - referring to previous context they are fine.
+    public function updateConfig() {
         $db = \Config\Database::connect();
         $userId = session()->get('user_id');
-
         $data = [
             'scheduled_datetime' => $this->request->getPost('scheduled_datetime'),
-            'faktur_requested'   => $this->request->getPost('faktur') ? 1 : 0
+            'faktur_requested' => $this->request->getPost('faktur') ? 1 : 0
         ];
-
         $db->table('user_cart')->where('user_id', $userId)->update($data);
         return $this->response->setJSON(['status' => 'success']);
     }
-
-    public function remove($id)
-    {
+    
+    public function remove($id) {
         $db = \Config\Database::connect();
         $db->table('user_cart_items')->delete(['id' => $id]);
         return redirect()->back()->with('success', 'Item removed.');
+    }
+    
+    public function add() {
+        // Standard add logic
+        if (!session()->get('isLoggedIn')) return redirect()->to('login');
+        $userId = session()->get('user_id');
+        $db = \Config\Database::connect();
+        $cartModel = new CartModel();
+        $cart = $cartModel->where('user_id', $userId)->first();
+        $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId]);
+        $qty = $this->request->getPost('quantity') ? (int)$this->request->getPost('quantity') : 1;
+        if($qty < 1) $qty = 1;
+        $db->table('user_cart_items')->insert([
+            'cart_id' => $cartId,
+            'product_id' => $this->request->getPost('product_id') ?: null,
+            'service_id' => $this->request->getPost('service_id') ?: null,
+            'quantity' => $qty
+        ]);
+        return redirect()->back()->with('success', 'Added.');
     }
 }
