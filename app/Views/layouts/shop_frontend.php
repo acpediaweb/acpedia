@@ -703,13 +703,12 @@
             lucide.createIcons();
         }, 1000);
 
-  /**
- * ACpedia Cart Management System
- * Handles: Toggle, Click-away, and UI updates
+ /**
+ * ACpedia Cart System
+ * Handles: Toggle visibility, Click-away behavior, and UI Updates
  */
-
 const CartManager = {
-    // 1. Initialize selectors
+    // 1. Initialize selectors and attach events
     init() {
         this.cartButton = document.getElementById('cartButton');
         this.cartDropdown = document.getElementById('cartDropdown');
@@ -720,10 +719,12 @@ const CartManager = {
         this.emptyMessage = document.getElementById('emptyCartMessage');
         this.grandTotalDisplay = document.getElementById('cartGrandTotal');
 
-        // Only attach events if the elements exist on the current page
-        if (this.cartButton && this.cartDropdown) {
-            this.attachEvents();
+        // GUARD: Only proceed if the essential elements exist on this page
+        if (!this.cartButton || !this.cartDropdown) {
+            return; 
         }
+
+        this.attachEvents();
     },
 
     // 2. Event Listeners
@@ -731,27 +732,36 @@ const CartManager = {
         // Toggle cart on button click
         this.cartButton.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation();
+            e.stopPropagation(); // Prevents the 'window' click from firing immediately
             this.toggleCart();
         });
 
-        // Close cart when clicking anywhere else
+        // Close cart when clicking anywhere outside the dropdown
         window.addEventListener('click', (e) => {
             if (!this.cartDropdown.contains(e.target) && !this.cartButton.contains(e.target)) {
                 this.closeCart();
             }
         });
 
-        // Prevent dropdown from closing when clicking inside it
+        // Prevent the dropdown from closing when clicking inside it
         this.cartDropdown.addEventListener('click', (e) => {
             e.stopPropagation();
         });
     },
 
-    // 3. UI Actions
+    // 3. Actions
     toggleCart() {
-        this.cartDropdown.classList.toggle('hidden');
-        // If opening, you could trigger an API refresh here
+        const isHidden = this.cartDropdown.classList.contains('hidden');
+        if (isHidden) {
+            this.openCart();
+        } else {
+            this.closeCart();
+        }
+    },
+
+    openCart() {
+        this.cartDropdown.classList.remove('hidden');
+        // Optional: add animation classes here
     },
 
     closeCart() {
@@ -759,28 +769,24 @@ const CartManager = {
     },
 
     /**
-     * Update the UI dynamically (Call this after an AJAX Add-to-Cart)
-     * @param {number} count - Total items in cart
-     * @param {number} total - Grand total value
+     * Update the UI (Call this after AJAX 'Add to Cart' or 'Delete')
+     * @param {number} count - Number of items
+     * @param {number} total - Subtotal value
      */
     updateUI(count, total) {
-        if (!this.itemCountText) return;
-
-        // Update Numbers
-        this.itemCountText.textContent = count;
+        if (this.itemCountText) this.itemCountText.textContent = count;
         if (this.itemLabel) this.itemLabel.textContent = `${count} Items`;
-        
-        // Update Price (Formatted to IDR)
+
+        // Format price to IDR: 50000 -> Rp 50.000
         if (this.grandTotalDisplay) {
-            const formattedTotal = new Intl.NumberFormat('id-ID', {
+            this.grandTotalDisplay.textContent = new Intl.NumberFormat('id-ID', {
                 style: 'currency',
                 currency: 'IDR',
                 minimumFractionDigits: 0
             }).format(total);
-            this.grandTotalDisplay.textContent = formattedTotal;
         }
 
-        // Handle Visibility Logic
+        // Toggle visibility of empty states vs footer
         if (count > 0) {
             this.notificationDot?.classList.remove('hidden');
             this.cartFooter?.classList.remove('hidden');
@@ -793,7 +799,7 @@ const CartManager = {
     }
 };
 
-// Ensure DOM is ready before running
+// Start the manager once the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     CartManager.init();
 });
