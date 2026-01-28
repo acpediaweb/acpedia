@@ -7,9 +7,6 @@ use App\Models\CartModel;
 
 class CartController extends BaseController
 {
-    /**
-     * View the full cart with detailed configuration options.
-     */
     public function index()
     {
         if (!session()->get('isLoggedIn')) {
@@ -19,10 +16,10 @@ class CartController extends BaseController
         $userId = session()->get('user_id');
         $db = \Config\Database::connect();
 
-        // 1. Fetch Cart Header (for schedule and faktur toggle)
+        // 1. Fetch Cart Header
         $cart = $db->table('user_cart')->where('user_id', $userId)->get()->getRow();
         
-        // 2. Fetch Items with joined data for display
+        // 2. Fetch Items with joined data
         $items = $db->table('user_cart_items as uci')
             ->select('uci.*, p.product_name, p.base_price as p_price, p.sale_price, s.service_title, s.base_price as s_price')
             ->join('user_cart as uc', 'uc.id = uci.cart_id')
@@ -32,22 +29,19 @@ class CartController extends BaseController
             ->get()
             ->getResult();
 
-        // 3. Fetch auxiliary data for service configuration dropdowns
-        $brands = $db->table('brands')->get()->getResult();
-        $types  = $db->table('product_types')->get()->getResult();
+        // 3. Fetch ONLY existing tables: brands and categories
+        $brands     = $db->table('brands')->get()->getResult();
+        $categories = $db->table('categories')->get()->getResult();
 
         return view('shop/cart', [
-            'title'  => 'Your Shopping Cart',
-            'cart'   => $cart,
-            'items'  => $items,
-            'brands' => $brands,
-            'types'  => $types
+            'title'      => 'Your Shopping Cart',
+            'cart'       => $cart,
+            'items'      => $items,
+            'brands'     => $brands,
+            'categories' => $categories // Replacing 'types' with your actual 'categories' table
         ]);
     }
 
-    /**
-     * Handles adding both Products and Services to the unified cart.
-     */
     public function add()
     {
         if (!session()->get('isLoggedIn')) { 
@@ -80,16 +74,13 @@ class CartController extends BaseController
                 'product_id' => $productId ?: null,
                 'service_id' => $serviceId ?: null,
                 'quantity'   => $quantity,
-                'config'     => json_encode([]) // Initialize empty config
+                'config'     => json_encode([]) 
             ]);
         }
 
         return redirect()->back()->with('success', 'Cart updated successfully!');
     }
 
-    /**
-     * Updates item quantity and JSON configuration (PK, Brand, Addons).
-     */
     public function update()
     {
         $db = \Config\Database::connect();
@@ -97,17 +88,14 @@ class CartController extends BaseController
         
         $data = [
             'quantity' => $this->request->getPost('qty'),
-            'config'   => json_encode($this->request->getPost('config')) // Saves Brand, PK, Addons, etc.
+            'config'   => json_encode($this->request->getPost('config')) 
         ];
 
         $db->table('user_cart_items')->where('id', $itemId)->update($data);
         
-        return redirect()->to('shop/cart')->with('success', 'Item configuration updated.');
+        return redirect()->to('shop/cart')->with('success', 'Configuration updated.');
     }
 
-    /**
-     * Auto-save for Cart Header settings (Schedule & Faktur).
-     */
     public function updateConfig()
     {
         $db = \Config\Database::connect();
@@ -120,17 +108,14 @@ class CartController extends BaseController
 
         $db->table('user_cart')->where('user_id', $userId)->update($data);
         
-        return $this->response->setJSON(['status' => 'success', 'message' => 'Schedule saved.']);
+        return $this->response->setJSON(['status' => 'success']);
     }
 
-    /**
-     * Remove an item from the cart.
-     */
     public function remove($id)
     {
         $db = \Config\Database::connect();
         $db->table('user_cart_items')->delete(['id' => $id]);
         
-        return redirect()->back()->with('success', 'Item removed from cart.');
+        return redirect()->back()->with('success', 'Item removed.');
     }
 }
