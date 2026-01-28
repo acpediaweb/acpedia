@@ -27,7 +27,7 @@ class Forum extends BaseController
         $status = $this->request->getVar('status') ?? '';
         $search = $this->request->getVar('search') ?? '';
 
-        // Build query with joins for author name and post count
+        // Added joins to fetch author name and post count
         $query = $this->forumModel
             ->select('forum.*, users.fullname as author_name, COUNT(forum_posts.id) as post_count')
             ->join('users', 'users.id = forum.thread_poster_id', 'left')
@@ -58,7 +58,12 @@ class Forum extends BaseController
      */
     public function show($id)
     {
-        $thread = $this->forumModel->find($id);
+        // Join users to get the thread author's name
+        $thread = $this->forumModel
+            ->select('forum.*, users.fullname as author_name')
+            ->join('users', 'users.id = forum.thread_poster_id', 'left')
+            ->where('forum.id', $id)
+            ->first();
 
         if (!$thread) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
