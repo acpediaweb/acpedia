@@ -27,7 +27,7 @@ class CartController extends BaseController
             ->get()
             ->getResult();
 
-        // 3. Attach Saved Addons & Configs
+        // 3. Attach Saved Configs
         foreach ($items as $item) {
             $item->saved_addons = $db->table('user_cart_item_addons')
                 ->where('cart_item_id', $item->id)
@@ -35,15 +35,21 @@ class CartController extends BaseController
                 ->getResult();
                 
             $item->service_config = null;
+            $item->saved_addon_ids = []; // Helper array for View
+            
             foreach ($item->saved_addons as $addon) {
+                // Parse Service JSON
                 if (!empty($addon->extra_data_json)) {
                     $item->service_config = json_decode($addon->extra_data_json, true);
-                    break; 
+                }
+                // Collect Addon IDs as STRINGS to match JS checkbox values
+                if ($addon->addon_id) {
+                    $item->saved_addon_ids[] = (string)$addon->addon_id;
                 }
             }
         }
 
-        // 4. Fetch Addresses for Dropdown
+        // 4. Fetch Addresses
         $addresses = $db->table('users_addresses')
             ->where('user_id', $userId)
             ->orderBy('is_primary', 'DESC') 
@@ -76,9 +82,9 @@ class CartController extends BaseController
         $cart = $cartModel->where('user_id', $userId)->first();
         $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId]);
 
-        // Note: 'add' usually comes from product page which might send 'quantity'
-        // We normalize it here.
-        $qty = $this->request->getPost('quantity') ?? 1;
+        // Default qty to 1 if missing
+        $qty = $this->request->getPost('quantity') ? (int)$this->request->getPost('quantity') : 1;
+        if($qty < 1) $qty = 1;
 
         $db->table('user_cart_items')->insert([
             'cart_id'    => $cartId,
@@ -91,55 +97,52 @@ class CartController extends BaseController
     }
 
     /**
-     * FIX APPLIED HERE:
-     * 1. Capture 'qty' (from cart view input).
-     * 2. Force that quantity onto all Addons and Pipes.
+     * Update Quantity and Save Configurations
      */
     public function update()
     {
         $db = \Config\Database::connect();
         $itemId = $this->request->getPost('item_id');
         
-        // 1. Capture and Validate Qty
-        $qty = (int)$this->request->getPost('qty');
-        if ($qty < 1) $qty = 1; // Prevent 0 or negative
+        // 1. VALIDATE QTY: Force at least 1 (Fixes "Sets qty to zero")
+        $rawQty = (int)$this->request->getPost('qty');
+        $qty = max(1, $rawQty);
 
-        // 2. Update Main Item Quantity
+        // 2. Update Main Item
         $db->table('user_cart_items')->where('id', $itemId)->update([
             'quantity' => $qty
         ]);
 
-        // 3. Reset Old Configurations
+        // 3. Clear Old Configs (Pipes/Addons/JSON)
         $db->table('user_cart_item_addons')->where('cart_item_id', $itemId)->delete();
 
-        // 4. Save Service Config (Brand/Type/PK) -> JSON
+        // 4. Save Service Config (JSON)
         $configData = $this->request->getPost('config');
         if (!empty($configData)) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id'    => $itemId,
                 'extra_data_json' => json_encode($configData),
-                'quantity'        => 1 // Config row itself is usually just 1 per item row logic, or $qty. 
-                                     // Technically metadata, so 1 is fine, but let's keep it clean.
+                'quantity'        => 1 // Config metadata is singular
             ]);
         }
 
-        // 5. Save Pipe (Matches Unit Quantity)
+        // 5. Save Pipe (Matches Unit Qty)
         $pipeId = $this->request->getPost('pipe_id');
         if (!empty($pipeId)) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
                 'pipe_id'      => $pipeId,
-                'quantity'     => $qty // <--- FIX: Matches main item quantity
+                'quantity'     => $qty // Syncs with AC Unit Qty
             ]);
         }
 
-        // 6. Save Addons (Matches Unit Quantity)
+        // 6. Save Addons (Matches Unit Qty)
         $selectedAddons = $this->request->getPost('addons') ?? [];
         foreach ($selectedAddons as $addonId) {
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
                 'addon_id'     => $addonId,
-                'quantity'     => $qty // <--- FIX: Matches main item quantity (e.g. 3 ACs = 3 Installs)
+                'quantity'     => $qty // Syncs with AC Unit Qty (e.g., 3 Install Services for 3 ACs)
             ]);
         }
 

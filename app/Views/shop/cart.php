@@ -54,7 +54,6 @@
                     
                     // PHP-Side Fallback Calculation
                     $savedPipeId = null;
-                    $savedAddonIds = [];
                     $addonTotal = 0;
                     
                     if (!empty($item->saved_addons)) {
@@ -66,7 +65,6 @@
                                 }
                             }
                             if ($sa->addon_id) {
-                                $savedAddonIds[] = $sa->addon_id;
                                 foreach ($addons as $a) {
                                     if ($a->id == $sa->addon_id) $addonTotal += $a->addon_price;
                                 }
@@ -75,6 +73,9 @@
                     }
                     $subtotal = ($basePrice + $addonTotal) * $item->quantity;
                     $grandTotal += $subtotal;
+                    
+                    // Safe JSON encode for JS
+                    $jsAddons = !empty($item->saved_addon_ids) ? json_encode($item->saved_addon_ids) : '[]';
                 ?>
                 
                 <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden"
@@ -82,7 +83,7 @@
                         qty: <?= (int)$item->quantity ?>,
                         basePrice: <?= (float)$basePrice ?>,
                         selectedPipe: '<?= $savedPipeId ?? '' ?>',
-                        selectedAddons: <?= !empty($savedAddonIds) ? json_encode($savedAddonIds) : '[]' ?>
+                        selectedAddons: <?= $jsAddons ?>
                      })">
                      
                     <form action="<?= base_url('shop/cart/update') ?>" method="POST">
@@ -261,24 +262,22 @@
             qty: Number(config.qty),
             basePrice: Number(config.basePrice),
             selectedPipe: config.selectedPipe,
-            selectedAddons: config.selectedAddons || [], // FORCE EMPTY ARRAY IF NULL
+            selectedAddons: config.selectedAddons || [], // Valid Array or Empty
 
             get subtotal() {
                 let total = this.basePrice;
                 
-                // Safety check: Ensure global data is loaded
+                // Safety check
                 if (!window.SHOP_DATA) return total;
 
-                // Add Pipe Price (Safe Lookup)
+                // Pipe Price (Safe Lookup)
                 if (this.selectedPipe) {
-                     // The || 0 prevents NaN if the ID is missing
                     let pipePrice = window.SHOP_DATA.pipePrices[this.selectedPipe] || 0;
                     total += pipePrice;
                 }
 
-                // Add Addon Prices (Safe Lookup)
+                // Addon Prices (Safe Lookup)
                 this.selectedAddons.forEach(id => {
-                    // Force String Key Lookup & Default to 0
                     let addonPrice = window.SHOP_DATA.addonPrices[String(id)] || 0;
                     total += addonPrice;
                 });
@@ -287,7 +286,6 @@
             },
             
             formatPrice(val) {
-                // Return 0 if NaN appears
                 if (isNaN(val)) return '0';
                 return new Intl.NumberFormat('id-ID').format(val);
             }
