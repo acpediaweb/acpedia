@@ -160,7 +160,7 @@
                                             #<?= ($idx + 1) ?>
                                         </span>
                                     </div>
-                                <?php endif; endforeach; endif; ?>
+                                <?php endforeach; endif; endif; ?>
                             </div>
                         </div>
                     <?php endif; ?>

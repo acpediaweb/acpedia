@@ -5,17 +5,20 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\OrderModel;
 use App\Models\OrderItemModel;
+use App\Models\UserModel;
 
 class Orders extends BaseController
 {
     protected $orderModel;
     protected $orderItemModel;
+    protected $userModel;
     protected $perPage = 15;
 
     public function __construct()
     {
         $this->orderModel = new OrderModel();
         $this->orderItemModel = new OrderItemModel();
+        $this->userModel = new UserModel();
     }
 
     /**
@@ -68,9 +71,15 @@ class Orders extends BaseController
             ->where('order_items.order_id', $id)
             ->findAll();
 
+        $customer = null;
+        if (!empty($order->user_id)) {
+            $customer = $this->userModel->find($order->user_id);
+        }
+
         return view('admin/orders/detail', [
             'order' => $order,
             'items' => $items,
+            'customer' => $customer,
             'statuses' => ['Pending', 'Confirmed', 'Technician Assigned', 'In Progress', 'Completed', 'Cancelled'],
         ]);
     }
@@ -90,12 +99,12 @@ class Orders extends BaseController
         }
 
         $status = $this->request->getPost('status');
-        $validStatuses = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
+        $validStatuses = ['Pending', 'Confirmed', 'Technician Assigned', 'In Progress', 'Completed', 'Cancelled'];
 
         if (!in_array($status, $validStatuses)) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Invalid Confirmed', 'Technician Assigned', 'status'
+                'message' => 'Invalid status'
             ])->setStatusCode(400);
         }
 

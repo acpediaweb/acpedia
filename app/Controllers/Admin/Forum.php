@@ -113,4 +113,34 @@ class Forum extends BaseController
         return redirect()->to('admin/forum/' . $id)
             ->with('success', 'Thread reopened successfully');
     }
+
+    /**
+     * Show create thread form
+     */
+    public function create()
+    {
+        return view('admin/forum/form');
+    }
+
+    /**
+     * Save new thread
+     */
+    public function save()
+    {
+        $title = $this->request->getPost('thread_title');
+        if (empty($title)) {
+            return redirect()->back()->withInput()->with('error', 'Thread title is required');
+        }
+
+        $data = [
+            'thread_poster_id' => session()->get('user_id') ?? null,
+            'thread_title' => $title,
+            'flair_id' => $this->request->getPost('flair_id') ?: null,
+            'status' => 'Open',
+        ];
+
+        $id = $this->forumModel->insert($data);
+
+        return redirect()->to('admin/forum/' . $id)->with('success', 'Thread created');
+    }
 }

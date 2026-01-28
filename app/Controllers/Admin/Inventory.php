@@ -121,11 +121,10 @@ class Inventory extends BaseController
         }
 
         $this->inventoryModel->update($id, [
-            'assigned_to_user_id' => null,
             'bound_to_user_id' => null,
             'bound_to_user_address_id' => null,
         ]);
 
         return redirect()->to('admin/inventory/' . $id)
-            ->with('success', 'Item unboun
-}
+            ->with('success', 'Item unbound successfully');
+    }

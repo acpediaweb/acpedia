@@ -39,6 +39,7 @@ class Timeline extends BaseController
             'logs' => $logs,
             'pager' => $this->logModel->pager,
             'selectedInventory' => $inventory,
+            'selectedAction' => $this->request->getVar('action') ?? '',
         ]);
     }
 

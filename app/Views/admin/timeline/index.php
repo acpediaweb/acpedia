@@ -56,21 +56,21 @@
                                 <td class="py-4 px-6 text-white font-semibold">#<?= $log->inventory_id ?></td>
                                 <td class="py-4 px-6">
                                     <span class="inline-block px-3 py-1 bg-blue-900 text-blue-200 text-xs font-semibold rounded">
-                                        <?= ucfirst(esc($log->action)) ?>
+                                        <?= esc($log->action_title ?? '-') ?>
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-gray-300">
-                                    <?php if (!empty($log->actor_name)): ?>
-                                        <?= esc($log->actor_name) ?>
+                                    <?php if (!empty($log->action_actor)): ?>
+                                        <?= esc($log->action_actor) ?>
                                     <?php else: ?>
                                         <span class="text-gray-500">System</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-4 px-6 text-gray-300 text-sm">
-                                    <?= esc($log->details ?? '-') ?>
+                                    <?= esc($log->action_description ?? '-') ?>
                                 </td>
                                 <td class="py-4 px-6 text-gray-300 text-sm">
-                                    <?= date('M d, Y H:i', strtotime($log->created_at)) ?>
+                                    <?= date('M d, Y H:i', strtotime($log->action_timestamp ?? $log->created_at ?? 'now')) ?>
                                 </td>
                                 <td class="py-4 px-6">
                                     <a href="<?= base_url('admin/timeline/' . $log->inventory_id) ?>" 

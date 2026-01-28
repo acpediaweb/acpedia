@@ -121,6 +121,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     // G. Forum Management
     $routes->get('forum', 'Forum::index');
     $routes->get('forum/(:num)', 'Forum::show/$1');
+    $routes->get('forum/create', 'Forum::create');
+    $routes->post('forum/save', 'Forum::save');
     $routes->post('forum/(:num)/close', 'Forum::closeThread/$1');
     $routes->post('forum/(:num)/reopen', 'Forum::reopenThread/$1');
 

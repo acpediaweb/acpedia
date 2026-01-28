@@ -24,18 +24,18 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <p class="text-gray-400 text-sm">Customer Name</p>
-                        <p class="text-white font-semibold mt-1"><?= esc($order->fullname) ?></p>
+                        <p class="text-white font-semibold mt-1"><?= esc($customer->fullname ?? '-') ?></p>
                     </div>
                     <div>
                         <p class="text-gray-400 text-sm">Customer Email</p>
-                        <p class="text-white font-semibold mt-1"><?= esc($order->email) ?></p>
+                        <p class="text-white font-semibold mt-1"><?= esc($customer->email ?? '-') ?></p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <p class="text-gray-400 text-sm">Phone</p>
-                        <p class="text-white font-semibold mt-1"><?= esc($order->phone) ?></p>
+                        <p class="text-white font-semibold mt-1"><?= esc($customer->phone ?? '-') ?></p>
                     </div>
                     <div>
                         <p class="text-gray-400 text-sm">Order Date</p>
@@ -45,7 +45,8 @@
 
                 <div>
                     <p class="text-gray-400 text-sm">Delivery Address</p>
-                    <p class="text-white font-semibold mt-1"><?= esc($order->delivery_address_display) ?></p>
+                    <?php $delivery = $order->street_snapshot ?? $order->delivery_address_display ?? ($order->city_snapshot ?? '-'); ?>
+                    <p class="text-white font-semibold mt-1"><?= esc($delivery) ?></p>
                 </div>
 
                 <div>

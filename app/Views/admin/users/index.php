@@ -31,7 +31,7 @@
                     <?php if (!empty($roles)): ?>
                         <?php foreach ($roles as $role): ?>
                             <option value="<?= $role->id ?>" <?= ($selectedRole === (string)$role->id) ? 'selected' : '' ?>>
-                                <?= esc($role->name ?? 'Unknown') ?>
+                                <?= esc($role->role_name ?? 'Unknown') ?>
                             </option>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -71,7 +71,7 @@
                                             $roleName = 'Unknown';
                                             foreach ($roles as $role) {
                                                 if ($role->id === (int)$user->role_id) {
-                                                    $roleName = esc($role->name);
+                                                    $roleName = esc($role->role_name);
                                                     break;
                                                 }
                                             }

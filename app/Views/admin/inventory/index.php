@@ -16,11 +16,11 @@
                 <!-- Product Filter -->
                 <select name="product" class="px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500">
                     <option value="">All Products</option>
-                    <?php foreach ($products as $prod): ?>
-                        <option value="<?= $prod->id ?>" <?= ($selectedProduct === (string)$prod->id) ? 'selected' : '' ?>>
-                            <?= esc($prod->name) ?>
-                        </option>
-                    <?php endforeach; ?>
+                        <?php foreach ($products as $prod): ?>
+                            <option value="<?= $prod->id ?>" <?= ($selectedProduct === (string)$prod->id) ? 'selected' : '' ?>>
+                                <?= esc($prod->product_name) ?>
+                            </option>
+                        <?php endforeach; ?>
                 </select>
 
                 <!-- Brand Filter -->
@@ -28,7 +28,7 @@
                     <option value="">All Brands</option>
                     <?php foreach ($brands as $brand): ?>
                         <option value="<?= $brand->id ?>" <?= ($selectedBrand === (string)$brand->id) ? 'selected' : '' ?>>
-                            <?= esc($brand->name) ?>
+                            <?= esc($brand->brand_name) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -38,7 +38,7 @@
                     <option value="">All Types</option>
                     <?php foreach ($types as $t): ?>
                         <option value="<?= $t->id ?>" <?= ($selectedType === (string)$t->id) ? 'selected' : '' ?>>
-                            <?= esc($t->name) ?>
+                            <?= esc($t->type_name) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -81,7 +81,7 @@
                                 <td class="py-4 px-6 text-gray-300"><?= esc($item->product_name) ?></td>
                                 <td class="py-4 px-6 text-gray-300">
                                     <code class="text-xs bg-gray-900 px-2 py-1 rounded">
-                                        <?= esc($item->serial_number ?? $item->barcode_number ?? '-') ?>
+                                        <?= esc($item->item_serial_number ?? $item->item_barcode ?? '-') ?>
                                     </code>
                                 </td>
                                 <td class="py-4 px-6 text-gray-300"><?= esc($item->brand_name ?? '-') ?></td>
@@ -97,9 +97,8 @@
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-4 px-6 text-gray-300 text-sm">
-                                    <?php if (!empty($item->assigned_to_user_id)): ?>
-                                        <div>User ID: <?= $item->assigned_to_user_id ?></div>
-                                        <div class="text-gray-500 text-xs">Since <?= date('M d, Y', strtotime($item->assigned_at)) ?></div>
+                                    <?php if (!empty($item->bound_to_user_id)): ?>
+                                        <div>User ID: <?= $item->bound_to_user_id ?></div>
                                     <?php else: ?>
                                         <span class="text-gray-500">-</span>
                                     <?php endif; ?>
