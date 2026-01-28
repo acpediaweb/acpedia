@@ -43,7 +43,6 @@ class ProductModel extends Model
         'additional_images' => 'json',
         'extra_attributes' => 'json',
     ];
-    protected $castHandlers = [];
 
     public function getBySlug(string $slug)
     {

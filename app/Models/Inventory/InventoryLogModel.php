@@ -31,7 +31,6 @@ class InventoryLogModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByInventoryId(int $inventoryId)
     {

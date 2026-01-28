@@ -34,7 +34,6 @@ class UserCartItemAddonModel extends Model
         'quantity' => 'integer',
         'extra_data_json' => 'json',
     ];
-    protected $castHandlers = [];
 
     public function getByCartItemId(int $cartItemId)
     {

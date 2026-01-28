@@ -29,7 +29,6 @@ class UserTicketModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByUserId(int $userId)
     {

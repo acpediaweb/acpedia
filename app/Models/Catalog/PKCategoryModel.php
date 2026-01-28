@@ -29,7 +29,6 @@ class PKCategoryModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByName(string $name)
     {

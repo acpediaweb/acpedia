@@ -34,7 +34,6 @@ class ProductRatingModel extends Model
         'rating_score' => 'integer',
         'price_at_purchase' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByProductId(int $productId)
     {

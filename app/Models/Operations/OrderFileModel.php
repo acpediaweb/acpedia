@@ -29,7 +29,6 @@ class OrderFileModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByDiscussionId(int $discussionId)
     {

@@ -34,7 +34,6 @@ class UserNotificationModel extends Model
         'is_read' => 'boolean',
         'is_pushed' => 'boolean',
     ];
-    protected $castHandlers = [];
 
     public function getByUserId(int $userId)
     {

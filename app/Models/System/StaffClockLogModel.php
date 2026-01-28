@@ -40,7 +40,6 @@ class StaffClockLogModel extends Model
         'clockout_latitude' => 'float',
         'clockout_longitude' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByStaffId(int $staffId)
     {

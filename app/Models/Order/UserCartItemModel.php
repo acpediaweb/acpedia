@@ -32,7 +32,6 @@ class UserCartItemModel extends Model
     protected $casts = [
         'quantity' => 'integer',
     ];
-    protected $castHandlers = [];
 
     public function getByCartId(int $cartId)
     {

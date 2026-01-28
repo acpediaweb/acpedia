@@ -46,7 +46,6 @@ class OrderModel extends Model
         'total_amount_snapshot' => 'float',
         'faktur_requested' => 'boolean',
     ];
-    protected $castHandlers = [];
 
     public function getByUserId(int $userId)
     {

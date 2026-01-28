@@ -29,7 +29,6 @@ class ForumPostFileModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByPostId(int $postId)
     {

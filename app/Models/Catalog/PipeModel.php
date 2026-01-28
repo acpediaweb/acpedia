@@ -31,7 +31,6 @@ class PipeModel extends Model
     protected $casts = [
         'price_per_meter' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByType(string $type)
     {

@@ -5,9 +5,27 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+// Home routes
 $routes->get('/', 'Home::index');
-$routes->get('/toko-kami', 'Toko::index');
-$routes->get('api/products', 'Toko::apiList');
+$routes->get('/tentang-kami', 'Home::about');
+$routes->get('/layanan', 'Home::services');
+$routes->get('/hubungi-kami', 'Home::contact');
+$routes->post('/hubungi-kami', 'Home::contact');
+$routes->get('/form-hvac', 'Home::hvacForm');
+$routes->post('/form-hvac', 'Home::hvacForm');
+
+// Shop routes
+$routes->group('toko-kami', function($routes) {
+    $routes->get('/', 'Shop::index');
+    $routes->get('produk/(:num)', 'Shop::detail/$1');
+    $routes->get('keranjang', 'Shop::cart');
+    $routes->post('add-to-cart/(:num)', 'Shop::addToCart/$1');
+    $routes->post('remove-from-cart/(:num)', 'Shop::removeFromCart/$1');
+    $routes->post('update-cart/(:num)', 'Shop::updateCart/$1');
+    $routes->get('checkout', 'Shop::checkout');
+    $routes->post('process-checkout', 'Shop::processCheckout');
+    $routes->get('order/(:num)', 'Shop::orderDetail/$1');
+});
 
 // ============================================
 // AUTHENTICATION ROUTES

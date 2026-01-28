@@ -33,7 +33,6 @@ class OrderTechnicianRatingModel extends Model
     protected $casts = [
         'rating_score' => 'integer',
     ];
-    protected $castHandlers = [];
 
     public function getByOrderId(int $orderId)
     {

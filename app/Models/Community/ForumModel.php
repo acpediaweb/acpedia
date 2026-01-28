@@ -30,7 +30,6 @@ class ForumModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByPosterId(int $posterId)
     {

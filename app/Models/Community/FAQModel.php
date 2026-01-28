@@ -28,7 +28,6 @@ class FAQModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByCategoryId(int $categoryId)
     {

@@ -31,7 +31,6 @@ class AdminClockAuditStaffModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByClockLogId(int $clockLogId)
     {

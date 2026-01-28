@@ -32,7 +32,6 @@ class ContactUsFormSubmissionModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByEmail(string $email)
     {

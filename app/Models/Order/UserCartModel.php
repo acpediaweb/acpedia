@@ -31,7 +31,6 @@ class UserCartModel extends Model
     protected $casts = [
         'faktur_requested' => 'boolean',
     ];
-    protected $castHandlers = [];
 
     public function getByUserId(int $userId)
     {

@@ -31,7 +31,6 @@ class AdminClockAuditTechnicianModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByTechClockLogId(int $techClockLogId)
     {

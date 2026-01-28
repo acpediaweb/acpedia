@@ -37,7 +37,6 @@ class OrderTechAdjustmentModel extends Model
         'adjustment_amount' => 'float',
         'is_admin_adjustment' => 'boolean',
     ];
-    protected $castHandlers = [];
 
     public function getByOrderId(int $orderId)
     {

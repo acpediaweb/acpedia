@@ -33,7 +33,6 @@ class InventoryModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByProductId(int $productId)
     {

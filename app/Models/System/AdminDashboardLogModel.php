@@ -30,7 +30,6 @@ class AdminDashboardLogModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByAdminId(int $adminId)
     {

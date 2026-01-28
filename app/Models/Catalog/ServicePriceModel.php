@@ -33,7 +33,6 @@ class ServicePriceModel extends Model
         'is_per_pk' => 'boolean',
         'price' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByServiceAndType(int $serviceId, int $typeId)
     {

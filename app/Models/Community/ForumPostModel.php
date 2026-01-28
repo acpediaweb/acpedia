@@ -29,7 +29,6 @@ class ForumPostModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByThreadId(int $threadId)
     {

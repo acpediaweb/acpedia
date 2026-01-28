@@ -28,7 +28,6 @@ class StaticPageContentModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getBySlug(string $slug)
     {

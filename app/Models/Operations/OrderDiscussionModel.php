@@ -33,7 +33,6 @@ class OrderDiscussionModel extends Model
     protected $casts = [
         'is_system_message' => 'boolean',
     ];
-    protected $castHandlers = [];
 
     public function getByOrderId(int $orderId)
     {

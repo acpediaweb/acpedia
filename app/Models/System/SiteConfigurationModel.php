@@ -27,7 +27,6 @@ class SiteConfigurationModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByKey(string $key)
     {

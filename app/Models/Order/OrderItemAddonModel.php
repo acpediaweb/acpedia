@@ -37,7 +37,6 @@ class OrderItemAddonModel extends Model
         'price_snapshot' => 'float',
         'extra_data_json' => 'json',
     ];
-    protected $castHandlers = [];
 
     public function getByOrderItemId(int $orderItemId)
     {

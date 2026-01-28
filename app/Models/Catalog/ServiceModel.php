@@ -31,7 +31,6 @@ class ServiceModel extends Model
     protected $casts = [
         'base_price' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByTitle(string $title)
     {

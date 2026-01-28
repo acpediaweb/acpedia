@@ -40,7 +40,6 @@ class UserAddressModel extends Model
         'longitude' => 'float',
         'is_primary' => 'boolean',
     ];
-    protected $castHandlers = [];
 
     public function getByUserId(int $userId)
     {

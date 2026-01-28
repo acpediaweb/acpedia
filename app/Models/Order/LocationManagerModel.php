@@ -42,7 +42,6 @@ class LocationManagerModel extends Model
         'latitude' => 'float',
         'longitude' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByEmail(string $email)
     {

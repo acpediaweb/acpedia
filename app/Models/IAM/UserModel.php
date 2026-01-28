@@ -36,7 +36,6 @@ class UserModel extends Model
         'is_active' => 'boolean',
         'technician_rating_avg' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByEmail(string $email)
     {

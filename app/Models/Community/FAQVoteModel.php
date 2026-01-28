@@ -33,7 +33,6 @@ class FAQVoteModel extends Model
     protected $casts = [
         'is_helpful' => 'boolean',
     ];
-    protected $castHandlers = [];
 
     public function getByFAQId(int $faqId)
     {

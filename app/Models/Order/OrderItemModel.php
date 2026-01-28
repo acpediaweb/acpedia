@@ -35,7 +35,6 @@ class OrderItemModel extends Model
         'base_price_snapshot' => 'float',
         'sale_price_snapshot' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByOrderId(int $orderId)
     {

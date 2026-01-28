@@ -29,7 +29,6 @@ class UserRoomModel extends Model
     protected $cleanValidationRules = true;
 
     protected $casts = [];
-    protected $castHandlers = [];
 
     public function getByAddressId(int $addressId)
     {

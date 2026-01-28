@@ -44,7 +44,6 @@ class OrderTechWorkModel extends Model
         'clockout_longitude' => 'float',
         'proof_of_completion_urls' => 'json',
     ];
-    protected $castHandlers = [];
 
     public function getByOrderId(int $orderId)
     {

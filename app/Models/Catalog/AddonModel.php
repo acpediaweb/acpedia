@@ -31,7 +31,6 @@ class AddonModel extends Model
     protected $casts = [
         'addon_price' => 'float',
     ];
-    protected $castHandlers = [];
 
     public function getByName(string $name)
     {
