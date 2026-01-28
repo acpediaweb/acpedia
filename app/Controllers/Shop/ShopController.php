@@ -17,7 +17,7 @@ class ShopController extends BaseController
             'products' => $model->getWithRelations() 
         ];
 
-        return view('shop/index', $data);
+        return view('shop/list', $data);
     }
 
     public function detail($slug)
