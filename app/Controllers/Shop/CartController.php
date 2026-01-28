@@ -8,7 +8,7 @@ use App\Models\CartModel;
 class CartController extends BaseController
 {
     /**
-     * Display the full cart page with configuration options.
+     * Display the cart with data pulled from specific schema tables.
      */
     public function index()
     {
@@ -19,10 +19,10 @@ class CartController extends BaseController
         $userId = session()->get('user_id');
         $db = \Config\Database::connect();
 
-        // 1. Fetch Cart Header (Schedule & Faktur)
+        // 1. Fetch Cart Header
         $cart = $db->table('user_cart')->where('user_id', $userId)->get()->getRow();
         
-        // 2. Fetch Items with joined Product/Service data
+        // 2. Fetch Cart Items with joined Product/Service details
         $items = $db->table('user_cart_items as uci')
             ->select('uci.*, p.product_name, p.base_price as p_price, p.sale_price, s.service_title, s.base_price as s_price')
             ->join('user_cart as uc', 'uc.id = uci.cart_id')
@@ -32,90 +32,116 @@ class CartController extends BaseController
             ->get()
             ->getResult();
 
-        // 3. Fetch data for Mandatory Configurations and Addons
-        $brands     = $db->table('brands')->get()->getResult();
-        $categories = $db->table('categories')->get()->getResult();
-        
-        // Fetch low-cost services typically used as addons (Pipe, Installation, etc.)
-        $addons = $db->table('services')
-            ->where('base_price <', 1000000) 
-            ->get()
-            ->getResult();
+        // 3. Attach "Addons/Config" data to each item for the View
+        foreach ($items as $item) {
+            $item->saved_addons = $db->table('user_cart_item_addons')
+                ->where('cart_item_id', $item->id)
+                ->get()
+                ->getResult();
+                
+            // Helper to extract specific config from the rows
+            $item->service_config = null;
+            foreach ($item->saved_addons as $addon) {
+                if (!empty($addon->extra_data_json)) {
+                    $item->service_config = json_decode($addon->extra_data_json, true);
+                    break; 
+                }
+            }
+        }
 
-        return view('shop/cart', [
-            'title'      => 'Manage Your Cart',
-            'cart'       => $cart,
-            'items'      => $items,
-            'brands'     => $brands,
-            'categories' => $categories,
-            'addons'     => $addons
-        ]);
+        // 4. Fetch Dropdown Data from Schema
+        $data = [
+            'title'         => 'Your Shopping Cart',
+            'cart'          => $cart,
+            'items'         => $items,
+            'brands'        => $db->table('brands')->orderBy('brand_name', 'ASC')->get()->getResult(),
+            'pk_categories' => $db->table('pk_categories')->orderBy('id', 'ASC')->get()->getResult(), // From schema
+            'types'         => $db->table('types')->orderBy('type_name', 'ASC')->get()->getResult(),   // From schema
+            'pipes'         => $db->table('pipes')->get()->getResult(),
+            'addons'        => $db->table('addons')->get()->getResult()
+        ];
+
+        return view('shop/cart', $data);
     }
 
     /**
-     * Add a product or service to the cart.
+     * Add Item to Cart (Basic Entry)
      */
     public function add()
     {
-        if (!session()->get('isLoggedIn')) { 
-            return redirect()->to('login')->with('error', 'Please login to add items.');
-        }
+        if (!session()->get('isLoggedIn')) return redirect()->to('login');
 
-        $userId    = session()->get('user_id');
-        $productId = $this->request->getPost('product_id');
-        $serviceId = $this->request->getPost('service_id');
-        $quantity  = $this->request->getPost('quantity') ?? 1;
-
-        $cartModel = new CartModel();
+        $userId = session()->get('user_id');
         $db = \Config\Database::connect();
-
-        // Get or Create Cart Header
+        
+        // Get or Create Cart
+        $cartModel = new CartModel();
         $cart = $cartModel->where('user_id', $userId)->first();
-        $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId, 'faktur_requested' => false]);
+        $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId]);
 
-        $builder = $db->table('user_cart_items');
-        $existingItem = $builder->where([
+        // Add Item
+        $db->table('user_cart_items')->insert([
             'cart_id'    => $cartId,
-            'product_id' => $productId ?: null,
-            'service_id' => $serviceId ?: null,
-        ])->get()->getRow();
+            'product_id' => $this->request->getPost('product_id') ?: null,
+            'service_id' => $this->request->getPost('service_id') ?: null,
+            'quantity'   => $this->request->getPost('quantity') ?? 1
+        ]);
 
-        if ($existingItem) {
-            $builder->where('id', $existingItem->id)->update(['quantity' => $existingItem->quantity + $quantity]);
-        } else {
-            $builder->insert([
-                'cart_id'    => $cartId,
-                'product_id' => $productId ?: null,
-                'service_id' => $serviceId ?: null,
-                'quantity'   => $quantity,
-                'config'     => json_encode([]) // Start with empty JSON config
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Added to cart!');
+        return redirect()->back()->with('success', 'Item added to cart.');
     }
 
     /**
-     * Update individual item configuration (PK, Brand, Addons) and Qty.
+     * Update Quantity and Save Complex Configurations
      */
     public function update()
     {
         $db = \Config\Database::connect();
         $itemId = $this->request->getPost('item_id');
         
-        // This takes the 'config' array from the form and stores it as JSON
-        $data = [
-            'quantity' => $this->request->getPost('qty'),
-            'config'   => json_encode($this->request->getPost('config')) 
-        ];
+        // 1. Update Base Quantity
+        $db->table('user_cart_items')->where('id', $itemId)->update([
+            'quantity' => $this->request->getPost('qty')
+        ]);
 
-        $db->table('user_cart_items')->where('id', $itemId)->update($data);
-        
+        // 2. Clear previous configs/addons for this item (simplest way to sync)
+        $db->table('user_cart_item_addons')->where('cart_item_id', $itemId)->delete();
+
+        // 3. Save Service Configuration (Brand, PK, Type)
+        $configData = $this->request->getPost('config'); // Array from form
+        if (!empty($configData)) {
+            // We store this as a JSON row in user_cart_item_addons
+            $db->table('user_cart_item_addons')->insert([
+                'cart_item_id'    => $itemId,
+                'extra_data_json' => json_encode($configData),
+                'quantity'        => 1
+            ]);
+        }
+
+        // 4. Save Selected Pipe
+        $pipeId = $this->request->getPost('pipe_id');
+        if (!empty($pipeId)) {
+            $db->table('user_cart_item_addons')->insert([
+                'cart_item_id' => $itemId,
+                'pipe_id'      => $pipeId,
+                'quantity'     => $this->request->getPost('qty') // Pipe length usually matches unit qty
+            ]);
+        }
+
+        // 5. Save Selected Addons (Checkbox Array)
+        $selectedAddons = $this->request->getPost('addons') ?? [];
+        foreach ($selectedAddons as $addonId) {
+            $db->table('user_cart_item_addons')->insert([
+                'cart_item_id' => $itemId,
+                'addon_id'     => $addonId,
+                'quantity'     => 1
+            ]);
+        }
+
         return redirect()->to('shop/cart')->with('success', 'Cart updated.');
     }
 
     /**
-     * Auto-save Cart Header settings (Schedule & Faktur) via AJAX.
+     * Auto-Save Schedule & Faktur
      */
     public function updateConfig()
     {
@@ -128,18 +154,13 @@ class CartController extends BaseController
         ];
 
         $db->table('user_cart')->where('user_id', $userId)->update($data);
-        
         return $this->response->setJSON(['status' => 'success']);
     }
 
-    /**
-     * Remove item from cart.
-     */
     public function remove($id)
     {
         $db = \Config\Database::connect();
         $db->table('user_cart_items')->delete(['id' => $id]);
-        
         return redirect()->back()->with('success', 'Item removed.');
     }
 }
