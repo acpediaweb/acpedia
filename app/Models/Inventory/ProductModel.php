@@ -12,7 +12,7 @@ class ProductModel extends Model
     protected $returnType = 'object';
     protected $useSoftDeletes = true;
     protected $deletedField = 'deleted_at';
-    protected array $allowedFields = ['product_name', 'product_description', 'slug', 'base_price', 'sale_price', 'category_id', 'type_id', 'brand_id', 'pk_category_id', 'main_image', 'additional_images', 'extra_attributes'];
+    protected $allowedFields = ['product_name', 'product_description', 'slug', 'base_price', 'sale_price', 'category_id', 'type_id', 'brand_id', 'pk_category_id', 'main_image', 'additional_images', 'extra_attributes'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';

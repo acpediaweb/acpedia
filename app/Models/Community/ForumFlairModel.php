@@ -11,7 +11,7 @@ class ForumFlairModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['flair_name', 'flair_color', 'flair_description'];
+    protected $allowedFields = ['flair_name', 'flair_color', 'flair_description'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

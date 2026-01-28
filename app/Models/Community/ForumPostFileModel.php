@@ -11,7 +11,7 @@ class ForumPostFileModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['forum_post_id', 'file_urls', 'uploaded_at'];
+    protected $allowedFields = ['forum_post_id', 'file_urls', 'uploaded_at'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

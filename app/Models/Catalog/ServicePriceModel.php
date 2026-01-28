@@ -11,7 +11,7 @@ class ServicePriceModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['service_id', 'type_id', 'is_per_pk', 'price'];
+    protected $allowedFields = ['service_id', 'type_id', 'is_per_pk', 'price'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

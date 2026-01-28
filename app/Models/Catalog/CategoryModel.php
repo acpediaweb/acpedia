@@ -11,7 +11,7 @@ class CategoryModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['category_name', 'category_description', 'icon'];
+    protected $allowedFields = ['category_name', 'category_description', 'icon'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

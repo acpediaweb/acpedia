@@ -11,7 +11,7 @@ class SiteConfigurationModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['config_key', 'config_value'];
+    protected $allowedFields = ['config_key', 'config_value'];
 
     protected $useTimestamps = true;
     protected $createdField = null;

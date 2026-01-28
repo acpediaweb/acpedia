@@ -11,7 +11,7 @@ class AdminClockAuditStaffModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['staff_clock_log_id', 'admin_actor_id', 'audit_action', 'audit_timestamp', 'audit_notes'];
+    protected $allowedFields = ['staff_clock_log_id', 'admin_actor_id', 'audit_action', 'audit_timestamp', 'audit_notes'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

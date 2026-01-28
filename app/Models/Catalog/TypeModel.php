@@ -11,7 +11,7 @@ class TypeModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['type_name', 'type_description', 'icon'];
+    protected $allowedFields = ['type_name', 'type_description', 'icon'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

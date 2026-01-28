@@ -11,7 +11,7 @@ class ProductRatingModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['product_id', 'user_id', 'rating_score', 'rating_comments', 'price_at_purchase'];
+    protected $allowedFields = ['product_id', 'user_id', 'rating_score', 'rating_comments', 'price_at_purchase'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';

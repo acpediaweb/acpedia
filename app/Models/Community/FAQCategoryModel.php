@@ -11,7 +11,7 @@ class FAQCategoryModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['category_name', 'category_description'];
+    protected $allowedFields = ['category_name', 'category_description'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

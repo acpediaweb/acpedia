@@ -11,7 +11,7 @@ class OrderDiscussionModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['order_id', 'actor_user_id', 'message_text', 'is_system_message', 'message_timestamp'];
+    protected $allowedFields = ['order_id', 'actor_user_id', 'message_text', 'is_system_message', 'message_timestamp'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

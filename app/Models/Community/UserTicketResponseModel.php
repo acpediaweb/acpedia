@@ -11,7 +11,7 @@ class UserTicketResponseModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['ticket_id', 'responder_user_id', 'response_message'];
+    protected $allowedFields = ['ticket_id', 'responder_user_id', 'response_message'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';

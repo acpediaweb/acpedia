@@ -12,7 +12,7 @@ class ForumModel extends Model
     protected $returnType = 'object';
     protected $useSoftDeletes = true;
     protected $deletedField = 'deleted_at';
-    protected array $allowedFields = ['thread_poster_id', 'thread_title', 'flair_id', 'status'];
+    protected $allowedFields = ['thread_poster_id', 'thread_title', 'flair_id', 'status'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';

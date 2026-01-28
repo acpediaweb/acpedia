@@ -11,7 +11,7 @@ class ContactUsFormSubmissionModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['full_name', 'email', 'phone_number', 'whatsapp_number', 'subject', 'message'];
+    protected $allowedFields = ['full_name', 'email', 'phone_number', 'whatsapp_number', 'subject', 'message'];
 
     protected $useTimestamps = true;
     protected $createdField = 'submitted_at';

@@ -11,7 +11,7 @@ class AdminDashboardLogModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['admin_actor_id', 'action_title', 'action_description', 'action_timestamp'];
+    protected $allowedFields = ['admin_actor_id', 'action_title', 'action_description', 'action_timestamp'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

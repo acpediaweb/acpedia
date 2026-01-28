@@ -11,7 +11,7 @@ class StaffClockLogModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['staff_user_id', 'clockin_timestamp', 'clockin_latitude', 'clockin_longitude', 'clockin_selfie_url', 'clockout_timestamp', 'clockout_latitude', 'clockout_longitude', 'clockout_selfie_url'];
+    protected $allowedFields = ['staff_user_id', 'clockin_timestamp', 'clockin_latitude', 'clockin_longitude', 'clockin_selfie_url', 'clockout_timestamp', 'clockout_latitude', 'clockout_longitude', 'clockout_selfie_url'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

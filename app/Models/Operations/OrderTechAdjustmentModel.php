@@ -11,7 +11,7 @@ class OrderTechAdjustmentModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['order_id', 'technician_actor_id', 'adjustment_title', 'adjustment_description', 'adjustment_amount', 'admin_actor_id', 'adjustment_status', 'is_admin_adjustment'];
+    protected $allowedFields = ['order_id', 'technician_actor_id', 'adjustment_title', 'adjustment_description', 'adjustment_amount', 'admin_actor_id', 'adjustment_status', 'is_admin_adjustment'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';

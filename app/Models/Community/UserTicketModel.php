@@ -11,7 +11,7 @@ class UserTicketModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['user_id', 'ticket_title', 'ticket_description', 'ticket_status'];
+    protected $allowedFields = ['user_id', 'ticket_title', 'ticket_description', 'ticket_status'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';

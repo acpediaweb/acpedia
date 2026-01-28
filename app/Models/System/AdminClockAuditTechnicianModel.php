@@ -11,7 +11,7 @@ class AdminClockAuditTechnicianModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['tech_clock_log_id', 'admin_actor_id', 'audit_action', 'audit_timestamp', 'audit_notes'];
+    protected $allowedFields = ['tech_clock_log_id', 'admin_actor_id', 'audit_action', 'audit_timestamp', 'audit_notes'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

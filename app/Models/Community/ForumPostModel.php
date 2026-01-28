@@ -12,7 +12,7 @@ class ForumPostModel extends Model
     protected $returnType = 'object';
     protected $useSoftDeletes = true;
     protected $deletedField = 'deleted_at';
-    protected array $allowedFields = ['thread_id', 'post_author_id', 'post_content'];
+    protected $allowedFields = ['thread_id', 'post_author_id', 'post_content'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';

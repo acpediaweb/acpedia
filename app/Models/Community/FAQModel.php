@@ -11,7 +11,7 @@ class FAQModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['category_id', 'question', 'answer'];
+    protected $allowedFields = ['category_id', 'question', 'answer'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';

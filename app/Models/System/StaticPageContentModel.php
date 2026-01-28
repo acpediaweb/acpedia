@@ -11,7 +11,7 @@ class StaticPageContentModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['page_name', 'page_slug', 'page_content'];
+    protected $allowedFields = ['page_name', 'page_slug', 'page_content'];
 
     protected $useTimestamps = true;
     protected $createdField = null;

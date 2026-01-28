@@ -11,7 +11,7 @@ class PKCategoryModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['pk_category_name', 'pk_category_description', 'icon'];
+    protected $allowedFields = ['pk_category_name', 'pk_category_description', 'icon'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

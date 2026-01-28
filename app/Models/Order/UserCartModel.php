@@ -11,7 +11,7 @@ class UserCartModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['user_id', 'faktur_requested', 'scheduled_datetime'];
+    protected $allowedFields = ['user_id', 'faktur_requested', 'scheduled_datetime'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

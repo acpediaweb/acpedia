@@ -11,7 +11,7 @@ class PipeModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['pipe_type', 'pipe_description', 'price_per_meter'];
+    protected $allowedFields = ['pipe_type', 'pipe_description', 'price_per_meter'];
 
     protected $useTimestamps = false;
     protected $createdField = null;

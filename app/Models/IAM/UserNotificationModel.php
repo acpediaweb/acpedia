@@ -11,7 +11,7 @@ class UserNotificationModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected array $allowedFields = ['user_id', 'notification_title', 'notification_message', 'is_read', 'is_pushed'];
+    protected $allowedFields = ['user_id', 'notification_title', 'notification_message', 'is_read', 'is_pushed'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
