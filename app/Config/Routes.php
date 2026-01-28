@@ -9,10 +9,13 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 $routes->get('/tentang-kami', 'Home::about');
 $routes->get('/layanan', 'Home::services');
+$routes->get('/layanan/(:alpha)', 'Home::serviceDetail/$1');
 $routes->get('/hubungi-kami', 'Home::contact');
 $routes->post('/hubungi-kami', 'Home::contact');
 $routes->get('/form-hvac', 'Home::hvacForm');
 $routes->post('/form-hvac', 'Home::hvacForm');
+$routes->get('/proyek', 'Home::projects');
+$routes->get('/proyek/hvac-contact', 'Home::hvacContact');
 
 // Shop routes
 $routes->group('toko-kami', function($routes) {
@@ -26,6 +29,9 @@ $routes->group('toko-kami', function($routes) {
     $routes->post('process-checkout', 'Shop::processCheckout');
     $routes->get('order/(:num)', 'Shop::orderDetail/$1');
 });
+
+// Compare products route
+$routes->get('/bandingkan', 'Shop::compare');
 
 // ============================================
 // AUTHENTICATION ROUTES

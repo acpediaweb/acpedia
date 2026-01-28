@@ -23,11 +23,16 @@ class AuthController extends BaseController
             $user = $this->userModel->getByEmail($email);
 
             if ($user && password_verify($password, $user->password_hash)) {
-                session()->set(['user_id' => $user->id, 'user' => $user]);
-                return redirect()->to('/dashboard');
+                session()->set([
+                    'user_id' => $user->id,
+                    'user_email' => $user->email,
+                    'user_fullname' => $user->fullname
+                ]);
+                session()->setFlashdata('success', 'Login berhasil! Selamat datang ' . $user->fullname);
+                return redirect()->to('/toko-kami');
             }
 
-            return redirect()->back()->with('error', 'Invalid email or password');
+            return redirect()->back()->withInput()->with('error', 'Email atau password salah');
         }
 
         return view('auth/login');
@@ -36,19 +41,39 @@ class AuthController extends BaseController
     public function register()
     {
         if ($this->request->getMethod() === 'post') {
+            $password = $this->request->getPost('password');
+            $confirmPassword = $this->request->getPost('confirm_password');
+
+            // Check if passwords match
+            if ($password !== $confirmPassword) {
+                return redirect()->back()->withInput()->with('error', 'Password dan konfirmasi password tidak cocok');
+            }
+
+            // Validate form
+            $validationRules = [
+                'fullname' => 'required|min_length[3]|max_length[100]',
+                'email' => 'required|valid_email|is_unique[users.email]',
+                'password' => 'required|min_length[6]',
+            ];
+
+            if (!$this->validate($validationRules)) {
+                return redirect()->back()->withInput()->with('error', $this->validator->listErrors());
+            }
+
             $data = [
                 'fullname' => $this->request->getPost('fullname'),
                 'email' => $this->request->getPost('email'),
-                'password_hash' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
+                'password_hash' => password_hash($password, PASSWORD_BCRYPT),
                 'role_id' => 2, // Default to User role
                 'is_active' => true,
             ];
 
             if ($this->userModel->insert($data)) {
-                return redirect()->to('/auth/login')->with('success', 'Registration successful. Please log in.');
+                session()->setFlashdata('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
+                return redirect()->to('/auth/login');
             }
 
-            return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
+            return redirect()->back()->withInput()->with('error', 'Gagal membuat akun. Silakan coba lagi.');
         }
 
         return view('auth/register');

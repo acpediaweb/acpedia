@@ -1,4 +1,4 @@
-<?php echo $this->extend('layouts/main'); ?>
+<?php echo $this->extend('layouts/shop'); ?>
 
 <?php echo $this->section('content'); ?>
 
