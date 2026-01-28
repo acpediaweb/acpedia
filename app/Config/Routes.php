@@ -15,10 +15,27 @@ $routes->group('/', ['namespace' => 'App\Controllers\Home'], static function ($r
 
 // --- 2. SHOP FRONTEND (Shop Folder) ---
 $routes->group('shop', ['namespace' => 'App\Controllers\Shop'], static function ($routes) {
-    $routes->get('', 'ShopController::index');           // Product list
-    $routes->get('(:segment)', 'ShopController::detail/$1'); // Product detail (slug)
-    $routes->get('category/(:segment)', 'ShopController::category/$1'); // Filter by category
+    
+    // Products & Services (Previously defined)
+    $routes->get('product/(:segment)', 'ShopController::detail/$1');
+    $routes->get('services', 'ServiceController::index');
+
+    // Cart Management
+    $routes->group('cart', static function ($routes) {
+        $routes->get('/', 'CartController::index');             // View full cart (shop/cart.php)
+        $routes->post('add', 'CartController::add');            // Add item (Product or Service)
+        $routes->get('remove/(:num)', 'CartController::remove/$1'); // Remove item by ID
+        $routes->post('update', 'CartController::update');      // Optional: Update quantities
+    });
+
+    // Checkout Flow
+    $routes->group('checkout', static function ($routes) {
+        $routes->get('/', 'CheckoutController::index');         // Address & Payment selection
+        $routes->post('process', 'CheckoutController::process'); // Finalize order & Snapshot data
+    });
 });
+
+
 
 // --- 3. SERVICES & BOOKING ---
 $routes->group('services', ['namespace' => 'App\Controllers\Shop'], static function ($routes) {
