@@ -22,14 +22,14 @@ class AuthController extends BaseController
 
         $user = $model->where('email', $email)->first();
 
-        if ($user && password_verify($password, $user['password_hash'])) {
+        if ($user && password_verify($password, $user->password_hash)) {
             $session->set([
-                'user_id'    => $user['id'],
-                'fullname'   => $user['fullname'],
-                'role_id'    => $user['role_id'],
+                'user_id'    => $user->id,
+                'fullname'   => $user->fullname,
+                'role_id'    => $user->role_id,
                 'isLoggedIn' => true
             ]);
-            return redirect()->to('shop')->with('success', 'Welcome back, ' . $user['fullname']);
+            return redirect()->to('shop')->with('success', 'Welcome back, ' . $user->fullname);
         }
 
         return redirect()->back()->with('error', 'Invalid email or password.');
