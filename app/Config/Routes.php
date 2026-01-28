@@ -9,7 +9,6 @@ use CodeIgniter\Router\RouteCollection;
 // --- 1. COMPANY PROFILE (Home Folder) ---
 $routes->group('/', ['namespace' => 'App\Controllers\Home'], static function ($routes) {
     $routes->get('', 'HomeController::index');
-    // Placeholder for future profile pages
     $routes->get('about', 'HomeController::about'); 
     $routes->get('contact', 'HomeController::contact');
 });
@@ -26,30 +25,35 @@ $routes->group('', ['namespace' => 'App\Controllers\Auth'], static function ($ro
 // --- 3. SHOP & SERVICES (Shop Folder) ---
 $routes->group('shop', ['namespace' => 'App\Controllers\Shop'], static function ($routes) {
     
-    // 1. Specific Routes FIRST (Hardcoded paths to avoid collision)
+    // A. Main Catalog Index (This was missing!)
+    $routes->get('', 'ShopController::index');
+
+    // B. Specific Pages (Must come BEFORE generic segments)
     $routes->get('services', 'ServiceController::index');
-    
+
+    // C. Cart Operations
     $routes->group('cart', static function ($routes) {
         $routes->get('/', 'CartController::index');             // View Cart
         $routes->post('add', 'CartController::add');            // Add Item
-        $routes->post('update', 'CartController::update');      // Update Qty & Config (Brand, Pipe, etc.)
-        $routes->post('updateConfig', 'CartController::updateConfig'); // AJAX Auto-save (Schedule & Faktur)
+        $routes->post('update', 'CartController::update');      // Update Qty & Config
+        $routes->post('updateConfig', 'CartController::updateConfig'); // AJAX Auto-save
         $routes->get('remove/(:num)', 'CartController::remove/$1'); // Remove Item
     });
 
+    // D. Checkout Flow
     $routes->group('checkout', static function ($routes) {
         $routes->get('/', 'CheckoutController::index');
         $routes->post('process', 'CheckoutController::process');
     });
 
-    // 2. Generic Slug Route LAST
-    // Catches product details like /shop/daikin-1pk
+    // E. Generic Product Detail (Catch-all for slugs)
+    // Example: shop/daikin-1pk
     $routes->get('(:segment)', 'ShopController::detail/$1'); 
 });
 
-// --- 4. INTERNAL (Future Persistence/Forum Logic) ---
-$routes->group('internal', ['namespace' => 'App\Controllers\Internal'], static function ($routes) {
-    // Restricted to Admin, Tech, and Staff
-    $routes->get('forum', 'ForumController::index');
-    $routes->get('unit/history/(:segment)', 'InventoryController::timeline/$1');
+// --- 4. CUSTOMER DASHBOARD (For Order History) ---
+$routes->group('customer', ['namespace' => 'App\Controllers\Customer'], static function ($routes) {
+    $routes->get('dashboard', 'DashboardController::index');
+    $routes->get('orders', 'OrderController::index');
+    $routes->get('profile', 'ProfileController::index');
 });
