@@ -98,7 +98,7 @@ class UserAddress extends BaseController
             'is_primary'    => $isPrimary
         ]);
 
-        return redirect()->to('customer/address')->with('success', 'Address added successfully');
+        return redirect()->to('users/address')->with('success', 'Address added successfully');
     }
 
     /**
@@ -158,7 +158,7 @@ class UserAddress extends BaseController
             ->first();
 
         if (!$address) {
-            return redirect()->to('customer/address')->with('error', 'Address not found');
+            return redirect()->to('users/address')->with('error', 'Address not found');
         }
 
         // Update address
@@ -173,7 +173,7 @@ class UserAddress extends BaseController
             'longitude'    => $this->request->getPost('longitude') ?? $address->longitude
         ]);
 
-        return redirect()->to('customer/address')->with('success', 'Address updated successfully');
+        return redirect()->to('users/address')->with('success', 'Address updated successfully');
     }
 
     /**
@@ -194,7 +194,7 @@ class UserAddress extends BaseController
             ->first();
 
         if (!$address) {
-            return redirect()->to('customer/address')->with('error', 'Address not found');
+            return redirect()->to('users/address')->with('error', 'Address not found');
         }
 
         // Set all addresses to not primary
@@ -206,7 +206,7 @@ class UserAddress extends BaseController
         // Set this address as primary
         $this->addressModel->update($id, ['is_primary' => true]);
 
-        return redirect()->to('customer/address')->with('success', 'Primary address updated');
+        return redirect()->to('users/address')->with('success', 'Primary address updated');
     }
 
     /**
@@ -227,7 +227,7 @@ class UserAddress extends BaseController
             ->first();
 
         if (!$address) {
-            return redirect()->to('customer/address')->with('error', 'Address not found');
+            return redirect()->to('users/address')->with('error', 'Address not found');
         }
 
         // Cannot delete if it's the only address
@@ -236,12 +236,12 @@ class UserAddress extends BaseController
             ->countAllResults();
 
         if ($count === 1) {
-            return redirect()->to('customer/address')->with('error', 'You must have at least one address');
+            return redirect()->to('users/address')->with('error', 'You must have at least one address');
         }
 
         // Delete address
         $this->addressModel->delete($id);
 
-        return redirect()->to('customer/address')->with('success', 'Address deleted successfully');
+        return redirect()->to('users/address')->with('success', 'Address deleted successfully');
     }
 }
