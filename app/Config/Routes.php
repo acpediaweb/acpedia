@@ -57,3 +57,34 @@ $routes->group('customer', ['namespace' => 'App\Controllers\Customer'], static f
     $routes->get('orders', 'OrderController::index');
     $routes->get('profile', 'ProfileController::index');
 });
+
+// --- 5. USER AREA (Users Folder) ---
+$routes->group('customer', ['namespace' => 'App\Controllers\Users'], static function ($routes) {
+    
+    // A. Profile Management
+    $routes->get('profile', 'UserProfile::index');
+    $routes->post('profile/update', 'UserProfile::updateProfile');
+    $routes->post('profile/update-picture', 'UserProfile::updateProfilePicture');
+    $routes->post('profile/change-password', 'UserProfile::changePassword');
+
+    // B. Address Management
+    $routes->get('address', 'UserAddress::index');
+    $routes->get('address/create', 'UserAddress::create');
+    $routes->post('address/store', 'UserAddress::store');
+    $routes->get('address/edit/(:num)', 'UserAddress::edit/$1');
+    $routes->post('address/update/(:num)', 'UserAddress::update/$1');
+    $routes->get('address/set-primary/(:num)', 'UserAddress::setPrimary/$1');
+    $routes->get('address/delete/(:num)', 'UserAddress::delete/$1');
+
+    // C. Order Management
+    $routes->get('orders', 'UserOrders::list');
+    $routes->get('orders/(:num)', 'UserOrders::detail/$1');
+
+    // D. Notifications
+    $routes->get('notification', 'UserNotif::index');
+    $routes->get('notification/mark-read/(:num)', 'UserNotif::markAsRead/$1');
+
+    // E. User Units (Inventory)
+    $routes->get('units', 'UserUnits::list');
+    $routes->get('units/(:num)', 'UserUnits::detail/$1');
+});
