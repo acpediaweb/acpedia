@@ -27,15 +27,15 @@
                 <!-- Left -->
                 <div class="flex items-center gap-6 flex-shrink-0">
                     <div class="flex items-center gap-6 text-sm">
-                        <a href="insertlink" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
+                        <a href="proyek-hvac" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
                             <i data-lucide="building-2" class="h-4 w-4"></i>
                             Project HVAC
                         </a>
-                        <a href="insertlink" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
+                        <a href="pk-kalkulator" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
                             <i data-lucide="calculator" class="h-4 w-4"></i>
                             Kalkulator PK
                         </a>
-                        <a href="insertlink" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
+                        <a href="contact" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
                             <i data-lucide="headphones" class="h-4 w-4"></i>
                             Hubungi Kami
                         </a>
@@ -78,73 +78,88 @@
     </div>
 
     <!-- Header -->
-    <header class="bg-white border-b sticky top-0 z-50 transition-all duration-300 shadow-sm border-border">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-14 md:h-16 transition-all duration-300">
-                <a href="#top">
-                    <div class="flex items-center gap-3 cursor-pointer">
-                        <img src="\assets\acpedialogo.png" alt="ACpedia Logo" class="h-6 md:h-7 w-auto">
-                    </div>
+<header class="bg-white border-b sticky top-0 z-50 transition-all duration-300 shadow-sm border-border">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between h-14 md:h-16 transition-all duration-300">
+            <a href="#top">
+                <div class="flex items-center gap-3 cursor-pointer">
+                    <img src="/assets/acpedialogo.png" alt="ACpedia Logo" class="h-6 md:h-7 w-auto">
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center gap-8">
+                <a href="#home" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
+                    <i data-lucide="home" class="h-4 w-4"></i> Beranda
                 </a>
+                <a href="#about" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
+                    <i data-lucide="wrench" class="h-4 w-4"></i> Layanan Kami
+                </a>
+                <a href="#toko" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
+                    <i data-lucide="store" class="h-4 w-4"></i> Toko Kami
+                </a>
+                <a href="#contact" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
+                    <i data-lucide="mail" class="h-4 w-4"></i> Kontak
+                </a>
+            </nav>
 
-                <nav class="hidden lg:flex items-center gap-8">
-                    <a href="#home" class="transition-colors relative group flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
-                        <i data-lucide="home" class="h-4 w-4"></i> Beranda
-                    </a>
-                    <a href="#about" class="transition-colors relative group flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
-                        <i data-lucide="wrench" class="h-4 w-4"></i> Layanan Kami
-                    </a>
-                    <a href="#toko" class="transition-colors relative group flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
-                        <i data-lucide="store" class="h-4 w-4"></i> Toko Kami
-                    </a>
-                    <a href="#contact" class="transition-colors relative group flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
-                        <i data-lucide="mail" class="h-4 w-4"></i> Kontak
-                    </a>
-                </nav>
-
-                <div class="flex items-center gap-4">
-                    <div class="hidden lg:block relative w-[115px] h-[16px] cursor-pointer hover:opacity-80 transition-opacity">
-                        <div class="absolute -left-[56px] top-1/2 -translate-y-1/2 flex items-center gap-3">
-                            <i data-lucide="bell" class="w-4 h-4 text-[#373E51] cursor-pointer hover:text-[#41B8EA] transition-colors"></i>
-                            <i data-lucide="shopping-cart" class="w-4 h-4 text-[#373E51] cursor-pointer hover:text-[#41B8EA] transition-colors"></i>
-                        </div>
-                        <div class="absolute flex flex-col font-['Roboto',sans-serif] h-[15px] justify-center leading-[0] not-italic right-0 text-[#373e51] text-[13px] text-right top-[7.5px] translate-y-[-50%] w-[91.01px]">
-                            <p class="leading-[13px]">Login/Register</p>
-                        </div>
-                        <div class="absolute left-0 size-[14px] top-px">
-                            <i data-lucide="user" class="block size-full text-[#373E51]"></i>
-                        </div>
-                    </div>
-                    
-                    <!-- Mobile Notification & Cart Icons -->
-                    <div class="flex items-center gap-4 lg:hidden">
+            <div class="flex items-center gap-4">
+                <div class="hidden lg:flex items-center gap-6">
+                    <div class="flex items-center gap-4">
                         <i data-lucide="bell" class="w-5 h-5 text-[#373E51] cursor-pointer hover:text-[#41B8EA] transition-colors"></i>
-                        <i data-lucide="shopping-cart" class="w-5 h-5 text-[#373E51] cursor-pointer hover:text-[#41B8EA] transition-colors"></i>
+                        
+                        <div class="relative group">
+                            <?= view_cell('App\Cells\CartCell::mini') ?>
+                        </div>
                     </div>
 
-                    <button id="mobileMenuToggle" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <div class="flex items-center gap-2 text-[#373E51] text-[13px] font-['Roboto',sans-serif]">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                        <?php if (session()->get('isLoggedIn')): ?>
+                            <a href="/profile" class="hover:text-[#41B8EA] transition-colors">Profile</a>
+                        <?php else: ?>
+                            <div class="flex gap-1">
+                                <a href="/login" class="hover:text-[#41B8EA] transition-colors">Login</a>
+                                <span>|</span>
+                                <a href="/register" class="hover:text-[#41B8EA] transition-colors">Register</a>
+                            </div>
+                        <?php opacity: ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 lg:hidden">
+                    <i data-lucide="bell" class="w-5 h-5 text-[#373E51] cursor-pointer"></i>
+                    <?= view_cell('App\Cells\CartCell::mini') ?>
+                    <button id="mobileMenuToggle" class="p-2 hover:bg-gray-100 rounded-lg">
                         <i data-lucide="menu" class="h-6 w-6"></i>
                     </button>
                 </div>
             </div>
-            <!-- Mobile Menu -->
-            <div id="mobileMenu" class="mobile-menu md:hidden border-t border-gray-100">
-                <div class="flex flex-col py-2">
-                    <a href="#home" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Beranda</a>
-                    <a href="#about" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Layanan Kami</a>
-                    <a href="#toko" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Toko Kami</a>
-                    <a href="#contact" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Kontak</a>
-                    <div class="px-4 py-3 border-t border-gray-100 mt-2">
-                        <div class="flex items-center gap-3 text-sm text-gray-600 mb-3">
-                            <a href="#" class="flex items-center gap-2 hover:text-[#41B8EA]">
-                                <i data-lucide="user" class="h-4 w-4"></i> Login / Register
-                            </a>
-                        </div>
+        </div>
+
+        <div id="mobileMenu" class="mobile-menu hidden border-t border-gray-100">
+            <div class="flex flex-col py-2">
+                <a href="#home" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Beranda</a>
+                <a href="#about" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Layanan Kami</a>
+                <a href="#toko" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Toko Kami</a>
+                <a href="#contact" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Kontak</a>
+                
+                <div class="px-4 py-3 border-t border-gray-100 mt-2">
+                    <div class="flex items-center gap-2 text-sm text-[#373E51]">
+                        <i data-lucide="user" class="h-4 w-4"></i>
+                        <?php if (session()->get('isLoggedIn')): ?>
+                            <a href="/profile" class="hover:text-[#41B8EA]">Profile Saya</a>
+                        <?php else: ?>
+                            <a href="/login" class="hover:text-[#41B8EA]">Login</a>
+                            <span class="text-gray-300">/</span>
+                            <a href="/register" class="hover:text-[#41B8EA]">Register</a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
-    </header>
+    </div>
+</header>
 
     <main>
   <?= $this->renderSection('content') ?>
