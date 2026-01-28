@@ -5,58 +5,68 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <?php
-// --- 1. PREPARE DATA FOR JAVASCRIPT ---
-// We convert CI4 object data into the specific JSON format the template expects
+// --- 1. DATA PREPARATION (PHP to JS) ---
+
+// A. Build Service Packets (Tabs) from DB '$pipes'
+$jsServicePackets = [];
+foreach ($pipes as $pipe) {
+    // We use the pipe_type (e.g., "Premium", "Elite") as the key
+    // Ensure your 'pipes' table has these columns or aliased in the model
+    $jsServicePackets[$pipe->pipe_type] = [
+        'price'         => (int)($pipe->price ?? 0), // Full packet price
+        'pricePerMeter' => (int)($pipe->price_per_meter ?? 0),
+        'thickness'     => $pipe->thickness ?? '-',
+        'brand'         => $pipe->brand ?? 'Generic',
+        'db_id'         => $pipe->id
+    ];
+}
+
+// B. Build Cart Items
 $jsItems = [];
 $grandTotal = 0;
 
 foreach ($items as $item) {
-    $isService = !empty($item->service_id); // Assuming strictly product items for the main list based on template style
+    // 1. Calculate Prices
+    $unitPrice = ($item->sale_price > 0) ? $item->sale_price : $item->p_price;
     
-    // Skip standalone services if you want them attached to products, 
-    // OR treat them as items. For this template, we assume products.
-    
-    // Logic to determine if a "Packet" (Service) is attached
-    // You might need to adjust this logic based on how your DB relates products to services
+    // 2. Determine if a Service (Pipe) is attached
     $attachedService = null;
     if (!empty($item->saved_pipe_id)) {
-        // Example mapping: Finding the pipe name to determine packet type
-        // You can adjust this mapping based on your actual $pipes array
-        $pipeName = 'Standard'; 
-        $pipePrice = 0;
         foreach($pipes as $p) {
             if($p->id == $item->saved_pipe_id) {
-                $pipeName = $p->pipe_type; 
-                $pipePrice = $p->price_per_meter; // Or total price
+                $attachedService = [
+                    'type'  => $p->pipe_type,
+                    'price' => (int)($p->price ?? 0), // Price of the packet
+                    'id'    => $p->id
+                ];
                 break;
             }
         }
-
-        $attachedService = [
-            'type' => $pipeName, // e.g., 'Premium', 'Biasa'
-            'price' => $pipePrice,
-            'id' => $item->saved_pipe_id
-        ];
     }
 
+    // 3. Build JS Object
     $jsItems[] = [
-        'id' => $item->id,
-        'name' => $isService ? $item->service_title : $item->product_name,
-        'image' => $item->image_url ?? 'https://placehold.co/80x80/png?text=No+Image', // Fallback image
-        'variant' => $item->variant_name ?? 'Standard Unit',
-        'location' => 'Jakarta', // You can map your address logic here if attached to item
-        'price' => (int) ($item->sale_price ?? $item->p_price),
-        'quantity' => (int) $item->quantity,
-        'selected' => true, // Default checked
-        'service' => $attachedService
+        'id'            => $item->id,
+        'name'          => $item->product_name ?? $item->service_title,
+        'image'         => $item->image ?? 'https://placehold.co/80x80/png?text=Unit', // Use DB image if available
+        'variant'       => $item->variant ?? 'Standard Unit',
+        'location'      => 'Jakarta', // Placeholder or fetch from $addresses[0]
+        'price'         => (int)$unitPrice,
+        'quantity'      => (int)$item->quantity,
+        'selected'      => true,
+        'service'       => $attachedService,
+        // Store existing addons to prevent wiping them on update (Controller logic requires sending all)
+        'saved_addons'  => $item->saved_addon_ids ?? [], 
+        'config'        => $item->service_config ?? []
     ];
 }
 ?>
-sss
+
 <main class="container mx-auto px-4 py-8 max-w-[1280px] flex-grow font-sans">
     <h1 class="text-[32px] font-semibold text-[#222] mb-6">Keranjang</h1>
 
     <div class="bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] rounded-sm overflow-hidden min-h-[500px] flex flex-col border border-gray-100">
+        
         <div class="hidden md:flex bg-[#efefef] border-b border-[#dee2e6] text-[#222] font-bold text-sm h-[48px] items-center px-5">
             <div class="w-[50px] flex justify-center">
                 <input type="checkbox" id="select-all" class="w-[18px] h-[18px] border-[#777] rounded cursor-pointer accent-[#41B8EA]">
@@ -111,10 +121,7 @@ sss
                     </div>
 
                     <div class="grid grid-cols-3 gap-3 mb-5" id="modal-tabs">
-                        <button data-tab="Biasa" onclick="selectPacket('Biasa')" class="py-2.5 px-1 rounded-[4px] text-[14px] font-medium border transition-all text-center">Biasa</button>
-                        <button data-tab="Premium" onclick="selectPacket('Premium')" class="py-2.5 px-1 rounded-[4px] text-[14px] font-medium border transition-all text-center">Premium</button>
-                        <button data-tab="Elite" onclick="selectPacket('Elite')" class="py-2.5 px-1 rounded-[4px] text-[14px] font-medium border transition-all text-center">Elite</button>
-                    </div>
+                        </div>
 
                     <div class="bg-[#f8f9fa] border border-gray-200 rounded-[6px] p-3 text-center mb-5">
                         <p class="text-[12px] text-[#666]">Kualitas pipa mempengaruhi ketahanan terhadap bocor dan performa AC</p>
@@ -123,40 +130,30 @@ sss
                     <div class="space-y-3 mb-6">
                         <div class="bg-[#f8f9fa] rounded-[6px] px-4 py-2.5 flex justify-between items-center">
                             <span class="text-[13px] font-semibold text-[#555]">Ketebalan</span>
-                            <span id="modal-thickness" class="text-[13px] text-[#333] font-medium">0.60 mm</span>
+                            <span id="modal-thickness" class="text-[13px] text-[#333] font-medium">-</span>
                         </div>
                         <div class="bg-white rounded-[6px] border border-[#eee] px-4 py-1.5 flex justify-between items-center h-[42px]">
                             <span class="text-[13px] font-semibold text-[#555]">Merk</span>
                             <div class="h-[28px] min-w-[70px] flex items-center justify-end" id="modal-brand-container">
-                                <span class="text-[13px] font-bold text-[#373e51]">DENPOO</span>
+                                <span class="text-[13px] font-bold text-[#373e51]">-</span>
                             </div>
                         </div>
                         <div class="bg-[#f8f9fa] rounded-[6px] px-4 py-2.5 flex justify-between items-center">
                             <span class="text-[13px] font-semibold text-[#555]">Harga</span>
-                            <span id="modal-price-meter" class="text-[13px] text-[#333] font-medium">Rp 90.000/meter</span>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-5 mb-6">
-                        <div>
-                            <h4 class="font-bold text-[13px] text-[#222] mb-2.5">Termasuk Dalam Paket</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-start gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#3EB48A] fill-[#3EB48A] text-white flex-shrink-0 mt-0.5"></i> <span class="text-[12.5px] text-[#444] leading-tight">Jasa Pasang AC Baru</span></li>
-                                <li class="flex items-start gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#3EB48A] fill-[#3EB48A] text-white flex-shrink-0 mt-0.5"></i> <span class="text-[12.5px] text-[#444] leading-tight">Pipa Tembaga AC (3m)</span></li>
-                            </ul>
+                            <span id="modal-price-meter" class="text-[13px] text-[#333] font-medium">-</span>
                         </div>
                     </div>
 
                     <div class="bg-[#fff9e6] border border-[#ffeeba] rounded-[6px] p-3.5 mb-6">
-                        <p class="text-[12px] text-[#856404] leading-relaxed"><span class="font-bold">Catatan:</span> Biaya tambah pipa akan tertagih setelah pemasangan.</p>
+                        <p class="text-[12px] text-[#856404] leading-relaxed"><span class="font-bold">Catatan:</span> Harga yang tertera adalah harga estimasi paket pasang (Jasa + Material).</p>
                     </div>
                 </div>
 
                 <div class="border-t border-[#eee] p-5 bg-white sticky bottom-0 z-10 rounded-b-[10px]">
                     <div class="flex justify-between items-end mb-4">
                         <div>
-                            <div class="text-[12px] text-[#777] mb-0.5">Biaya Jasa</div>
-                            <div id="modal-total-price" class="text-[18px] font-bold text-[#41b8ea] leading-none">Rp 500.000</div>
+                            <div class="text-[12px] text-[#777] mb-0.5">Biaya Paket</div>
+                            <div id="modal-total-price" class="text-[18px] font-bold text-[#41b8ea] leading-none">Rp 0</div>
                         </div>
                     </div>
                     <div class="flex gap-3">
@@ -170,61 +167,71 @@ sss
 </div>
 
 <script>
-    // 1. Initialize Data from PHP
+    // --- 1. CONFIGURATION ---
+    // Injected from PHP
     let cartItems = <?= json_encode($jsItems) ?>;
-
-    // Service Data (Matches PHP Pipes or can be static configs)
-    const servicePackets = {
-        'Biasa': { 
-            price: 500000, 
-            thickness: '0.60 mm', 
-            brand: 'DENPOO', 
-            pricePerMeter: 90000,
-            db_id: 1 // Match this to your DB ID for 'Biasa' pipe
-        },
-        'Premium': { 
-            price: 750000, 
-            thickness: '0.70 mm', 
-            brand: 'TATEYAMA', 
-            pricePerMeter: 125000,
-            db_id: 2
-        },
-        'Elite': { 
-            price: 1000000, 
-            thickness: '0.81 mm', 
-            brand: 'HODA', 
-            pricePerMeter: 150000,
-            db_id: 3
-        }
-    };
+    const servicePackets = <?= json_encode($jsServicePackets) ?>;
+    
+    // Get the first key from servicePackets to act as default
+    const packetKeys = Object.keys(servicePackets);
+    const defaultPacketKey = packetKeys.length > 0 ? packetKeys[0] : null;
 
     let currentModalItemId = null;
-    let currentSelectedPacket = 'Biasa';
+    let currentSelectedPacket = defaultPacketKey;
 
-    // --- Helpers ---
+    // --- 2. FORMATTING HELPERS ---
     function formatRupiah(amount) {
         return 'Rp ' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
-    // --- AJAX Sync Function (Updates Server) ---
-    async function syncServer(url, formData) {
+    // --- 3. SERVER SYNC (Crucial for Controller Compatibility) ---
+    // The Controller::update() wipes addons, so we must send everything back
+    async function syncCartItem(item) {
+        const formData = new FormData();
+        formData.append('item_id', item.id);
+        formData.append('qty', item.quantity);
+        
+        // Add Pipe ID if service exists
+        if(item.service && item.service.id) {
+            formData.append('pipe_id', item.service.id);
+        }
+
+        // Add Saved Addons (Restoring them so they aren't deleted)
+        if(item.saved_addons && Array.isArray(item.saved_addons)) {
+            item.saved_addons.forEach(addonId => {
+                formData.append('addons[]', addonId);
+            });
+        }
+
+        // Add Config JSON
+        if(item.config) {
+            // Controller expects array/post for config
+            // We iterate and append e.g. config[brand], config[pk]
+            for (const [key, value] of Object.entries(item.config)) {
+                formData.append(`config[${key}]`, value);
+            }
+        }
+
         try {
-            const response = await fetch(url, {
+            // We use fetch to post to the update route
+            // Note: Controller returns redirect, so fetch might follow it.
+            // For a smoother UX, we ignore the redirect HTML response in JS 
+            // unless we want to reload the page.
+            await fetch('<?= base_url('shop/cart/update') ?>', {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    '<?= csrf_token() ?>': '<?= csrf_hash() ?>' // CI4 CSRF
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             });
-            return await response.json();
+            console.log('Cart Synced');
         } catch (error) {
-            console.error('Sync Error:', error);
-            return { success: false };
+            console.error('Sync failed', error);
+            alert('Gagal menyimpan perubahan. Silakan refresh halaman.');
         }
     }
 
-    // --- Render Logic ---
+    // --- 4. RENDER LOGIC ---
     function renderCart() {
         const container = document.getElementById('cart-items-container');
         container.innerHTML = ''; 
@@ -238,20 +245,20 @@ sss
         cartItems.forEach(item => {
             const itemTotal = (item.price * item.quantity) + (item.service ? (item.service.price * item.quantity) : 0);
             
-            // Service Badge / Button
+            // Service Badge / Button Logic
             let serviceHtml = '';
             if (item.service) {
                 serviceHtml = `
                     <div class="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-[#eaf7fc] border border-[#bce0f0] rounded text-[12px] text-[#2c8bb5]">
                         <i data-lucide="wrench" class="w-3 h-3"></i>
-                        <span>Jasa: <b>${item.service.type}</b> (+${formatRupiah(item.service.price)})</span>
-                        <button onclick="removeService(${item.id})" class="ml-2 hover:text-red-500"><i data-lucide="x" class="w-3 h-3"></i></button>
+                        <span>Paket: <b>${item.service.type}</b> (+${formatRupiah(item.service.price)})</span>
+                        <button onclick="removeService(${item.id})" class="ml-2 hover:text-red-500" title="Hapus Jasa"><i data-lucide="x" class="w-3 h-3"></i></button>
                     </div>
                 `;
             } else {
                 serviceHtml = `
                     <button onclick="openJasaModal(${item.id})" class="mt-2 text-[12px] font-bold text-[#41B8EA] hover:underline flex items-center gap-1">
-                        + Tambah Jasa Pasang
+                        + Tambah Paket Pasang
                     </button>
                 `;
             }
@@ -263,7 +270,7 @@ sss
                     </div>
 
                     <div class="w-full md:w-[300px] flex gap-4">
-                        <img src="${item.image}" alt="${item.name}" class="w-[70px] h-[70px] object-cover rounded border border-gray-200">
+                        <img src="${item.image}" alt="${item.name}" class="w-[70px] h-[70px] object-cover rounded border border-gray-200 bg-white">
                         <div class="flex-1">
                             <h3 class="text-[14px] font-bold text-[#373E51] leading-snug mb-1 line-clamp-2">${item.name}</h3>
                             <span class="text-[12px] text-[#777] bg-gray-100 px-1.5 py-0.5 rounded">${item.variant}</span>
@@ -310,7 +317,8 @@ sss
         checkSelectAllStatus();
     }
 
-    // --- Interaction Logic ---
+    // --- 5. INTERACTION LOGIC ---
+
     function updateQuantity(id, change) {
         const item = cartItems.find(x => x.id === id);
         if (item) {
@@ -318,22 +326,18 @@ sss
             if (newQty >= 1) {
                 item.quantity = newQty;
                 renderCart();
-                
-                // Server Sync
-                const formData = new FormData();
-                formData.append('item_id', id);
-                formData.append('qty', newQty);
-                syncServer('<?= base_url('shop/cart/update') ?>', formData);
+                // Debounce could be added here, but direct call is safer for data integrity
+                syncCartItem(item);
             }
         }
     }
 
     function deleteItem(id) {
         if(confirm('Hapus produk ini dari keranjang?')) {
+            // Optimistic UI update
             cartItems = cartItems.filter(x => x.id !== id);
             renderCart();
-
-            // Server Sync (Assuming a delete route, or handled via update with 0 qty)
+            // Trigger actual deletion endpoint
             window.location.href = '<?= base_url('shop/cart/remove/') ?>/' + id;
         }
     }
@@ -365,18 +369,29 @@ sss
         document.getElementById('grand-total').innerText = formatRupiah(grandTotal);
     }
 
+    // Select All Listener
     document.getElementById('select-all').addEventListener('change', (e) => {
         const isChecked = e.target.checked;
         cartItems.forEach(item => item.selected = isChecked);
         renderCart();
     });
 
-    // --- Modal Logic ---
+    // --- 6. MODAL LOGIC ---
     const modal = document.getElementById('jasa-modal');
 
     function openJasaModal(id) {
+        if(!defaultPacketKey) {
+            alert("Tidak ada paket pipa tersedia saat ini.");
+            return;
+        }
         currentModalItemId = id;
-        selectPacket('Biasa'); 
+        
+        // Render Dynamic Tabs
+        renderModalTabs();
+        
+        // Select Default or Existing
+        selectPacket(defaultPacketKey);
+        
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
@@ -387,23 +402,42 @@ sss
         currentModalItemId = null;
     }
 
+    function renderModalTabs() {
+        const tabsContainer = document.getElementById('modal-tabs');
+        tabsContainer.innerHTML = '';
+        
+        // Create buttons dynamically based on DB pipes keys
+        Object.keys(servicePackets).forEach(key => {
+            const btn = document.createElement('button');
+            btn.setAttribute('data-tab', key);
+            btn.onclick = () => selectPacket(key);
+            btn.innerText = key; // e.g., "Biasa", "Premium"
+            // Base classes
+            btn.className = "py-2.5 px-1 rounded-[4px] text-[14px] font-medium border transition-all text-center";
+            tabsContainer.appendChild(btn);
+        });
+    }
+
     function selectPacket(type) {
         currentSelectedPacket = type;
         const data = servicePackets[type];
 
-        // UI Updates for Tabs
+        // Update Tab Styles
         const tabs = document.querySelectorAll('#modal-tabs button');
         tabs.forEach(btn => {
             const tabType = btn.getAttribute('data-tab');
             btn.className = "py-2.5 px-1 rounded-[4px] text-[14px] font-medium border transition-all text-center";
+            
             if(tabType === type) {
-                if(type === 'Premium') btn.classList.add('bg-[#41b8ea]', 'border-[#41b8ea]', 'text-white', 'shadow-sm');
-                else btn.classList.add('bg-[#555]', 'border-[#555]', 'text-white', 'shadow-sm');
+                // Active State (Teal/Blue style)
+                btn.classList.add('bg-[#41b8ea]', 'border-[#41b8ea]', 'text-white', 'shadow-sm');
             } else {
+                // Inactive State
                 btn.classList.add('bg-white', 'border-[#777]', 'text-[#777]', 'hover:bg-gray-50');
             }
         });
 
+        // Update Data
         document.getElementById('modal-thickness').innerText = data.thickness;
         document.getElementById('modal-price-meter').innerText = formatRupiah(data.pricePerMeter) + "/meter";
         document.getElementById('modal-total-price').innerText = formatRupiah(data.price);
@@ -411,22 +445,22 @@ sss
     }
 
     function saveJasaModal() {
-        if (currentModalItemId !== null) {
+        if (currentModalItemId !== null && currentSelectedPacket) {
             const item = cartItems.find(x => x.id === currentModalItemId);
             if (item) {
                 const packet = servicePackets[currentSelectedPacket];
                 
+                // Update Local JS State
                 item.service = {
                     type: currentSelectedPacket,
-                    price: packet.price
+                    price: packet.price,
+                    id: packet.db_id // Important: ID for DB
                 };
+                
                 renderCart();
-
-                // Server Sync (Saving the pipe/packet choice)
-                const formData = new FormData();
-                formData.append('item_id', currentModalItemId);
-                formData.append('pipe_id', packet.db_id); // Sending the mapped DB ID
-                syncServer('<?= base_url('shop/cart/updateConfig') ?>', formData);
+                
+                // Sync to Server
+                syncCartItem(item);
             }
         }
         closeJasaModal();
@@ -437,16 +471,12 @@ sss
         if(item) {
             item.service = null;
             renderCart();
-            
-            // Server Sync (Remove pipe)
-            const formData = new FormData();
-            formData.append('item_id', id);
-            formData.append('pipe_id', ''); // Empty to remove
-            syncServer('<?= base_url('shop/cart/updateConfig') ?>', formData);
+            // Sync removal to server (pipe_id will be missing/null in syncCartItem)
+            syncCartItem(item);
         }
     }
 
-    // Init
+    // Initial Render
     document.addEventListener('DOMContentLoaded', () => {
         renderCart();
     });
