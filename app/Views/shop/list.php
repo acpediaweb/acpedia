@@ -666,92 +666,228 @@
     </div>
 
 
-  <script>
-    /**
-     * 1. DATA INITIALIZATION
-     * We convert the PHP array directly into a JS object.
+<script>
+    /** * 1. GLOBAL STATE INITIALIZATION 
+     * These must be declared first to fix the ReferenceErrors
      */
-    const rawData = <?php echo json_encode($products); ?>;
-    
-    // Fix ReferenceErrors: Define these globally before they are used
+    const productsPerPage = 12; // FIX: Declaring the missing variable
     let currentPage = 1;
-    let filteredProducts = [];
+    let selectedPK = null;
+    let selectedType = null;
+    let selectedBrands = [];
+    let selectedOtherProducts = [];
+    let selectedCategory = null;
+    let currentTab = 'terbaru';
+    let searchQuery = '';
 
-    /**
-     * 2. DATA MAPPING
-     * Transforming Database columns to Frontend keys
+    // Data from PHP (Injecting the database results)
+    const rawData = <?php echo json_encode($products); ?>;
+
+    /** * 2. DATA MAPPING 
+     * Converting CI4 Database results to your UI structure
      */
     const products = rawData.map(item => {
-        // Handle Pricing & Discount
         const basePrice = parseFloat(item.base_price) || 0;
         const salePrice = parseFloat(item.sale_price) || 0;
-        const discount = (salePrice > 0 && salePrice < basePrice) 
-            ? Math.round(((basePrice - salePrice) / basePrice) * 100) 
-            : 0;
-
-        // FIX: "Object Object" JSON.parse error
-        // If CI4 already returns an object, don't parse it.
-        let featuresArr = ['Standard Unit'];
-        if (item.extra_attributes) {
-            if (typeof item.extra_attributes === 'object') {
-                featuresArr = item.extra_attributes;
-            } else {
-                try {
-                    featuresArr = JSON.parse(item.extra_attributes);
-                } catch (e) {
-                    console.warn("Invalid JSON in extra_attributes for ID: " + item.id);
-                }
-            }
-        }
-
+        
         return {
             id: parseInt(item.id),
             brand: item.brand_name || 'Generic',
             model: item.product_name,
-            pk: item.pk_category_name || 'Unknown PK',
+            pk: item.pk_category_name || 'N/A',
             type: item.type_name || 'Standard',
-            rating: 4.5, // Placeholder for now
-            reviews: 120, // Placeholder for now
+            rating: 4.5,
+            reviews: 137,
             originalPrice: basePrice,
             price: salePrice > 0 ? salePrice : basePrice,
-            discount: discount,
-            // FIX: Image 404 - Ensure this folder exists in /public/uploads/products/
-            image: '<?= base_url("uploads/products") ?>/' + (item.main_image || 'default-ac.png'),
-            features: Array.isArray(featuresArr) ? featuresArr : [featuresArr]
+            discount: (salePrice > 0 && salePrice < basePrice) ? Math.round(((basePrice - salePrice) / basePrice) * 100) : 0,
+            image: '<?= base_url("uploads/products") ?>/' + (item.main_image || 'default.png')
         };
     });
 
-    // Sync filtered products with the newly loaded data
-    filteredProducts = [...products];
+    let filteredProducts = [...products];
 
-    /**
-     * 3. RENDER LOGIC
-     * This function should exist in your script to display the items
+    // Initialize Icons
+    lucide.createIcons();
+
+    /** * 3. UI HELPERS & DROPDOWNS 
      */
-    function renderProducts() {
-        const productGrid = document.getElementById('product-grid');
-        if (!productGrid) return;
+    function setupDropdown(toggleId, contentId, chevronId) {
+        const toggle = document.getElementById(toggleId);
+        const content = document.getElementById(contentId);
+        const chevron = document.getElementById(chevronId);
+        if (!toggle || !content) return;
 
-        productGrid.innerHTML = ''; // Clear grid
-
-        // Example: Only showing current page logic here
-        filteredProducts.forEach(product => {
-            productGrid.innerHTML += `
-                <div class="product-card">
-                    <img src="${product.image}" alt="${product.model}">
-                    <h4>${product.brand}</h4>
-                    <p>${product.model} - ${product.pk}</p>
-                    <div class="price">Rp ${product.price.toLocaleString('id-ID')}</div>
-                </div>
-            `;
+        toggle.addEventListener('click', () => {
+            content.classList.toggle('open');
+            if (chevron) chevron.classList.toggle('rotate-180');
         });
     }
 
-    // Run on load
+    // Call setups
+    setupDropdown('servicesToggle', 'servicesContent', 'servicesChevron');
+    setupDropdown('pkCategoriesToggle', 'pkCategoriesContent', 'pkCategoriesChevron');
+    setupDropdown('productCategoriesToggle', 'productCategoriesContent', 'productCategoriesChevron');
+    setupDropdown('brandsFilterToggle', 'brandsFilterContent', 'brandsFilterChevron');
+    setupDropdown('pkFilterToggle', 'pkFilterContent', 'pkFilterChevron');
+    setupDropdown('typeFilterToggle', 'typeFilterContent', 'typeFilterChevron');
+    setupDropdown('otherProductsToggle', 'otherProductsContent', 'otherProductsChevron');
+
+    /** * 4. PK CALCULATOR LOGIC 
+     */
+    const m2Slider = document.getElementById('m2Slider');
+    const m2Display = document.getElementById('m2Display');
+    const sliderHandle = document.getElementById('sliderHandle');
+
+    if (m2Slider) {
+        m2Slider.addEventListener('input', function() {
+            const value = this.value;
+            m2Display.textContent = value;
+            const maxWidth = this.offsetWidth - 20;
+            const position = (value / 250) * maxWidth;
+            sliderHandle.style.left = position + 'px';
+        });
+    }
+
+    const calculateBtn = document.getElementById('calculateBtn');
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', function() {
+            const m2 = parseInt(m2Slider.value);
+            const condition = document.getElementById('roomCondition').value;
+            const btuResult = document.getElementById('btuResult');
+            const pkResult = document.getElementById('pkResult');
+            const calculationResult = document.getElementById('calculationResult');
+
+            if (m2 === 0 || !condition) {
+                alert('Silakan pilih kondisi ruangan dan geser slider!');
+                return;
+            }
+
+            const btuPerM2 = condition === 'terkena-matahari' ? 500 : 400;
+            const btuMin = m2 * btuPerM2;
+            const btuMax = m2 * 500;
+
+            const btuToPK = (btu) => {
+                if (btu <= 5000) return '1/2';
+                if (btu <= 7000) return '3/4';
+                if (btu <= 9000) return '1';
+                if (btu <= 12000) return '1.5';
+                if (btu <= 18000) return '2';
+                return '2.5';
+            };
+
+            const pkMin = btuToPK(btuMin);
+            const pkMax = btuToPK(btuMax);
+            btuResult.textContent = `${btuMin.toLocaleString('id-ID')} - ${btuMax.toLocaleString('id-ID')}`;
+            pkResult.textContent = pkMin === pkMax ? `${pkMin}` : `${pkMin} s/d ${pkMax}`;
+            calculationResult.classList.remove('hidden');
+        });
+    }
+
+    /** * 5. FILTERING ENGINE 
+     */
+    function filterProducts() {
+        filteredProducts = products.filter(product => {
+            const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand);
+            const pkMatch = !selectedPK || product.pk.includes(selectedPK); // Match "1/2" in "1/2 PK"
+            const typeMatch = !selectedType || product.type === selectedType;
+            const searchMatch = searchQuery === '' || 
+                product.brand.toLowerCase().includes(searchQuery) ||
+                product.model.toLowerCase().includes(searchQuery);
+
+            return brandMatch && pkMatch && typeMatch && searchMatch;
+        });
+
+        // Sorting
+        switch(currentTab) {
+            case 'diskon': filteredProducts.sort((a, b) => b.discount - a.discount); break;
+            case 'terlaris': filteredProducts.sort((a, b) => b.reviews - a.reviews); break;
+            case 'harga-rendah': filteredProducts.sort((a, b) => a.price - b.price); break;
+            case 'harga-tinggi': filteredProducts.sort((a, b) => b.price - a.price); break;
+            default: filteredProducts.sort((a, b) => b.id - a.id);
+        }
+
+        currentPage = 1;
+        renderProducts();
+    }
+
+    /** * 6. RENDERING 
+     */
+    function renderProducts() {
+        const grid = document.getElementById('productsGrid');
+        if (!grid) return;
+
+        const start = (currentPage - 1) * productsPerPage;
+        const end = start + productsPerPage;
+        const pageProducts = filteredProducts.slice(start, end);
+
+        if (pageProducts.length === 0) {
+            grid.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500">Produk tidak ditemukan.</div>';
+            return;
+        }
+
+        grid.innerHTML = pageProducts.map(product => `
+            <div class="product-card bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden">
+                <div class="relative">
+                    <img src="${product.image}" alt="${product.model}" class="w-full h-48 object-cover">
+                    ${product.discount > 0 ? `
+                    <div class="absolute top-2 right-2 bg-[#F99C1C] text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xs">
+                        ${product.discount}%
+                    </div>` : ''}
+                </div>
+                <div class="p-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] px-2 py-1 bg-[#41B8EA] text-white rounded">${product.type}</span>
+                        <span class="text-[10px] px-2 py-1 bg-[#3EB48A] text-white rounded">${product.pk}</span>
+                    </div>
+                    <h3 class="font-semibold text-sm mb-2 line-clamp-2">${product.brand} ${product.model}</h3>
+                    <div class="mb-3">
+                        <div class="text-xs text-gray-400 line-through">Rp ${product.originalPrice.toLocaleString('id-ID')}</div>
+                        <div class="text-lg font-bold text-[#ED2024]">Rp ${product.price.toLocaleString('id-ID')}</div>
+                    </div>
+                    <button class="w-full bg-[#F99C1C] text-white py-2 rounded text-sm font-semibold">Pesan Sekarang</button>
+                </div>
+            </div>
+        `).join('');
+
+        lucide.createIcons();
+    }
+
+    // Initial Event Listeners (Search, Tabs, Filter Buttons)
     document.addEventListener('DOMContentLoaded', () => {
+        // Search
+        document.getElementById('searchQuery')?.addEventListener('input', function() {
+            searchQuery = this.value.toLowerCase();
+            filterProducts();
+        });
+
+        // Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentTab = this.dataset.tab;
+                filterProducts();
+            });
+        });
+
+        // Brand Sidebar Filters
+        document.querySelectorAll('.brand-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const brand = this.dataset.brand;
+                if (selectedBrands.includes(brand)) {
+                    selectedBrands = selectedBrands.filter(b => b !== brand);
+                    this.classList.remove('bg-[#41B8EA]', 'text-white');
+                } else {
+                    selectedBrands.push(brand);
+                    this.classList.add('bg-[#41B8EA]', 'text-white');
+                }
+                filterProducts();
+            });
+        });
+
         renderProducts();
     });
-
 </script>
 
 <?= $this->endSection() ?>
