@@ -115,7 +115,7 @@
                     <div class="flex items-center gap-2 text-[#373E51] text-[13px] font-['Roboto',sans-serif]">
                         <i data-lucide="user" class="w-5 h-5"></i>
                         <?php if (session()->get('isLoggedIn')): ?>
-                            <a href="/profile" class="hover:text-[#41B8EA] transition-colors">Profile</a>
+                            <a href="users/profile" class="hover:text-[#41B8EA] transition-colors">Profile</a>
                         <?php else: ?>
                             <div class="flex gap-1">
                                 <a href="/login" class="hover:text-[#41B8EA] transition-colors">Login</a>
@@ -148,7 +148,7 @@
                     <div class="flex items-center gap-2 text-sm text-[#373E51]">
                         <i data-lucide="user" class="h-4 w-4"></i>
                         <?php if (session()->get('isLoggedIn')): ?>
-                            <a href="/profile" class="hover:text-[#41B8EA]">Profile Saya</a>
+                            <a href="users/profile" class="hover:text-[#41B8EA]">Profile Saya</a>
                         <?php else: ?>
                             <a href="/login" class="hover:text-[#41B8EA]">Login</a>
                             <span class="text-gray-300">/</span>
@@ -703,46 +703,99 @@
             lucide.createIcons();
         }, 1000);
 
-        document.addEventListener('DOMContentLoaded', () => {
-    const cartButton = document.getElementById('cartButton');
-    const cartDropdown = document.getElementById('cartDropdown');
+  /**
+ * ACpedia Cart Management System
+ * Handles: Toggle, Click-away, and UI updates
+ */
 
-    // Toggle Dropdown
-    cartButton.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevents immediate closing
-        cartDropdown.classList.toggle('hidden');
-        
-        // If you have Notif or User dropdowns, close them here:
-        // document.getElementById('notifDropdown').classList.add('hidden');
-    });
+const CartManager = {
+    // 1. Initialize selectors
+    init() {
+        this.cartButton = document.getElementById('cartButton');
+        this.cartDropdown = document.getElementById('cartDropdown');
+        this.itemCountText = document.getElementById('cartItemCountText');
+        this.itemLabel = document.getElementById('cartItemLabel');
+        this.notificationDot = document.getElementById('cartNotificationDot');
+        this.cartFooter = document.getElementById('cartFooter');
+        this.emptyMessage = document.getElementById('emptyCartMessage');
+        this.grandTotalDisplay = document.getElementById('cartGrandTotal');
 
-    // Close when clicking outside
-    window.addEventListener('click', (e) => {
-        if (!cartDropdown.contains(e.target) && !cartButton.contains(e.target)) {
-            cartDropdown.classList.add('hidden');
+        // Only attach events if the elements exist on the current page
+        if (this.cartButton && this.cartDropdown) {
+            this.attachEvents();
         }
-    });
+    },
 
-    // Example function to update cart UI (Call this after AJAX updates)
-    function updateCartUI(count, total) {
-        const dot = document.getElementById('cartNotificationDot');
-        const footer = document.getElementById('cartFooter');
-        const emptyMsg = document.getElementById('emptyCartMessage');
+    // 2. Event Listeners
+    attachEvents() {
+        // Toggle cart on button click
+        this.cartButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleCart();
+        });
 
-        document.getElementById('cartItemCountText').innerText = count;
-        document.getElementById('cartItemLabel').innerText = `${count} Items`;
-        document.getElementById('cartGrandTotal').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        // Close cart when clicking anywhere else
+        window.addEventListener('click', (e) => {
+            if (!this.cartDropdown.contains(e.target) && !this.cartButton.contains(e.target)) {
+                this.closeCart();
+            }
+        });
 
+        // Prevent dropdown from closing when clicking inside it
+        this.cartDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    },
+
+    // 3. UI Actions
+    toggleCart() {
+        this.cartDropdown.classList.toggle('hidden');
+        // If opening, you could trigger an API refresh here
+    },
+
+    closeCart() {
+        this.cartDropdown.classList.add('hidden');
+    },
+
+    /**
+     * Update the UI dynamically (Call this after an AJAX Add-to-Cart)
+     * @param {number} count - Total items in cart
+     * @param {number} total - Grand total value
+     */
+    updateUI(count, total) {
+        if (!this.itemCountText) return;
+
+        // Update Numbers
+        this.itemCountText.textContent = count;
+        if (this.itemLabel) this.itemLabel.textContent = `${count} Items`;
+        
+        // Update Price (Formatted to IDR)
+        if (this.grandTotalDisplay) {
+            const formattedTotal = new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(total);
+            this.grandTotalDisplay.textContent = formattedTotal;
+        }
+
+        // Handle Visibility Logic
         if (count > 0) {
-            dot.classList.remove('hidden');
-            footer.classList.remove('hidden');
-            emptyMsg.classList.add('hidden');
+            this.notificationDot?.classList.remove('hidden');
+            this.cartFooter?.classList.remove('hidden');
+            this.emptyMessage?.classList.add('hidden');
         } else {
-            dot.classList.add('hidden');
-            footer.classList.add('hidden');
-            emptyMsg.classList.remove('hidden');
+            this.notificationDot?.classList.add('hidden');
+            this.cartFooter?.classList.add('hidden');
+            this.emptyMessage?.classList.remove('hidden');
         }
     }
+};
+
+// Ensure DOM is ready before running
+document.addEventListener('DOMContentLoaded', () => {
+    CartManager.init();
 });
     </script>
 
