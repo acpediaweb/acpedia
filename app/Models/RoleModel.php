@@ -13,4 +13,6 @@ class RoleModel extends Model
     protected $useSoftDeletes = false;
     protected $allowedFields = ['name', 'description'];
     protected $useTimestamps = false;
+    protected $createdField = '';
+    protected $updatedField = '';
 }

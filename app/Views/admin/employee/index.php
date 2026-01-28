@@ -87,7 +87,7 @@
     <!-- Pagination -->
     <?php if ($pager): ?>
         <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
-            <?= $pager->links('employees', 'default') ?>
+            <?= $pager->links() ?>
         </div>
     <?php endif; ?>
 </div>

@@ -206,36 +206,6 @@
             <p class="text-gray-500 text-xs mt-2">Add key-value pairs for custom product attributes</p>
         </div>
 
-        <!-- Categories -->
-        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
-            <h2 class="text-xl font-bold text-white mb-6">Categories</h2>
-
-            <div class="space-y-2">
-                <?php if (!empty($categories)): ?>
-                    <?php foreach ($categories as $category): ?>
-                        <label class="flex items-center text-gray-300">
-                            <input type="checkbox" name="categories[]" value="<?= $category->id ?>"
-                                <?php if ($product): ?>
-                                    <?php 
-                                        $db = \Config\Database::connect();
-                                        $existing = $db->table('product_categories')
-                                            ->where('product_id', $product->id)
-                                            ->where('category_id', $category->id)
-                                            ->get()
-                                            ->getResult();
-                                        if (!empty($existing)): 
-                                    ?>
-                                        checked
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                                class="w-5 h-5 bg-gray-700 border border-gray-600 rounded focus:outline-none">
-                            <span class="ml-3"><?= esc($category->name) ?></span>
-                        </label>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </div>
-
         <!-- Form Actions -->
         <div class="flex gap-3">
             <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold transition-colors">

@@ -36,10 +36,9 @@ class Inventory extends BaseController
         $itemsPerPage = $this->request->getVar('items_per_page') ?? 20;
 
         $query = $this->inventoryModel
-            ->select('inventory.*, products.name as product_name, brands.name as brand_name, product_types.name as type_name')
+            ->select('inventory.*, products.name as product_name, brands.name as brand_name')
             ->join('products', 'products.id = inventory.product_id', 'left')
-            ->join('brands', 'brands.id = products.brand_id', 'left')
-            ->join('product_types', 'product_types.id = products.product_type_id', 'left');
+            ->join('brands', 'brands.id = products.brand_id', 'left');
 
         // Apply filters
         if (!empty($product)) {
@@ -48,10 +47,6 @@ class Inventory extends BaseController
 
         if (!empty($brand)) {
             $query = $query->where('brands.id', $brand);
-        }
-
-        if (!empty($type)) {
-            $query = $query->where('product_types.id', $type);
         }
 
         $items = $query->orderBy('inventory.created_at', 'DESC')

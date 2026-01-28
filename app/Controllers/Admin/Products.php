@@ -34,9 +34,8 @@ class Products extends BaseController
         $brand = $this->request->getVar('brand') ?? '';
 
         $query = $this->productModel
-            ->select('products.*, brands.name as brand_name, product_categories.category_id')
-            ->join('brands', 'brands.id = products.brand_id', 'left')
-            ->join('product_categories', 'product_categories.product_id = products.id', 'left');
+            ->select('products.*, brands.name as brand_name')
+            ->join('brands', 'brands.id = products.brand_id', 'left');
 
         if (!empty($search)) {
             $query = $query->like('products.name', $search);
@@ -46,8 +45,7 @@ class Products extends BaseController
             $query = $query->where('products.brand_id', $brand);
         }
 
-        $products = $query->distinct()
-            ->orderBy('products.name', 'ASC')
+        $products = $query->orderBy('products.name', 'ASC')
             ->paginate($this->perPage, 'products');
 
         return view('admin/products/index', [
@@ -156,22 +154,6 @@ class Products extends BaseController
         } else {
             $id = $this->productModel->insert($data);
             $message = 'Product created successfully';
-        }
-
-        // Handle categories
-        $categories = $this->request->getPost('categories') ?? [];
-        if (!empty($categories)) {
-            // Delete existing categories
-            $db = \Config\Database::connect();
-            $db->table('product_categories')->where('product_id', $id)->delete();
-
-            // Insert new categories
-            foreach ($categories as $catId) {
-                $db->table('product_categories')->insert([
-                    'product_id' => $id,
-                    'category_id' => $catId,
-                ]);
-            }
         }
 
         return redirect()->to('admin/products')

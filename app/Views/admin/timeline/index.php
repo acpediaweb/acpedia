@@ -92,7 +92,7 @@
         <!-- Pagination -->
         <?php if ($pager): ?>
             <div class="bg-gray-900 border-t border-gray-700 px-6 py-4">
-                <?= $pager->links('timeline', 'default') ?>
+                <?= $pager->links() ?>
             </div>
         <?php endif; ?>
     </div>
