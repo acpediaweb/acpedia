@@ -91,7 +91,7 @@
                     <div class="flex-shrink-0">
                         <div class="h-32 w-32 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center text-white text-4xl font-bold shadow-sm overflow-hidden">
                             <?php if ($user->profile_picture): ?>
-                                <img src="<?= base_url('writable/uploads/' . esc($user->profile_picture)) ?>" 
+                                <img src="<?= base_url('file/uploads/' . esc($user->profile_picture)) ?>" 
                                      alt="Profile" class="w-full h-full object-cover">
                             <?php else: ?>
                                 <?= strtoupper(substr($user->fullname, 0, 1)) ?>

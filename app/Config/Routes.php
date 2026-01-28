@@ -6,6 +6,9 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+// --- 0. FILE SERVING (Public uploads) ---
+$routes->get('file/uploads/(:any)', 'FileController::uploads/$1');
+
 // --- 1. COMPANY PROFILE (Home Folder) ---
 $routes->group('/', ['namespace' => 'App\Controllers\Home'], static function ($routes) {
     $routes->get('', 'HomeController::index');
