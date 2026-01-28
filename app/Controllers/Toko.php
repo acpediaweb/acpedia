@@ -6,8 +6,8 @@ use App\Controllers\BaseController;
 use App\Models\ProductModel;
 use App\Models\BrandModel;
 use App\Models\PkCategoryModel;
-use App\Models\TypeModel;     // Ensure you have created this model
-use App\Models\CategoryModel; // Ensure you have created this model
+use App\Models\TypeModel;
+use App\Models\CategoryModel;
 
 class Toko extends BaseController
 {
@@ -23,10 +23,7 @@ class Toko extends BaseController
         $this->productModel    = new ProductModel();
         $this->brandModel      = new BrandModel();
         $this->pkCategoryModel = new PkCategoryModel();
-        
-        // Note: Ensure TypeModel and CategoryModel files exist in app/Models/
-        // If they don't exist yet, run: php spark make:model TypeModel
-        $this->typeModel       = new TypeModel(); 
+        $this->typeModel       = new TypeModel();
         $this->categoryModel   = new CategoryModel();
     }
 
