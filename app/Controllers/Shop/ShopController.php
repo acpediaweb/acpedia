@@ -17,7 +17,7 @@ class ShopController extends BaseController
             'products' => $model->getWithRelations() 
         ];
 
-        return view('Shop/index', $data);
+        return view('shop/index', $data);
     }
 
     public function detail($slug)
@@ -36,6 +36,6 @@ class ShopController extends BaseController
         'product' => $product[0], // getWithRelations returns an array
     ];
 
-    return view('Shop/detail', $data);
+    return view('shop/detail', $data);
 }
 }
