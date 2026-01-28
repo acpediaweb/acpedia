@@ -719,8 +719,10 @@ const CartManager = {
         this.emptyMessage = document.getElementById('emptyCartMessage');
         this.grandTotalDisplay = document.getElementById('cartGrandTotal');
 
-        // GUARD: Only proceed if the essential elements exist on this page
+        // GUARD: This prevents your "Uncaught TypeError"
+        // It checks if the elements exist before trying to use them.
         if (!this.cartButton || !this.cartDropdown) {
+            console.warn("Cart elements not found. Skipping initialization.");
             return; 
         }
 
@@ -732,18 +734,20 @@ const CartManager = {
         // Toggle cart on button click
         this.cartButton.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation(); // Prevents the 'window' click from firing immediately
+            e.stopPropagation(); // Stops the click from bubbling up to 'window'
             this.toggleCart();
         });
 
         // Close cart when clicking anywhere outside the dropdown
         window.addEventListener('click', (e) => {
-            if (!this.cartDropdown.contains(e.target) && !this.cartButton.contains(e.target)) {
-                this.closeCart();
+            if (!this.cartDropdown.classList.contains('hidden')) {
+                if (!this.cartDropdown.contains(e.target) && !this.cartButton.contains(e.target)) {
+                    this.closeCart();
+                }
             }
         });
 
-        // Prevent the dropdown from closing when clicking inside it
+        // Prevent the dropdown from closing when clicking inside the content itself
         this.cartDropdown.addEventListener('click', (e) => {
             e.stopPropagation();
         });
@@ -751,17 +755,7 @@ const CartManager = {
 
     // 3. Actions
     toggleCart() {
-        const isHidden = this.cartDropdown.classList.contains('hidden');
-        if (isHidden) {
-            this.openCart();
-        } else {
-            this.closeCart();
-        }
-    },
-
-    openCart() {
-        this.cartDropdown.classList.remove('hidden');
-        // Optional: add animation classes here
+        this.cartDropdown.classList.toggle('hidden');
     },
 
     closeCart() {
@@ -771,13 +765,13 @@ const CartManager = {
     /**
      * Update the UI (Call this after AJAX 'Add to Cart' or 'Delete')
      * @param {number} count - Number of items
-     * @param {number} total - Subtotal value
+     * @param {number} total - Subtotal value (integer)
      */
     updateUI(count, total) {
         if (this.itemCountText) this.itemCountText.textContent = count;
         if (this.itemLabel) this.itemLabel.textContent = `${count} Items`;
 
-        // Format price to IDR: 50000 -> Rp 50.000
+        // Format price to IDR automatically
         if (this.grandTotalDisplay) {
             this.grandTotalDisplay.textContent = new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -786,7 +780,7 @@ const CartManager = {
             }).format(total);
         }
 
-        // Toggle visibility of empty states vs footer
+        // Handle visibility of empty vs full cart states
         if (count > 0) {
             this.notificationDot?.classList.remove('hidden');
             this.cartFooter?.classList.remove('hidden');
@@ -799,10 +793,12 @@ const CartManager = {
     }
 };
 
-// Start the manager once the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
+// CRITICAL: This ensures the HTML is fully loaded before the JS runs
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => CartManager.init());
+} else {
     CartManager.init();
-});
+}
     </script>
 
 </body>
