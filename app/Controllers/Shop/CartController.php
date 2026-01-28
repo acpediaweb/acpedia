@@ -8,7 +8,7 @@ use App\Models\CartModel;
 class CartController extends BaseController
 {
     /**
-     * Display the cart with data pulled from specific schema tables.
+     * Display the full cart with all configuration options and address picker.
      */
     public function index()
     {
@@ -19,10 +19,11 @@ class CartController extends BaseController
         $userId = session()->get('user_id');
         $db = \Config\Database::connect();
 
-        // 1. Fetch Cart Header
+        // 1. Fetch Cart Header (Schedule & Faktur status)
         $cart = $db->table('user_cart')->where('user_id', $userId)->get()->getRow();
         
         // 2. Fetch Cart Items with joined Product/Service details
+        //    (Price calculation happens in the view, we just need base data here)
         $items = $db->table('user_cart_items as uci')
             ->select('uci.*, p.product_name, p.base_price as p_price, p.sale_price, s.service_title, s.base_price as s_price')
             ->join('user_cart as uc', 'uc.id = uci.cart_id')
@@ -32,14 +33,14 @@ class CartController extends BaseController
             ->get()
             ->getResult();
 
-        // 3. Attach "Addons/Config" data to each item for the View
+        // 3. Attach Saved Configurations (Addons, Pipes, JSON Data) to items
         foreach ($items as $item) {
             $item->saved_addons = $db->table('user_cart_item_addons')
                 ->where('cart_item_id', $item->id)
                 ->get()
                 ->getResult();
                 
-            // Helper to extract specific config from the rows
+            // Parse the JSON config for Services (Brand, PK, Type) if it exists
             $item->service_config = null;
             foreach ($item->saved_addons as $addon) {
                 if (!empty($addon->extra_data_json)) {
@@ -49,14 +50,23 @@ class CartController extends BaseController
             }
         }
 
-        // 4. Fetch Dropdown Data from Schema
+        // 4. Fetch User Addresses (For the Sidebar Picker)
+        //    Ordered by Primary first so it shows up as default
+        $addresses = $db->table('users_addresses')
+            ->where('user_id', $userId)
+            ->orderBy('is_primary', 'DESC') 
+            ->get()
+            ->getResult();
+
+        // 5. Fetch Dropdown Data from Schema Tables
         $data = [
             'title'         => 'Your Shopping Cart',
             'cart'          => $cart,
             'items'         => $items,
+            'addresses'     => $addresses, // Passed to View for the dropdown
             'brands'        => $db->table('brands')->orderBy('brand_name', 'ASC')->get()->getResult(),
-            'pk_categories' => $db->table('pk_categories')->orderBy('id', 'ASC')->get()->getResult(), // From schema
-            'types'         => $db->table('types')->orderBy('type_name', 'ASC')->get()->getResult(),   // From schema
+            'pk_categories' => $db->table('pk_categories')->orderBy('id', 'ASC')->get()->getResult(),
+            'types'         => $db->table('types')->orderBy('type_name', 'ASC')->get()->getResult(),
             'pipes'         => $db->table('pipes')->get()->getResult(),
             'addons'        => $db->table('addons')->get()->getResult()
         ];
@@ -65,7 +75,7 @@ class CartController extends BaseController
     }
 
     /**
-     * Add Item to Cart (Basic Entry)
+     * Add Item to Cart (Entry Point)
      */
     public function add()
     {
@@ -74,7 +84,7 @@ class CartController extends BaseController
         $userId = session()->get('user_id');
         $db = \Config\Database::connect();
         
-        // Get or Create Cart
+        // Get or Create Cart Header
         $cartModel = new CartModel();
         $cart = $cartModel->where('user_id', $userId)->first();
         $cartId = $cart ? $cart->id : $cartModel->insert(['user_id' => $userId]);
@@ -91,7 +101,7 @@ class CartController extends BaseController
     }
 
     /**
-     * Update Quantity and Save Complex Configurations
+     * Update Quantity and Save Complex Configurations (Pipes, JSON, Addons)
      */
     public function update()
     {
@@ -103,13 +113,13 @@ class CartController extends BaseController
             'quantity' => $this->request->getPost('qty')
         ]);
 
-        // 2. Clear previous configs/addons for this item (simplest way to sync)
+        // 2. Clear previous configs/addons for this item
+        //    (This is the cleanest way to ensure we don't have duplicate pipes/configs)
         $db->table('user_cart_item_addons')->where('cart_item_id', $itemId)->delete();
 
-        // 3. Save Service Configuration (Brand, PK, Type)
-        $configData = $this->request->getPost('config'); // Array from form
+        // 3. Save Service Configuration (Brand, Type, PK) -> Stored as JSON
+        $configData = $this->request->getPost('config');
         if (!empty($configData)) {
-            // We store this as a JSON row in user_cart_item_addons
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id'    => $itemId,
                 'extra_data_json' => json_encode($configData),
@@ -123,7 +133,7 @@ class CartController extends BaseController
             $db->table('user_cart_item_addons')->insert([
                 'cart_item_id' => $itemId,
                 'pipe_id'      => $pipeId,
-                'quantity'     => $this->request->getPost('qty') // Pipe length usually matches unit qty
+                'quantity'     => 1 
             ]);
         }
 
@@ -141,7 +151,7 @@ class CartController extends BaseController
     }
 
     /**
-     * Auto-Save Schedule & Faktur
+     * AJAX Endpoint: Auto-Save Schedule & Faktur
      */
     public function updateConfig()
     {
@@ -157,6 +167,9 @@ class CartController extends BaseController
         return $this->response->setJSON(['status' => 'success']);
     }
 
+    /**
+     * Remove Item
+     */
     public function remove($id)
     {
         $db = \Config\Database::connect();
