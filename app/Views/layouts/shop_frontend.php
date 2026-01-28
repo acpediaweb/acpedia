@@ -719,10 +719,9 @@ const CartManager = {
         this.emptyMessage = document.getElementById('emptyCartMessage');
         this.grandTotalDisplay = document.getElementById('cartGrandTotal');
 
-        // GUARD: This prevents your "Uncaught TypeError"
-        // It checks if the elements exist before trying to use them.
+        // GUARD: This is what fixes your Uncaught TypeError.
+        // If these elements aren't on the page, the script exits gracefully.
         if (!this.cartButton || !this.cartDropdown) {
-            console.warn("Cart elements not found. Skipping initialization.");
             return; 
         }
 
@@ -734,11 +733,11 @@ const CartManager = {
         // Toggle cart on button click
         this.cartButton.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation(); // Stops the click from bubbling up to 'window'
+            e.stopPropagation(); // Stops the click from immediately closing the cart via window listener
             this.toggleCart();
         });
 
-        // Close cart when clicking anywhere outside the dropdown
+        // Close cart when clicking anywhere outside
         window.addEventListener('click', (e) => {
             if (!this.cartDropdown.classList.contains('hidden')) {
                 if (!this.cartDropdown.contains(e.target) && !this.cartButton.contains(e.target)) {
@@ -747,13 +746,13 @@ const CartManager = {
             }
         });
 
-        // Prevent the dropdown from closing when clicking inside the content itself
+        // Prevent the dropdown from closing when clicking inside it
         this.cartDropdown.addEventListener('click', (e) => {
             e.stopPropagation();
         });
     },
 
-    // 3. Actions
+    // 3. UI Actions
     toggleCart() {
         this.cartDropdown.classList.toggle('hidden');
     },
@@ -763,15 +762,15 @@ const CartManager = {
     },
 
     /**
-     * Update the UI (Call this after AJAX 'Add to Cart' or 'Delete')
-     * @param {number} count - Number of items
-     * @param {number} total - Subtotal value (integer)
+     * Update the UI (Call this after an AJAX Add-to-Cart)
+     * @param {number} count - Total items
+     * @param {number} total - Grand total value
      */
     updateUI(count, total) {
         if (this.itemCountText) this.itemCountText.textContent = count;
         if (this.itemLabel) this.itemLabel.textContent = `${count} Items`;
 
-        // Format price to IDR automatically
+        // Format price to IDR: 50000 -> Rp 50.000
         if (this.grandTotalDisplay) {
             this.grandTotalDisplay.textContent = new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -780,7 +779,7 @@ const CartManager = {
             }).format(total);
         }
 
-        // Handle visibility of empty vs full cart states
+        // Handle Visibility Logic
         if (count > 0) {
             this.notificationDot?.classList.remove('hidden');
             this.cartFooter?.classList.remove('hidden');
@@ -793,12 +792,10 @@ const CartManager = {
     }
 };
 
-// CRITICAL: This ensures the HTML is fully loaded before the JS runs
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => CartManager.init());
-} else {
+// Start the manager once the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
     CartManager.init();
-}
+});
     </script>
 
 </body>
