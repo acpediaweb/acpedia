@@ -397,4 +397,18 @@ class Shop extends BaseController
 
         return view('shop/order_detail', $data);
     }
+
+    /**
+     * Display product comparison page
+     * Route: /bandingkan
+     */
+    public function compare()
+    {
+        $data = [
+            'title' => 'ACPedia - Bandingkan Produk',
+            'page' => 'compare',
+        ];
+
+        return view('shop/compare', $data);
+    }
 }

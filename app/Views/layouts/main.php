@@ -16,15 +16,21 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <?php if (session()->has('user_id')): ?>
-                        <li class="nav-item"><a class="nav-link" href="/cart">Cart</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/orders">Orders</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/auth/profile">Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/auth/logout">Logout</a></li>
-                    <?php else: ?>
-                        <li class="nav-item"><a class="nav-link" href="/auth/login">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/auth/register">Register</a></li>
-                    <?php endif; ?>
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="layananDropdown" role="button" data-bs-toggle="dropdown">
+                            Layanan
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="layananDropdown">
+                            <li><a class="dropdown-item" href="/layanan">Semua Layanan</a></li>
+                            <li><a class="dropdown-item" href="/layanan/pemasangan">Pemasangan</a></li>
+                            <li><a class="dropdown-item" href="/layanan/perawatan">Perawatan</a></li>
+                            <li><a class="dropdown-item" href="/layanan/perbaikan">Perbaikan</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/proyek">Proyek</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/tentang-kami">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/hubungi-kami">Contact</a></li>
                 </ul>
             </div>
         </div>

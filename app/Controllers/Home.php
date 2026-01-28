@@ -143,4 +143,69 @@ class Home extends BaseController
 
         return view('home/hvac_form', $data);
     }
+
+    /**
+     * Display service detail page
+     * Route: /layanan/:slug
+     */
+    public function serviceDetail($slug = null)
+    {
+        $services = [
+            'pemasangan' => [
+                'title' => 'ACPedia - Layanan Pemasangan',
+                'name' => 'Pemasangan',
+                'slug' => 'pemasangan'
+            ],
+            'perawatan' => [
+                'title' => 'ACPedia - Layanan Perawatan',
+                'name' => 'Perawatan',
+                'slug' => 'perawatan'
+            ],
+            'perbaikan' => [
+                'title' => 'ACPedia - Layanan Perbaikan',
+                'name' => 'Perbaikan',
+                'slug' => 'perbaikan'
+            ],
+        ];
+
+        if (!$slug || !isset($services[$slug])) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        $data = [
+            'title' => $services[$slug]['title'],
+            'page' => 'service',
+            'service' => $services[$slug],
+        ];
+
+        return view('home/service_detail', $data);
+    }
+
+    /**
+     * Display projects page
+     * Route: /proyek
+     */
+    public function projects()
+    {
+        $data = [
+            'title' => 'ACPedia - Proyek Kami',
+            'page' => 'projects',
+        ];
+
+        return view('home/projects', $data);
+    }
+
+    /**
+     * Display HVAC contact page (project detail)
+     * Route: /proyek/hvac-contact
+     */
+    public function hvacContact()
+    {
+        $data = [
+            'title' => 'ACPedia - HVAC Contact - Proyek',
+            'page' => 'hvac_contact',
+        ];
+
+        return view('home/hvac_contact', $data);
+    }
 }
