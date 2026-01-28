@@ -24,16 +24,17 @@ $routes->group('', ['namespace' => 'App\Controllers\Auth'], static function ($ro
 });
 
 // --- 3. SHOP & SERVICES (Shop Folder) ---
-// --- 3. SHOP & SERVICES (Shop Folder) ---
 $routes->group('shop', ['namespace' => 'App\Controllers\Shop'], static function ($routes) {
     
-    // 1. Specific Routes FIRST (Hardcoded paths)
+    // 1. Specific Routes FIRST (Hardcoded paths to avoid collision)
     $routes->get('services', 'ServiceController::index');
     
     $routes->group('cart', static function ($routes) {
-        $routes->get('/', 'CartController::index');
-        $routes->post('add', 'CartController::add');
-        $routes->get('remove/(:num)', 'CartController::remove/$1');
+        $routes->get('/', 'CartController::index');             // View Cart
+        $routes->post('add', 'CartController::add');            // Add Item
+        $routes->post('update', 'CartController::update');      // Update Qty & Config (Brand, Pipe, etc.)
+        $routes->post('updateConfig', 'CartController::updateConfig'); // AJAX Auto-save (Schedule & Faktur)
+        $routes->get('remove/(:num)', 'CartController::remove/$1'); // Remove Item
     });
 
     $routes->group('checkout', static function ($routes) {
@@ -42,7 +43,7 @@ $routes->group('shop', ['namespace' => 'App\Controllers\Shop'], static function 
     });
 
     // 2. Generic Slug Route LAST
-    // If you put this at the top, it 'eats' the word 'cart' or 'services'
+    // Catches product details like /shop/daikin-1pk
     $routes->get('(:segment)', 'ShopController::detail/$1'); 
 });
 
