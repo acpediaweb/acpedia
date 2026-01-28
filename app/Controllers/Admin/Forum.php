@@ -27,7 +27,7 @@ class Forum extends BaseController
         $status = $this->request->getVar('status') ?? '';
         $search = $this->request->getVar('search') ?? '';
 
-        // Added joins to fetch author name and post count
+        // Join to get author name and count posts
         $query = $this->forumModel
             ->select('forum.*, users.fullname as author_name, COUNT(forum_posts.id) as post_count')
             ->join('users', 'users.id = forum.thread_poster_id', 'left')
@@ -54,11 +54,11 @@ class Forum extends BaseController
     }
 
     /**
-     * Show forum thread with posts
+     * Show forum thread with vBulletin-style details
      */
     public function show($id)
     {
-        // Join users to get the thread author's name
+        // Get Thread Details
         $thread = $this->forumModel
             ->select('forum.*, users.fullname as author_name')
             ->join('users', 'users.id = forum.thread_poster_id', 'left')
@@ -69,9 +69,9 @@ class Forum extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        // Get all posts in thread
+        // Get Posts with User Stats (Join Date for 'Member Since')
         $posts = $this->postModel
-            ->select('forum_posts.*, users.fullname, users.profile_picture')
+            ->select('forum_posts.*, users.fullname, users.profile_picture, users.created_at as member_since')
             ->join('users', 'users.id = forum_posts.post_author_id', 'left')
             ->where('forum_posts.thread_id', $id)
             ->where('forum_posts.deleted_at', null)
@@ -82,6 +82,31 @@ class Forum extends BaseController
             'thread' => $thread,
             'posts' => $posts,
         ]);
+    }
+
+    /**
+     * Handle Reply Submission (QuillJS)
+     */
+    public function reply($id)
+    {
+        $content = $this->request->getPost('content');
+        
+        // Basic validation to ensure content isn't empty or just whitespace
+        if (empty(trim(strip_tags($content)))) {
+             return redirect()->back()->with('error', 'Reply cannot be empty.');
+        }
+
+        $this->postModel->insert([
+            'thread_id' => $id,
+            'post_author_id' => session()->get('user_id'),
+            'content' => $content, // QuillJS sends HTML
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        // Touch the thread to update 'updated_at'
+        $this->forumModel->update($id, ['updated_at' => date('Y-m-d H:i:s')]);
+
+        return redirect()->to('admin/forum/' . $id)->with('success', 'Reply posted successfully');
     }
 
     /**

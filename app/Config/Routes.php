@@ -125,6 +125,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('forum/save', 'Forum::save');
     $routes->post('forum/(:num)/close', 'Forum::closeThread/$1');
     $routes->post('forum/(:num)/reopen', 'Forum::reopenThread/$1');
+    $routes->post('forum/(:num)/reply', 'Forum::reply/$1'); // 
 
     // H. Users Management
     $routes->get('users', 'Users::index');
