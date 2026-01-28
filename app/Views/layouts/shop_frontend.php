@@ -119,7 +119,7 @@
                     <div class="flex items-center gap-2 text-[#373E51] text-[13px]">
                         <i data-lucide="user" class="w-5 h-5"></i>
                         <?php if (session()->get('isLoggedIn')): ?>
-                            <a href="users/profile" class="hover:text-[#41B8EA]">Profile</a>
+                            <a href="/users/profile" class="hover:text-[#41B8EA]">Profile</a>
                         <?php else: ?>
                             <a href="/login" class="hover:text-[#41B8EA]">Login</a>
                             <span>|</span>
@@ -148,7 +148,7 @@
                 <a href="#contact" class="px-4 py-3 text-[#373E51] hover:bg-gray-50">Kontak</a>
                 <div class="px-4 pt-3 border-t">
                     <?php if (session()->get('isLoggedIn')): ?>
-                        <a href="users/profile" class="text-sm">Profile Saya</a>
+                        <a href="/users/profile" class="text-sm">Profile Saya</a>
                     <?php else: ?>
                         <a href="/login" class="text-sm">Login / Register</a>
                     <?php endif; ?>
