@@ -139,32 +139,34 @@
 
                 <!-- Additional Images -->
                 <div>
-                    <label class="text-gray-400 text-sm font-semibold block mb-2">Additional Images</label>
-                    <input type="file" name="additional_images[]" accept="image/*" multiple
-                        class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500">
-                    <p class="text-gray-500 text-xs mt-1">Upload multiple images as JSON array</p>
-                    
-                    <?php if ($product && !empty($product->additional_images)): ?>
-                        <div class="mt-4">
-                            <p class="text-gray-400 text-sm font-semibold mb-3">Current Additional Images</p>
-                            <div class="grid grid-cols-4 gap-3">
-                                <?php 
-                                    $images = json_decode($product->additional_images, true);
-                                    if (is_array($images)): 
-                                        foreach ($images as $idx => $img): 
-                                ?>
-                                    <div class="relative">
-                                        <img src="<?= base_url('file/uploads/' . $img) ?>" 
-                                            alt="Additional" class="w-full h-20 object-cover rounded border border-gray-600">
-                                        <span class="absolute top-1 right-1 bg-gray-900 text-white text-xs px-2 py-1 rounded">
-                                            #<?= ($idx + 1) ?>
-                                        </span>
-                                    </div>
-                                <?php endforeach; endif; endif; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                </div>
+    <label class="text-gray-400 text-sm font-semibold block mb-2">Additional Images</label>
+    <input type="file" name="additional_images[]" accept="image/*" multiple
+        class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500">
+    <p class="text-gray-500 text-xs mt-1">Upload multiple images as JSON array</p>
+    
+    <?php if ($product && !empty($product->additional_images)): ?>
+        <div class="mt-4">
+            <p class="text-gray-400 text-sm font-semibold mb-3">Current Additional Images</p>
+            <div class="grid grid-cols-4 gap-3">
+                <?php 
+                    $images = json_decode($product->additional_images, true);
+                    if (is_array($images)): 
+                        foreach ($images as $idx => $img): 
+                ?>
+                    <div class="relative">
+                        <img src="<?= base_url('file/uploads/' . $img) ?>" 
+                            alt="Additional" class="w-full h-20 object-cover rounded border border-gray-600">
+                        <span class="absolute top-1 right-1 bg-gray-900 text-white text-xs px-2 py-1 rounded">
+                            #<?= ($idx + 1) ?>
+                        </span>
+                    </div>
+                <?php 
+                        endforeach; 
+                    endif; 
+                ?>
+            </div>
+        </div>
+    <?php endif; ?> </div>
             </div>
         </div>
 
