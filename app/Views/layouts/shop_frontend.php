@@ -81,23 +81,23 @@
 <header class="bg-white border-b sticky top-0 z-50 transition-all duration-300 shadow-sm border-border">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-14 md:h-16 transition-all duration-300">
-            <a href="#top">
+            <a href="/">
                 <div class="flex items-center gap-3 cursor-pointer">
                     <img src="/assets/acpedialogo.png" alt="ACpedia Logo" class="h-6 md:h-7 w-auto">
                 </div>
             </a>
 
             <nav class="hidden lg:flex items-center gap-8">
-                <a href="#home" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
+                <a href="/" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
                     <i data-lucide="home" class="h-4 w-4"></i> Beranda
                 </a>
-                <a href="#about" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
+                <a href="/shop/services" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
                     <i data-lucide="wrench" class="h-4 w-4"></i> Layanan Kami
                 </a>
-                <a href="#toko" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
+                <a href="/shop" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
                     <i data-lucide="store" class="h-4 w-4"></i> Toko Kami
                 </a>
-                <a href="#contact" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
+                <a href="/contact" class="transition-colors flex items-center gap-2 text-[#373E51] hover:text-[#41B8EA]">
                     <i data-lucide="mail" class="h-4 w-4"></i> Kontak
                 </a>
             </nav>
@@ -139,10 +139,10 @@
 
         <div id="mobileMenu" class="mobile-menu hidden border-t border-gray-100">
             <div class="flex flex-col py-2">
-                <a href="#home" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Beranda</a>
-                <a href="#about" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Layanan Kami</a>
-                <a href="#toko" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Toko Kami</a>
-                <a href="#contact" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Kontak</a>
+                <a href="/" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Beranda</a>
+                <a href="/about" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Layanan Kami</a>
+                <a href="/shop" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Toko Kami</a>
+                <a href="/contact" class="px-4 py-3 text-[#373E51] hover:bg-gray-50 hover:text-[#41B8EA] font-medium transition-colors">Kontak</a>
                 
                 <div class="px-4 py-3 border-t border-gray-100 mt-2">
                     <div class="flex items-center gap-2 text-sm text-[#373E51]">
@@ -702,12 +702,49 @@
         setInterval(() => {
             lucide.createIcons();
         }, 1000);
+
+        document.addEventListener('DOMContentLoaded', () => {
+    const cartButton = document.getElementById('cartButton');
+    const cartDropdown = document.getElementById('cartDropdown');
+
+    // Toggle Dropdown
+    cartButton.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevents immediate closing
+        cartDropdown.classList.toggle('hidden');
+        
+        // If you have Notif or User dropdowns, close them here:
+        // document.getElementById('notifDropdown').classList.add('hidden');
+    });
+
+    // Close when clicking outside
+    window.addEventListener('click', (e) => {
+        if (!cartDropdown.contains(e.target) && !cartButton.contains(e.target)) {
+            cartDropdown.classList.add('hidden');
+        }
+    });
+
+    // Example function to update cart UI (Call this after AJAX updates)
+    function updateCartUI(count, total) {
+        const dot = document.getElementById('cartNotificationDot');
+        const footer = document.getElementById('cartFooter');
+        const emptyMsg = document.getElementById('emptyCartMessage');
+
+        document.getElementById('cartItemCountText').innerText = count;
+        document.getElementById('cartItemLabel').innerText = `${count} Items`;
+        document.getElementById('cartGrandTotal').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+
+        if (count > 0) {
+            dot.classList.remove('hidden');
+            footer.classList.remove('hidden');
+            emptyMsg.classList.add('hidden');
+        } else {
+            dot.classList.add('hidden');
+            footer.classList.add('hidden');
+            emptyMsg.classList.remove('hidden');
+        }
+    }
+});
     </script>
+
 </body>
 </html>
-
-
- <?= view_cell('App\Cells\CartCell::mini') ?>
-  <?php if (session()->get('isLoggedIn')): ?>  
-                        <?php else: ?>
-                        <?php endif; ?>
