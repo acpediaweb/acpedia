@@ -27,17 +27,17 @@
                 <!-- Left - Menu Links -->
                 <div class="flex items-center gap-6 flex-shrink-0">
                     <div class="flex items-center gap-6 text-sm">
-                        <a href="insertlink" target="_blank" rel="noopener noreferrer" 
+                        <a href="proyek-hvac" target="_blank" rel="noopener noreferrer" 
                            class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
                             <i data-lucide="building-2" class="h-4 w-4"></i>
                             Project HVAC
                         </a>
-                        <a href="insertlink" target="_blank" rel="noopener noreferrer"
+                        <a href="pk-kalkulator" target="_blank" rel="noopener noreferrer"
                            class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
                             <i data-lucide="calculator" class="h-4 w-4"></i>
                             Kalkulator PK
                         </a>
-                        <a href="insertlink" target="_blank" rel="noopener noreferrer"
+                        <a href="contact" target="_blank" rel="noopener noreferrer"
                            class="flex items-center gap-1.5 text-gray-700 hover:text-[#41B8EA] transition-colors whitespace-nowrap">
                             <i data-lucide="headphones" class="h-4 w-4"></i>
                             Hubungi Kami
@@ -96,7 +96,7 @@
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-8">
-                    <a href="home" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
+                    <a href="/" class="text-gray-800 hover:text-[#41B8EA] transition-colors flex items-center gap-2 relative group">
                         <i data-lucide="home" class="h-4 w-4"></i>
                         Beranda
                         <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#41B8EA] transition-all group-hover:w-full"></span>
@@ -119,7 +119,7 @@
                 </nav>
 
                 <div class="flex items-center gap-4">
-                    <a href="insertlink" target="_blank" rel="noopener noreferrer"
+                    <a href="proyek-hvac" target="_blank" rel="noopener noreferrer"
                        class="hidden lg:flex items-center gap-2 bg-[#F99C1C] hover:bg-[#F99C1C]/90 text-white px-4 py-2 rounded-md transition-all">
                         <i data-lucide="rocket" class="h-4 w-4"></i>
                         Mulai Proyek
@@ -133,7 +133,7 @@
             <!-- Mobile Menu -->
             <div id="mobileMenu" class="mobile-menu lg:hidden border-t border-gray-200">
                 <div class="py-3 space-y-2">
-                    <a href="home" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
+                    <a href="/" class="flex items-center gap-2 py-2 px-2 rounded hover:bg-blue-50 text-gray-800 hover:text-[#41B8EA] transition-colors mobile-link">
                         <i data-lucide="home" class="h-4 w-4"></i>
                         Beranda
                     </a>
@@ -150,7 +150,7 @@
                         Kontak
                     </a>
                     <div class="pt-2 px-2">
-                        <a href="insertlink" target="_blank" rel="noopener noreferrer"
+                        <a href="proyek-hvac" target="_blank" rel="noopener noreferrer"
                            class="flex items-center justify-center gap-2 bg-[#F99C1C] hover:bg-[#F99C1C]/90 text-white px-4 py-2 rounded-md w-full">
                             <i data-lucide="rocket" class="h-4 w-4"></i>
                             Mulai Proyek
