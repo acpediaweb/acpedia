@@ -13,7 +13,7 @@
                     <h1 class="text-3xl font-bold text-gray-900">My Addresses</h1>
                     <p class="text-gray-500">Manage your delivery addresses</p>
                 </div>
-                <a href="<?= base_url('customer/address/create') ?>" 
+                <a href="<?= base_url('users/address/create') ?>" 
                    class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
                     + Add New Address
                 </a>
@@ -41,7 +41,7 @@
                     </svg>
                     <h3 class="text-lg font-bold text-gray-900 mb-2">No addresses yet</h3>
                     <p class="text-gray-500 mb-6">Add your first address to get started with ordering</p>
-                    <a href="<?= base_url('customer/address/create') ?>" 
+                    <a href="<?= base_url('users/address/create') ?>" 
                        class="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
                         Add Address
                     </a>
@@ -93,17 +93,17 @@
 
                             <!-- Actions -->
                             <div class="flex gap-2 flex-wrap">
-                                <a href="<?= base_url('customer/address/edit/' . $address->id) ?>" 
+                                <a href="<?= base_url('users/address/edit/' . $address->id) ?>" 
                                    class="flex-1 px-4 py-2 bg-blue-50 text-blue-600 font-semibold rounded-lg hover:bg-blue-100 transition-colors text-center text-sm">
                                     Edit
                                 </a>
 
                                 <?php if (!$address->is_primary): ?>
-                                    <a href="<?= base_url('customer/address/set-primary/' . $address->id) ?>" 
+                                    <a href="<?= base_url('users/address/set-primary/' . $address->id) ?>" 
                                        class="flex-1 px-4 py-2 bg-gray-50 text-gray-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors text-center text-sm">
                                         Set Primary
                                     </a>
-                                    <a href="<?= base_url('customer/address/delete/' . $address->id) ?>" 
+                                    <a href="<?= base_url('users/address/delete/' . $address->id) ?>" 
                                        onclick="return confirm('Are you sure?')"
                                        class="px-4 py-2 bg-red-50 text-red-600 font-semibold rounded-lg hover:bg-red-100 transition-colors text-sm">
                                         Delete

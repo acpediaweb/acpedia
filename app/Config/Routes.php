@@ -51,15 +51,8 @@ $routes->group('shop', ['namespace' => 'App\Controllers\Shop'], static function 
     $routes->get('(:segment)', 'ShopController::detail/$1'); 
 });
 
-// --- 4. CUSTOMER DASHBOARD (For Order History) ---
-$routes->group('customer', ['namespace' => 'App\Controllers\Customer'], static function ($routes) {
-    $routes->get('dashboard', 'DashboardController::index');
-    $routes->get('orders', 'OrderController::index');
-    $routes->get('profile', 'ProfileController::index');
-});
-
-// --- 5. USER AREA (Users Folder) ---
-$routes->group('customer', ['namespace' => 'App\Controllers\Users'], static function ($routes) {
+// --- 4. USERS AREA (Users Folder) ---
+$routes->group('users', ['namespace' => 'App\Controllers\Users'], static function ($routes) {
     
     // A. Profile Management
     $routes->get('profile', 'UserProfile::index');

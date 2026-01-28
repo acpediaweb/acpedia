@@ -9,7 +9,7 @@
         <div class="space-y-6">
             <!-- Header -->
             <div>
-                <a href="<?= base_url('customer/address') ?>" class="text-blue-600 font-semibold mb-4 inline-flex items-center gap-2 hover:text-blue-700">
+                <a href="<?= base_url('users/address') ?>" class="text-blue-600 font-semibold mb-4 inline-flex items-center gap-2 hover:text-blue-700">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
@@ -31,7 +31,7 @@
 
             <!-- Form -->
             <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-                <form action="<?= isset($address) ? base_url('customer/address/update/' . $address->id) : base_url('customer/address/store') ?>" 
+                <form action="<?= isset($address) ? base_url('users/address/update/' . $address->id) : base_url('users/address/store') ?>" 
                       method="POST" class="space-y-6">
                     <?= csrf_field() ?>
 
@@ -112,7 +112,7 @@
 
                     <!-- Actions -->
                     <div class="flex gap-3 justify-end">
-                        <a href="<?= base_url('customer/address') ?>" 
+                        <a href="<?= base_url('users/address') ?>" 
                            class="px-6 py-3 border border-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
                             Cancel
                         </a>

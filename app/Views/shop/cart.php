@@ -180,7 +180,7 @@
                         <?php endif; ?>
                         
                         <div class="mt-2 text-right">
-                            <a href="<?= base_url('customer/profile') ?>" class="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center justify-end gap-1">
+                            <a href="<?= base_url('users/profile') ?>" class="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center justify-end gap-1">
                                 Manage Addresses &rarr;
                             </a>
                         </div>

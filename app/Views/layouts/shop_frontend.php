@@ -72,8 +72,8 @@
                                 <p class="text-[10px] text-gray-500 truncate"><?= esc(session()->get('email')) ?></p>
                             </div>
                             <div class="p-2">
-                                <a href="<?= base_url('customer/orders') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Order History</a>
-                                <a href="<?= base_url('customer/profile') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Unit Records</a>
+                                <a href="<?= base_url('users/orders') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Order History</a>
+                                <a href="<?= base_url('users/profile') ?>" class="block px-4 py-2 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Unit Records</a>
                                 <hr class="my-1 border-gray-100">
                                 <a href="<?= base_url('logout') ?>" class="block px-4 py-2 text-xs text-red-600 hover:bg-red-50 rounded-lg font-bold">Sign Out</a>
                             </div>

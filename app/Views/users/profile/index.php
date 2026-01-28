@@ -35,7 +35,7 @@
                     </div>
                 </div>
 
-                <form action="<?= base_url('customer/profile/update') ?>" method="POST" class="space-y-6">
+                <form action="<?= base_url('users/profile/update') ?>" method="POST" class="space-y-6">
                     <?= csrf_field() ?>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -100,7 +100,7 @@
                     </div>
 
                     <!-- Upload Form -->
-                    <form action="<?= base_url('customer/profile/update-picture') ?>" method="POST" enctype="multipart/form-data" class="flex-1">
+                    <form action="<?= base_url('users/profile/update-picture') ?>" method="POST" enctype="multipart/form-data" class="flex-1">
                         <?= csrf_field() ?>
 
                         <div class="space-y-4">
@@ -124,7 +124,7 @@
             <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
                 <h2 class="text-xl font-bold text-gray-900 mb-6">Change Password</h2>
 
-                <form action="<?= base_url('customer/profile/change-password') ?>" method="POST" class="space-y-6">
+                <form action="<?= base_url('users/profile/change-password') ?>" method="POST" class="space-y-6">
                     <?= csrf_field() ?>
 
                     <div class="space-y-4">

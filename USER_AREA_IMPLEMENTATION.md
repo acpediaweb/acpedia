@@ -122,30 +122,30 @@ app/Views/users/
 
 ## Routes Configuration
 
-Added to `app/Config/Routes.php` under `customer` group:
+Added to `app/Config/Routes.php` under `users` group:
 
 ```
-/customer/profile                    GET     -> UserProfile::index
-/customer/profile/update             POST    -> UserProfile::updateProfile
-/customer/profile/update-picture     POST    -> UserProfile::updateProfilePicture
-/customer/profile/change-password    POST    -> UserProfile::changePassword
+/users/profile                       GET     -> UserProfile::index
+/users/profile/update                POST    -> UserProfile::updateProfile
+/users/profile/update-picture        POST    -> UserProfile::updateProfilePicture
+/users/profile/change-password       POST    -> UserProfile::changePassword
 
-/customer/address                    GET     -> UserAddress::index
-/customer/address/create             GET     -> UserAddress::create
-/customer/address/store              POST    -> UserAddress::store
-/customer/address/edit/:id           GET     -> UserAddress::edit
-/customer/address/update/:id         POST    -> UserAddress::update
-/customer/address/set-primary/:id    GET     -> UserAddress::setPrimary
-/customer/address/delete/:id         GET     -> UserAddress::delete
+/users/address                       GET     -> UserAddress::index
+/users/address/create                GET     -> UserAddress::create
+/users/address/store                 POST    -> UserAddress::store
+/users/address/edit/:id              GET     -> UserAddress::edit
+/users/address/update/:id            POST    -> UserAddress::update
+/users/address/set-primary/:id       GET     -> UserAddress::setPrimary
+/users/address/delete/:id            GET     -> UserAddress::delete
 
-/customer/orders                     GET     -> UserOrders::list
-/customer/orders/:id                 GET     -> UserOrders::detail
+/users/orders                        GET     -> UserOrders::list
+/users/orders/:id                    GET     -> UserOrders::detail
 
-/customer/notification               GET     -> UserNotif::index
-/customer/notification/mark-read/:id GET     -> UserNotif::markAsRead
+/users/notification                  GET     -> UserNotif::index
+/users/notification/mark-read/:id    GET     -> UserNotif::markAsRead
 
-/customer/units                      GET     -> UserUnits::list
-/customer/units/:id                  GET     -> UserUnits::detail
+/users/units                         GET     -> UserUnits::list
+/users/units/:id                     GET     -> UserUnits::detail
 ```
 
 ---
@@ -187,13 +187,13 @@ All views use:
 ## Usage Instructions
 
 ### Profile Management
-1. User visits `/customer/profile`
+1. User visits `/users/profile`
 2. Can update fullname
 3. Can upload new profile picture
 4. Can change password with verification
 
 ### Address Management
-1. User visits `/customer/address` to see all addresses
+1. User visits `/users/address` to see all addresses
 2. Click "+ Add New Address" to create new
 3. Fill in location details (coordinates optional)
 4. Can edit any address
