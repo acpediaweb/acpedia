@@ -11,7 +11,7 @@ class ForumPostFileModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['forum_post_id', 'file_urls', 'uploaded_at'];
+    protected array $allowedFields = ['forum_post_id', 'file_urls', 'uploaded_at'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class ForumPostFileModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByPostId(int $postId)
     {

@@ -11,7 +11,7 @@ class ServicePriceModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['service_id', 'type_id', 'is_per_pk', 'price'];
+    protected array $allowedFields = ['service_id', 'type_id', 'is_per_pk', 'price'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -29,7 +29,7 @@ class ServicePriceModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'is_per_pk' => 'boolean',
         'price' => 'float',
     ];

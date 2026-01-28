@@ -11,7 +11,7 @@ class OrderItemModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['order_id', 'product_id', 'quantity', 'base_price_snapshot', 'sale_price_snapshot'];
+    protected array $allowedFields = ['order_id', 'product_id', 'quantity', 'base_price_snapshot', 'sale_price_snapshot'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -30,7 +30,7 @@ class OrderItemModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'quantity' => 'integer',
         'base_price_snapshot' => 'float',
         'sale_price_snapshot' => 'float',

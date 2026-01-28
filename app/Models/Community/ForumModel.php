@@ -12,7 +12,7 @@ class ForumModel extends Model
     protected $returnType = 'object';
     protected $useSoftDeletes = true;
     protected $deletedField = 'deleted_at';
-    protected $allowedFields = ['thread_poster_id', 'thread_title', 'flair_id', 'status'];
+    protected array $allowedFields = ['thread_poster_id', 'thread_title', 'flair_id', 'status'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -29,7 +29,7 @@ class ForumModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByPosterId(int $posterId)
     {

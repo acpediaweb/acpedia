@@ -11,7 +11,7 @@ class UserTicketResponseModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['ticket_id', 'responder_user_id', 'response_message'];
+    protected array $allowedFields = ['ticket_id', 'responder_user_id', 'response_message'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -28,7 +28,7 @@ class UserTicketResponseModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByTicketId(int $ticketId)
     {

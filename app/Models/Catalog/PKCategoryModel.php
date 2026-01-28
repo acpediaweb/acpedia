@@ -11,7 +11,7 @@ class PKCategoryModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['pk_category_name', 'pk_category_description', 'icon'];
+    protected array $allowedFields = ['pk_category_name', 'pk_category_description', 'icon'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class PKCategoryModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByName(string $name)
     {

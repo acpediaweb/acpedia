@@ -11,7 +11,7 @@ class RoleModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['role_name', 'role_color', 'role_description'];
+    protected array $allowedFields = ['role_name', 'role_color', 'role_description'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class RoleModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByName(string $roleName)
     {

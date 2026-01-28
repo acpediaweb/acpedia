@@ -11,7 +11,7 @@ class BrandModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['brand_name', 'brand_description', 'logo'];
+    protected array $allowedFields = ['brand_name', 'brand_description', 'logo'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class BrandModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByName(string $name)
     {

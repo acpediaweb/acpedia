@@ -11,7 +11,7 @@ class UserRoomModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['address_id', 'room_name', 'room_subtitle'];
+    protected array $allowedFields = ['address_id', 'room_name', 'room_subtitle'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class UserRoomModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByAddressId(int $addressId)
     {

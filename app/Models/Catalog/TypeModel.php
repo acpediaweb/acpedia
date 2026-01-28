@@ -11,7 +11,7 @@ class TypeModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['type_name', 'type_description', 'icon'];
+    protected array $allowedFields = ['type_name', 'type_description', 'icon'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class TypeModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByName(string $name)
     {

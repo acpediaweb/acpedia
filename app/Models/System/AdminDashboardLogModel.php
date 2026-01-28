@@ -11,7 +11,7 @@ class AdminDashboardLogModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['admin_actor_id', 'action_title', 'action_description', 'action_timestamp'];
+    protected array $allowedFields = ['admin_actor_id', 'action_title', 'action_description', 'action_timestamp'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -29,7 +29,7 @@ class AdminDashboardLogModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByAdminId(int $adminId)
     {

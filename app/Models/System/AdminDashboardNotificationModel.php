@@ -11,7 +11,7 @@ class AdminDashboardNotificationModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['notification_title', 'notification_message', 'is_read', 'is_pushed'];
+    protected array $allowedFields = ['notification_title', 'notification_message', 'is_read', 'is_pushed'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -29,7 +29,7 @@ class AdminDashboardNotificationModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'is_read' => 'boolean',
         'is_pushed' => 'boolean',
     ];

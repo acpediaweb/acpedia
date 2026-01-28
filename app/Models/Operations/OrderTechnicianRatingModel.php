@@ -11,7 +11,7 @@ class OrderTechnicianRatingModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['order_id', 'user_id', 'technician_user_id', 'rating_score', 'rating_comments'];
+    protected array $allowedFields = ['order_id', 'user_id', 'technician_user_id', 'rating_score', 'rating_comments'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -30,7 +30,7 @@ class OrderTechnicianRatingModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'rating_score' => 'integer',
     ];
 

@@ -11,7 +11,7 @@ class SiteConfigurationModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['config_key', 'config_value'];
+    protected array $allowedFields = ['config_key', 'config_value'];
 
     protected $useTimestamps = true;
     protected $createdField = null;
@@ -26,7 +26,7 @@ class SiteConfigurationModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByKey(string $key)
     {

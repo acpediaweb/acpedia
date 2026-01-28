@@ -11,7 +11,7 @@ class OrderTechAdjustmentModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['order_id', 'technician_actor_id', 'adjustment_title', 'adjustment_description', 'adjustment_amount', 'admin_actor_id', 'adjustment_status', 'is_admin_adjustment'];
+    protected array $allowedFields = ['order_id', 'technician_actor_id', 'adjustment_title', 'adjustment_description', 'adjustment_amount', 'admin_actor_id', 'adjustment_status', 'is_admin_adjustment'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -33,7 +33,7 @@ class OrderTechAdjustmentModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'adjustment_amount' => 'float',
         'is_admin_adjustment' => 'boolean',
     ];

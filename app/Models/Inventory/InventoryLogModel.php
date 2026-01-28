@@ -11,7 +11,7 @@ class InventoryLogModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['inventory_id', 'action_title', 'action_description', 'action_timestamp', 'action_actor'];
+    protected array $allowedFields = ['inventory_id', 'action_title', 'action_description', 'action_timestamp', 'action_actor'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -30,7 +30,7 @@ class InventoryLogModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByInventoryId(int $inventoryId)
     {

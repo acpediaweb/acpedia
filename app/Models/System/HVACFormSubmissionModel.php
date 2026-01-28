@@ -11,7 +11,7 @@ class HVACFormSubmissionModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['first_name', 'last_name', 'email', 'phone_number', 'whatsapp_number', 'subject', 'message'];
+    protected array $allowedFields = ['first_name', 'last_name', 'email', 'phone_number', 'whatsapp_number', 'subject', 'message'];
 
     protected $useTimestamps = true;
     protected $createdField = 'submitted_at';
@@ -32,7 +32,7 @@ class HVACFormSubmissionModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByEmail(string $email)
     {

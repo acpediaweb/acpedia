@@ -11,7 +11,7 @@ class UserAddressModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['user_id', 'street', 'sub_district', 'district', 'city', 'province', 'postal_code', 'latitude', 'longitude', 'is_primary'];
+    protected array $allowedFields = ['user_id', 'street', 'sub_district', 'district', 'city', 'province', 'postal_code', 'latitude', 'longitude', 'is_primary'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -35,7 +35,7 @@ class UserAddressModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'latitude' => 'float',
         'longitude' => 'float',
         'is_primary' => 'boolean',

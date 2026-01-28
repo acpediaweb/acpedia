@@ -11,7 +11,7 @@ class UserCartItemAddonModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['cart_item_id', 'pipe_id', 'addon_id', 'extra_data_json', 'quantity'];
+    protected array $allowedFields = ['cart_item_id', 'pipe_id', 'addon_id', 'extra_data_json', 'quantity'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -30,7 +30,7 @@ class UserCartItemAddonModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'quantity' => 'integer',
         'extra_data_json' => 'json',
     ];

@@ -11,14 +11,14 @@ class UserModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['fullname', 'email', 'profile_picture', 'password_hash', 'role_id', 'is_active', 'technician_rating_avg'];
+    protected array $allowedFields = ['fullname', 'email', 'profile_picture', 'password_hash', 'role_id', 'is_active', 'technician_rating_avg'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = null;
     protected $deletedField = null;
 
-    protected $validationRules = [
+    protected array $validationRules = [
         'fullname' => 'required|min_length[1]|max_length[50]|is_unique[users.fullname]',
         'email' => 'required|valid_email|is_unique[users.email]',
         'profile_picture' => 'permit_empty|string|max_length[255]',
@@ -32,7 +32,7 @@ class UserModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'is_active' => 'boolean',
         'technician_rating_avg' => 'float',
     ];

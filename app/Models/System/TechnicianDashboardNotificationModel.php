@@ -11,7 +11,7 @@ class TechnicianDashboardNotificationModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['technician_user_id', 'notification_title', 'notification_message', 'is_read', 'is_pushed'];
+    protected array $allowedFields = ['technician_user_id', 'notification_title', 'notification_message', 'is_read', 'is_pushed'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -30,7 +30,7 @@ class TechnicianDashboardNotificationModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'is_read' => 'boolean',
         'is_pushed' => 'boolean',
     ];

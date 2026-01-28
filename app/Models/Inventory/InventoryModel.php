@@ -11,7 +11,7 @@ class InventoryModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['product_id', 'item_type', 'item_serial_number', 'item_barcode', 'item_notes', 'bound_to_user_id', 'bound_to_user_address_id'];
+    protected array $allowedFields = ['product_id', 'item_type', 'item_serial_number', 'item_barcode', 'item_notes', 'bound_to_user_id', 'bound_to_user_address_id'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -32,7 +32,7 @@ class InventoryModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByProductId(int $productId)
     {

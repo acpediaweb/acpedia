@@ -11,7 +11,7 @@ class OrderFileModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['order_discussion_id', 'file_urls', 'uploaded_at'];
+    protected array $allowedFields = ['order_discussion_id', 'file_urls', 'uploaded_at'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class OrderFileModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByDiscussionId(int $discussionId)
     {

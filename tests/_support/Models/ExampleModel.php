@@ -10,7 +10,7 @@ class ExampleModel extends Model
     protected $primaryKey     = 'id';
     protected $returnType     = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields  = [
+    protected array $allowedFields  = [
         'name',
         'uid',
         'class',

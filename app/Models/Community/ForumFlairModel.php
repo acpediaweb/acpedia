@@ -11,7 +11,7 @@ class ForumFlairModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['flair_name', 'flair_color', 'flair_description'];
+    protected array $allowedFields = ['flair_name', 'flair_color', 'flair_description'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class ForumFlairModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByName(string $name)
     {

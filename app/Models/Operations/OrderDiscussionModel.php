@@ -11,7 +11,7 @@ class OrderDiscussionModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['order_id', 'actor_user_id', 'message_text', 'is_system_message', 'message_timestamp'];
+    protected array $allowedFields = ['order_id', 'actor_user_id', 'message_text', 'is_system_message', 'message_timestamp'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -30,7 +30,7 @@ class OrderDiscussionModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'is_system_message' => 'boolean',
     ];
 

@@ -11,7 +11,7 @@ class StaticPageContentModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['page_name', 'page_slug', 'page_content'];
+    protected array $allowedFields = ['page_name', 'page_slug', 'page_content'];
 
     protected $useTimestamps = true;
     protected $createdField = null;
@@ -27,7 +27,7 @@ class StaticPageContentModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getBySlug(string $slug)
     {

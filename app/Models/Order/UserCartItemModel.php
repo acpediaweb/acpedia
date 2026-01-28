@@ -11,7 +11,7 @@ class UserCartItemModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['cart_id', 'product_id', 'service_id', 'quantity'];
+    protected array $allowedFields = ['cart_id', 'product_id', 'service_id', 'quantity'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -29,7 +29,7 @@ class UserCartItemModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'quantity' => 'integer',
     ];
 

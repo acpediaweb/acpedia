@@ -11,7 +11,7 @@ class PipeModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['pipe_type', 'pipe_description', 'price_per_meter'];
+    protected array $allowedFields = ['pipe_type', 'pipe_description', 'price_per_meter'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class PipeModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'price_per_meter' => 'float',
     ];
 

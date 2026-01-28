@@ -11,7 +11,7 @@ class FAQVoteModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['faq_id', 'user_id', 'is_helpful', 'ip_address', 'voted_at'];
+    protected array $allowedFields = ['faq_id', 'user_id', 'is_helpful', 'ip_address', 'voted_at'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -30,7 +30,7 @@ class FAQVoteModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'is_helpful' => 'boolean',
     ];
 

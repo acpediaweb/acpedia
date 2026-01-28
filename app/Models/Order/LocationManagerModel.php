@@ -11,7 +11,7 @@ class LocationManagerModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['manager_location_name', 'manager_name', 'manager_email', 'manager_phone', 'kelurahan', 'kecamatan', 'city', 'province', 'postal_code', 'street', 'qr_code', 'latitude', 'longitude'];
+    protected array $allowedFields = ['manager_location_name', 'manager_name', 'manager_email', 'manager_phone', 'kelurahan', 'kecamatan', 'city', 'province', 'postal_code', 'street', 'qr_code', 'latitude', 'longitude'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -38,7 +38,7 @@ class LocationManagerModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'latitude' => 'float',
         'longitude' => 'float',
     ];

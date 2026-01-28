@@ -11,7 +11,7 @@ class ContactUsFormSubmissionModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['full_name', 'email', 'phone_number', 'whatsapp_number', 'subject', 'message'];
+    protected array $allowedFields = ['full_name', 'email', 'phone_number', 'whatsapp_number', 'subject', 'message'];
 
     protected $useTimestamps = true;
     protected $createdField = 'submitted_at';
@@ -31,7 +31,7 @@ class ContactUsFormSubmissionModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByEmail(string $email)
     {

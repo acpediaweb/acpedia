@@ -12,7 +12,7 @@ class ForumPostModel extends Model
     protected $returnType = 'object';
     protected $useSoftDeletes = true;
     protected $deletedField = 'deleted_at';
-    protected $allowedFields = ['thread_id', 'post_author_id', 'post_content'];
+    protected array $allowedFields = ['thread_id', 'post_author_id', 'post_content'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -28,7 +28,7 @@ class ForumPostModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [];
+    protected array $casts = [];
 
     public function getByThreadId(int $threadId)
     {

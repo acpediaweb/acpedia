@@ -11,7 +11,7 @@ class AddonModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['addon_name', 'addon_description', 'addon_price'];
+    protected array $allowedFields = ['addon_name', 'addon_description', 'addon_price'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class AddonModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'addon_price' => 'float',
     ];
 

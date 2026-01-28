@@ -11,7 +11,7 @@ class OrderItemAddonModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['order_item_id', 'service_id', 'pipe_id', 'addon_id', 'extra_data_json', 'quantity', 'price_snapshot'];
+    protected array $allowedFields = ['order_item_id', 'service_id', 'pipe_id', 'addon_id', 'extra_data_json', 'quantity', 'price_snapshot'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -32,7 +32,7 @@ class OrderItemAddonModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'quantity' => 'integer',
         'price_snapshot' => 'float',
         'extra_data_json' => 'json',

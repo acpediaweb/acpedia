@@ -11,7 +11,7 @@ class ServiceModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['service_title', 'service_description', 'base_price'];
+    protected array $allowedFields = ['service_title', 'service_description', 'base_price'];
 
     protected $useTimestamps = false;
     protected $createdField = null;
@@ -28,7 +28,7 @@ class ServiceModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    protected $casts = [
+    protected array $casts = [
         'base_price' => 'float',
     ];
 
